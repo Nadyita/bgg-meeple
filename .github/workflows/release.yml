@@ -1,8 +1,9 @@
 name: Release
 
 on:
-  release:
-    types: [created]
+  push:
+    tags:
+      - "v*"
 
 jobs:
   test:
@@ -73,7 +74,7 @@ jobs:
       - name: Package Linux release
         run: |
           cd build/linux/x64/release
-          tar -czf "bgg-meeple-linux-${{ github.event.release.tag_name }}.tar.gz" bundle
+          tar -czf "bgg-meeple-linux-${{ github.ref_name }}.tar.gz" bundle
 
       - name: Attach release assets
         uses: softprops/action-gh-release@v2

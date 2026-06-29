@@ -40,6 +40,22 @@ flutter build apk --release
 
 The release APK is written to `build/app/outputs/flutter-apk/app-release.apk`.
 
+### Create a release
+
+Releases are created automatically from Git tags that start with `v`:
+
+```bash
+git tag -a v1.0.0 -m "Release version 1.0.0"
+git push origin v1.0.0
+```
+
+This triggers the `release.yml` workflow, which runs the full test suite and then builds and attaches:
+
+- `bgg-meeple-android.apk`
+- `bgg-meeple-linux-<tag>.tar.gz`
+
+Only tags matching `v*` trigger a release. Tests must pass before any artifact is built or attached.
+
 ### Run tests
 
 ```bash
@@ -80,7 +96,7 @@ The app supports English and German. User-facing strings are externalized into A
 GitHub Actions workflows are defined in `.github/workflows/`:
 
 - `ci.yml`: runs tests and builds the Linux and Android apps on every push and pull request.
-- `release.yml`: builds Linux and Android release artifacts and attaches them to GitHub Releases.
+- `release.yml`: triggered by pushing a tag starting with `v`; runs tests, builds Linux and Android release artifacts, and attaches them to a new GitHub Release.
   The Android APK is attached as `bgg-meeple-android.apk`, the Linux bundle as `bgg-meeple-linux-<tag>.tar.gz`.
   Tests must pass before any artifact is built.
 
