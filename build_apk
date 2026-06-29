@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+export JAVA_HOME=~/.local/share/jdk/jdk-17.0.15+6
+export PATH=$JAVA_HOME/bin:$PATH
+flutter build apk --release

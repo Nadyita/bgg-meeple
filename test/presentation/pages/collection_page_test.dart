@@ -1,0 +1,159 @@
+import 'package:bgg_meeple/application/use_cases/load_card_layout_use_case.dart';
+import 'package:bgg_meeple/application/use_cases/load_collection_use_case.dart';
+import 'package:bgg_meeple/application/use_cases/load_collection_view_use_case.dart';
+import 'package:bgg_meeple/application/use_cases/load_credentials_use_case.dart';
+import 'package:bgg_meeple/application/use_cases/save_collection_view_use_case.dart';
+import 'package:bgg_meeple/application/use_cases/sync_collection_use_case.dart';
+import 'package:bgg_meeple/domain/entities/collection_item.dart';
+import 'package:bgg_meeple/domain/value_objects/card_layout_config.dart';
+import 'package:bgg_meeple/domain/value_objects/collection_filter.dart';
+import 'package:bgg_meeple/domain/value_objects/collection_sort.dart';
+import 'package:bgg_meeple/domain/value_objects/collection_view.dart';
+import 'package:bgg_meeple/domain/value_objects/localized_name.dart';
+import 'package:bgg_meeple/presentation/l10n/app_localizations.dart';
+import 'package:bgg_meeple/presentation/pages/collection_page.dart';
+import 'package:bgg_meeple/presentation/widgets/collection_card.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+
+class _MockLoadCollection extends Mock implements LoadCollectionUseCase {}
+
+class _MockLoadCardLayout extends Mock implements LoadCardLayoutUseCase {}
+
+class _MockLoadCollectionView extends Mock
+    implements LoadCollectionViewUseCase {}
+
+class _MockSaveCollectionView extends Mock
+    implements SaveCollectionViewUseCase {}
+
+class _MockLoadCredentials extends Mock implements LoadCredentialsUseCase {}
+
+class _MockSyncCollection extends Mock implements SyncCollectionUseCase {}
+
+class _CollectionViewFake extends Fake implements CollectionView {}
+
+Widget _buildApp({required Widget home}) {
+  return MaterialApp(
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
+    home: home,
+  );
+}
+
+void main() {
+  setUpAll(() {
+    registerFallbackValue(_CollectionViewFake());
+  });
+
+  group('CollectionPage compact toggle', () {
+    late LoadCollectionUseCase loadCollection;
+    late LoadCardLayoutUseCase loadCardLayout;
+    late LoadCollectionViewUseCase loadCollectionView;
+    late SaveCollectionViewUseCase saveCollectionView;
+    late LoadCredentialsUseCase loadCredentials;
+    late SyncCollectionUseCase syncCollection;
+
+    setUp(() {
+      loadCollection = _MockLoadCollection();
+      loadCardLayout = _MockLoadCardLayout();
+      loadCollectionView = _MockLoadCollectionView();
+      saveCollectionView = _MockSaveCollectionView();
+      loadCredentials = _MockLoadCredentials();
+      syncCollection = _MockSyncCollection();
+
+      when(loadCollection.call).thenAnswer(
+        (_) async => const [
+          CollectionItem(
+            thingId: 1,
+            names: [
+              LocalizedName(value: 'Catan', language: null, isPrimary: true),
+            ],
+          ),
+          CollectionItem(
+            thingId: 2,
+            names: [
+              LocalizedName(
+                value: 'Carcassonne',
+                language: null,
+                isPrimary: true,
+              ),
+            ],
+          ),
+        ],
+      );
+      when(
+        loadCardLayout.call,
+      ).thenAnswer((_) async => const CardLayoutConfig());
+      when(
+        loadCollectionView.call,
+      ).thenAnswer((_) async => const CollectionView());
+      when(() => saveCollectionView.call(any())).thenAnswer((_) async {});
+      when(loadCredentials.call).thenAnswer((_) async => null);
+    });
+
+    testWidgets('restores persisted search text into the search field', (
+      tester,
+    ) async {
+      const persistedView = CollectionView(
+        searchText: 'car',
+        filter: CollectionFilter(),
+        sort: CollectionSort(),
+      );
+      when(loadCollectionView.call).thenAnswer((_) async => persistedView);
+
+      await tester.pumpWidget(
+        _buildApp(
+          home: CollectionPage(
+            loadCollection: loadCollection,
+            loadCardLayout: loadCardLayout,
+            loadCollectionView: loadCollectionView,
+            saveCollectionView: saveCollectionView,
+            loadCredentials: loadCredentials,
+            syncCollection: syncCollection,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final textField = tester.widget<TextField>(find.byType(TextField));
+      expect(textField.controller?.text, 'car');
+      expect(find.byType(CollectionCard), findsOneWidget);
+      expect(find.text('Carcassonne'), findsOneWidget);
+
+      // Verify clear button is shown
+      expect(find.byIcon(Icons.clear), findsOneWidget);
+    });
+
+    testWidgets('toggles between card list and compact list', (tester) async {
+      await tester.pumpWidget(
+        _buildApp(
+          home: CollectionPage(
+            loadCollection: loadCollection,
+            loadCardLayout: loadCardLayout,
+            loadCollectionView: loadCollectionView,
+            saveCollectionView: saveCollectionView,
+            loadCredentials: loadCredentials,
+            syncCollection: syncCollection,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(CollectionCard), findsNWidgets(2));
+      expect(find.byType(ListTile), findsNothing);
+
+      await tester.tap(find.byIcon(Icons.view_module));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(CollectionCard), findsNothing);
+      expect(find.byType(ListTile), findsNWidgets(2));
+
+      await tester.tap(find.byIcon(Icons.view_list));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(CollectionCard), findsNWidgets(2));
+      expect(find.byType(ListTile), findsNothing);
+    });
+  });
+}

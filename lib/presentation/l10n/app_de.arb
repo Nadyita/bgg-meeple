@@ -1,0 +1,255 @@
+{
+  "appTitle": "BGG Meeple",
+  "settingsTitle": "Einstellungen",
+  "collectionTitle": "Meine Sammlung",
+  "searchHint": "Spiele suchen...",
+  "filterLabel": "Filter",
+  "clearSearchLabel": "Suche und Filter zurücksetzen",
+  "sortLabel": "Sortierung",
+  "syncLabel": "Sync",
+  "compactModeEnableTooltip": "Kompaktansicht",
+  "compactModeDisableTooltip": "Kartenansicht",
+  "unknownGame": "Unbekanntes Spiel",
+  "sortByName": "Name",
+  "sortByPlayTime": "Spieldauer",
+  "sortByBggRating": "BGG-Bewertung",
+  "sortByYear": "Jahr",
+  "ascending": "Aufsteigend",
+  "descending": "Absteigend",
+  "playerCountLabel": "Spieler",
+  "playTimeLabel": "Zeit (Min.)",
+  "ratingLabel": "Bewertung",
+  "clearFiltersLabel": "Zurücksetzen",
+  "subTypeOwned": "owned",
+  "subTypePreordered": "preordered",
+  "subTypeWishlisted": "wishlisted",
+  "subTypeWantToPlay": "want to play",
+  "subTypeWantToBuy": "want to buy",
+  "subTypePreviouslyOwned": "previously owned",
+  "subTypePlayed": "played",
+  "subTypeRated": "rated",
+  "subTypeForTrade": "for trade",
+  "subTypeWantInTrade": "want in trade",
+  "subTypeHasComment": "comment",
+  "noGamesMatchFilters": "Keine Spiele entsprechen den Filtern.",
+  "collectionEmptyAfterSync": "Die Sammlung erscheint hier nach der Synchronisation.",
+  "collectionEmptySearch": "Keine Spiele entsprechen der Suche.",
+  "settingsBggUsernameLabel": "BGG-Benutzername",
+  "settingsBggPasswordLabel": "BGG-Passwort",
+  "settingsSaveCredentialsButton": "Zugangsdaten speichern",
+  "settingsTestLoginButton": "Login testen",
+  "settingsSyncCollectionButton": "Sammlung synchronisieren",
+  "settingsCredentialsSavedMessage": "Zugangsdaten gespeichert",
+  "settingsLoginSuccessfulMessage": "Login erfolgreich",
+  "settingsSyncCompletedMessage": "Synchronisation abgeschlossen",
+  "settingsCardLayoutTitle": "Kartenlayout",
+  "settingsShowThumbnail": "Vorschaubild anzeigen",
+  "settingsShowVersionSubtitle": "Version-Untertitel anzeigen",
+  "settingsHidePlaysWhenZero": "Partien bei Null ausblenden",
+  "settingsShowGeekRatingUserCount": "Anzahl Bewertungen für Geek-Rating anzeigen",
+  "settingsThemeModeTitle": "Farbschema",
+  "settingsThemeModeSystem": "System",
+  "settingsThemeModeLight": "Hell",
+  "settingsThemeModeDark": "Dunkel",
+  "settingsFontSizeTitle": "Schriftgröße",
+  "settingsVisibleFieldsHint": "Sichtbare Felder (ziehen zum Sortieren)",
+  "cardFieldPlayerCount": "Spieleranzahl",
+  "cardFieldPlayTime": "Spieldauer",
+  "cardFieldPlays": "Partien",
+  "cardFieldOwnRating": "Eigene Bewertung",
+  "cardFieldGeekRating": "Geek-Rating",
+  "cardFieldMinAge": "Mindestalter",
+  "cardFieldBggRank": "BGG-Rang",
+  "cardFieldPlaysHiddenWhenZero": "Bei Null ausgeblendet",
+  "cardFieldGeekRatingIncludesUserCount": "Anzahl der Bewertungen einblenden",
+  "cardOwnRatingLabel": "Eigene Bewertung: {rating}",
+  "@cardOwnRatingLabel": {
+    "description": "Eigene Bewertung auf einer Sammlungskarte",
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "cardGeekRatingLabel": "Geek-Rating: {rating}",
+  "@cardGeekRatingLabel": {
+    "description": "Geek-Rating auf einer Sammlungskarte",
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "cardGeekRatingMissing": "Geek-Rating: –",
+  "cardMinAgeLabel": "Mindestalter: {age}",
+  "@cardMinAgeLabel": {
+    "description": "Mindestalter auf einer Sammlungskarte",
+    "placeholders": {
+      "age": {
+        "type": "int"
+      }
+    }
+  },
+  "cardBggRankLabel": "BGG-Rang: {rank}",
+  "@cardBggRankLabel": {
+    "description": "BGG-Rang auf einer Sammlungskarte",
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      }
+    }
+  },
+  "cardPlaysLabel": "Partien: {count}",
+  "@cardPlaysLabel": {
+    "description": "Anzahl Partien auf einer Sammlungskarte",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cardPlayerCountMissing": "Spieler: –",
+  "cardPlayerCountExact": "{count} Spieler",
+  "@cardPlayerCountExact": {
+    "description": "Exakte Spieleranzahl auf einer Sammlungskarte",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cardPlayerCountRangeMaxOnly": "1 - {max} Spieler",
+  "@cardPlayerCountRangeMaxOnly": {
+    "description": "Spieleranzahl wenn nur Maximum bekannt",
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "cardPlayerCountRangeMinOnly": "{min}+ Spieler",
+  "@cardPlayerCountRangeMinOnly": {
+    "description": "Spieleranzahl wenn nur Minimum bekannt",
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "cardPlayerCountRange": "{min} - {max} Spieler",
+  "@cardPlayerCountRange": {
+    "description": "Spieleranzahl-Bereich auf einer Sammlungskarte",
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "cardPlayTimeMissing": "Zeit: –",
+  "cardPlayTimeExact": "{minutes} Min.",
+  "@cardPlayTimeExact": {
+    "description": "Exakte Spieldauer auf einer Sammlungskarte",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "cardPlayTimeMaxOnly": "{max} Min.",
+  "@cardPlayTimeMaxOnly": {
+    "description": "Spieldauer wenn nur Maximum bekannt",
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "cardPlayTimeMinOnly": "{min}+ Min.",
+  "@cardPlayTimeMinOnly": {
+    "description": "Spieldauer wenn nur Minimum bekannt",
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "cardPlayTimeRange": "{min} - {max} Min.",
+  "@cardPlayTimeRange": {
+    "description": "Spieldauer-Bereich auf einer Sammlungskarte",
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "errorLoadCardLayout": "Laden des Kartenlayouts fehlgeschlagen: {details}",
+  "@errorLoadCardLayout": {
+    "description": "Fehler wenn das Kartenlayout nicht geladen werden kann",
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "errorLoadCollection": "Laden der Sammlung fehlgeschlagen: {details}",
+  "@errorLoadCollection": {
+    "description": "Fehler wenn die Sammlung nicht geladen werden kann",
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "errorLoadSettings": "Laden der Einstellungen fehlgeschlagen: {details}",
+  "@errorLoadSettings": {
+    "description": "Fehler wenn die Einstellungen nicht geladen werden können",
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "errorLogin": "Login fehlgeschlagen: {details}",
+  "@errorLogin": {
+    "description": "Fehler wenn der BGG-Login-Test fehlschlägt",
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "errorSyncUnavailable": "Synchronisation nicht verfügbar",
+  "errorSyncFailed": "Synchronisation fehlgeschlagen: {details}",
+  "@errorSyncFailed": {
+    "description": "Fehler wenn die Sammlungs-Synchronisation fehlschlägt",
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "errorSaveCredentials": "Speichern der Zugangsdaten fehlgeschlagen: {details}",
+  "@errorSaveCredentials": {
+    "description": "Fehler wenn die Zugangsdaten nicht gespeichert werden können",
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "errorSaveCardLayout": "Speichern des Kartenlayouts fehlgeschlagen: {details}",
+  "@errorSaveCardLayout": {
+    "description": "Fehler wenn das Kartenlayout nicht gespeichert werden kann",
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  }
+}

@@ -1,0 +1,255 @@
+{
+  "appTitle": "BGG Meeple",
+  "settingsTitle": "Settings",
+  "collectionTitle": "My Collection",
+  "searchHint": "Search games...",
+  "filterLabel": "Filters",
+  "clearSearchLabel": "Clear search and filters",
+  "sortLabel": "Sort",
+  "syncLabel": "Sync",
+  "compactModeEnableTooltip": "Compact view",
+  "compactModeDisableTooltip": "Card view",
+  "unknownGame": "Unknown game",
+  "sortByName": "Name",
+  "sortByPlayTime": "Play time",
+  "sortByBggRating": "BGG rating",
+  "sortByYear": "Year",
+  "ascending": "Ascending",
+  "descending": "Descending",
+  "playerCountLabel": "Players",
+  "playTimeLabel": "Time (min)",
+  "ratingLabel": "Rating",
+  "clearFiltersLabel": "Clear",
+  "subTypeOwned": "owned",
+  "subTypePreordered": "preordered",
+  "subTypeWishlisted": "wishlist",
+  "subTypeWantToPlay": "want to play",
+  "subTypeWantToBuy": "want to buy",
+  "subTypePreviouslyOwned": "previously owned",
+  "subTypePlayed": "played",
+  "subTypeRated": "rated",
+  "subTypeForTrade": "for trade",
+  "subTypeWantInTrade": "want in trade",
+  "subTypeHasComment": "comment",
+  "noGamesMatchFilters": "No games match your filters.",
+  "collectionEmptyAfterSync": "Collection will appear here after sync.",
+  "collectionEmptySearch": "No games match your search.",
+  "settingsBggUsernameLabel": "BGG Username",
+  "settingsBggPasswordLabel": "BGG Password",
+  "settingsSaveCredentialsButton": "Save Credentials",
+  "settingsTestLoginButton": "Test Login",
+  "settingsSyncCollectionButton": "Sync Collection",
+  "settingsCredentialsSavedMessage": "Credentials saved",
+  "settingsLoginSuccessfulMessage": "Login successful",
+  "settingsSyncCompletedMessage": "Sync completed",
+  "settingsCardLayoutTitle": "Card Layout",
+  "settingsShowThumbnail": "Show thumbnail",
+  "settingsShowVersionSubtitle": "Show version subtitle",
+  "settingsHidePlaysWhenZero": "Hide plays when zero",
+  "settingsShowGeekRatingUserCount": "Show number of ratings for geek rating",
+  "settingsThemeModeTitle": "Theme",
+  "settingsThemeModeSystem": "System",
+  "settingsThemeModeLight": "Light",
+  "settingsThemeModeDark": "Dark",
+  "settingsFontSizeTitle": "Font size",
+  "settingsVisibleFieldsHint": "Visible fields (drag to reorder)",
+  "cardFieldPlayerCount": "Player count",
+  "cardFieldPlayTime": "Play time",
+  "cardFieldPlays": "Plays",
+  "cardFieldOwnRating": "Your rating",
+  "cardFieldGeekRating": "Geek rating",
+  "cardFieldMinAge": "Min age",
+  "cardFieldBggRank": "BGG rank",
+  "cardFieldPlaysHiddenWhenZero": "Hidden when zero",
+  "cardFieldGeekRatingIncludesUserCount": "Includes number of ratings",
+  "cardOwnRatingLabel": "Your rating: {rating}",
+  "@cardOwnRatingLabel": {
+    "description": "Own rating displayed on a collection card",
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "cardGeekRatingLabel": "Geek rating: {rating}",
+  "@cardGeekRatingLabel": {
+    "description": "Geek rating displayed on a collection card",
+    "placeholders": {
+      "rating": {
+        "type": "String"
+      }
+    }
+  },
+  "cardGeekRatingMissing": "Geek rating: –",
+  "cardMinAgeLabel": "Min age: {age}",
+  "@cardMinAgeLabel": {
+    "description": "Minimum age displayed on a collection card",
+    "placeholders": {
+      "age": {
+        "type": "int"
+      }
+    }
+  },
+  "cardBggRankLabel": "BGG rank: {rank}",
+  "@cardBggRankLabel": {
+    "description": "BGG rank displayed on a collection card",
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      }
+    }
+  },
+  "cardPlaysLabel": "Plays: {count}",
+  "@cardPlaysLabel": {
+    "description": "Number of plays displayed on a collection card",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cardPlayerCountMissing": "Players: –",
+  "cardPlayerCountExact": "{count} Players",
+  "@cardPlayerCountExact": {
+    "description": "Exact player count on a collection card",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "cardPlayerCountRangeMaxOnly": "1 - {max} Players",
+  "@cardPlayerCountRangeMaxOnly": {
+    "description": "Player count range when only maximum is known",
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "cardPlayerCountRangeMinOnly": "{min}+ Players",
+  "@cardPlayerCountRangeMinOnly": {
+    "description": "Player count range when only minimum is known",
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "cardPlayerCountRange": "{min} - {max} Players",
+  "@cardPlayerCountRange": {
+    "description": "Player count range on a collection card",
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "cardPlayTimeMissing": "Time: –",
+  "cardPlayTimeExact": "{minutes} Min",
+  "@cardPlayTimeExact": {
+    "description": "Exact play time on a collection card",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "cardPlayTimeMaxOnly": "{max} Min",
+  "@cardPlayTimeMaxOnly": {
+    "description": "Play time when only maximum is known",
+    "placeholders": {
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "cardPlayTimeMinOnly": "{min}+ Min",
+  "@cardPlayTimeMinOnly": {
+    "description": "Play time when only minimum is known",
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
+  },
+  "cardPlayTimeRange": "{min} - {max} Min",
+  "@cardPlayTimeRange": {
+    "description": "Play time range on a collection card",
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "errorLoadCardLayout": "Failed to load card layout: {details}",
+  "@errorLoadCardLayout": {
+    "description": "Error shown when the card layout configuration cannot be loaded",
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "errorLoadCollection": "Failed to load collection: {details}",
+  "@errorLoadCollection": {
+    "description": "Error shown when the collection cannot be loaded",
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "errorLoadSettings": "Failed to load settings: {details}",
+  "@errorLoadSettings": {
+    "description": "Error shown when settings cannot be loaded",
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "errorLogin": "Login failed: {details}",
+  "@errorLogin": {
+    "description": "Error shown when the BGG login test fails",
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "errorSyncUnavailable": "Sync is not available",
+  "errorSyncFailed": "Sync failed: {details}",
+  "@errorSyncFailed": {
+    "description": "Error shown when collection sync fails",
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "errorSaveCredentials": "Failed to save credentials: {details}",
+  "@errorSaveCredentials": {
+    "description": "Error shown when credentials cannot be saved",
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "errorSaveCardLayout": "Failed to save card layout: {details}",
+  "@errorSaveCardLayout": {
+    "description": "Error shown when the card layout configuration cannot be saved",
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  }
+}
