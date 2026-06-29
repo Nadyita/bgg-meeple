@@ -174,4 +174,5 @@ so it is always transparent what is implemented, in progress, or still open.
 | 2026-06-27 | Implemented UX10: added a compact/table-view toggle left of the sync button in the main app bar; `CollectionBloc` tracks `isCompactMode`, the compact list shows only the game name, and a widget test verifies the toggle switches between card and compact views |
 | 2026-06-27 | Fixed search scope: live search now only matches game names (custom name and BGG names), not version edition names; added `CollectionViewCleared` event so the search-field X clears search text, filters, and sort order together |
 | 2026-06-27 | Fixed bug: persisted search text is now restored into the search field on startup, so users see why the collection list is filtered and can clear the query immediately |
+| 2026-06-29 | Fixed Linux GitHub Actions builds: added `libsecret-1-dev` to all Linux build steps because `flutter_secure_storage_linux` requires it; updated README prerequisites and troubleshooting section |
 | 2026-06-29 | Implemented NF10: CI now runs tests on every push; release workflow has an explicit test gate and only builds/attaches Android APK and Linux bundle when tests pass |

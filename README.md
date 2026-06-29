@@ -20,6 +20,7 @@ A personal offline-first BoardGameGeek collection viewer built with Flutter.
   - pkg-config
   - libgtk-3-dev
   - liblzma-dev
+  - libsecret-1-dev
 - For Android builds:
   - Android SDK (platform-tools, build-tools, Android platform)
   - JDK 17 or later
@@ -64,7 +65,7 @@ BGG credentials and session cookies are stored via [`flutter_secure_storage`](ht
 - Linux: `libsecret`
 - Windows: Credential Locker / DPAPI
 
-For local Linux development, make sure `libsecret` is installed.
+For local Linux development, make sure `libsecret-1-dev` (and the corresponding runtime library, usually `libsecret-1-0`) is installed. The Linux build will fail with `FindPkgConfig` errors if the development headers are missing.
 
 ## Architecture
 
