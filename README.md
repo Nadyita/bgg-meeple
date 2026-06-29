@@ -56,6 +56,10 @@ This triggers the `release.yml` workflow, which runs the full test suite and the
 
 Only tags matching `v*` trigger a release. Tests must pass before any artifact is built or attached.
 
+If the workflow fails with `403 Resource not accessible by integration` while creating the GitHub release, make sure the repository allows write access for GitHub Actions:
+**Settings → Actions → General → Workflow permissions → Read and write permissions**.
+The `release.yml` workflow requests `contents: write` permission for creating releases and uploading assets.
+
 ### Run tests
 
 ```bash

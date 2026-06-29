@@ -135,7 +135,7 @@ so it is always transparent what is implemented, in progress, or still open.
 - Should search/filter state persist when leaving and returning to the main screen? (Yes – covered by F26.)
 - Which persistence adapter should be used for the local cache? Drift is prepared in `pubspec.yaml`; final schema to be designed. **Answered: Drift will be used as the local persistence adapter.**
 - CI/CD gating: Should the full test suite run on every push to any branch, and should the release workflow re-run tests or wait for an external CI result? **Answered: CI runs on every push to any branch; the release workflow re-runs tests as an explicit `needs: test` gate so it is self-contained and works for releases created from any branch/tag.**
-- How should a GitHub Release be created? **Answered: By pushing a Git tag starting with `v` (e.g. `v1.0.0`). This automatically triggers `release.yml`, which runs the test suite and then creates the release with the Android APK and Linux bundle attached.**
+- How should a GitHub Release be created? **Answered: By pushing a Git tag starting with `v` (e.g. `v1.0.0`). This automatically triggers `release.yml`, which runs the test suite and then creates the release with the Android APK and Linux bundle attached. The workflow declares `permissions: contents: write`; if GitHub Actions does not have write permission in the repository settings, the release upload will fail with a 403 error.**
 - Should pre-releases also receive Android and Linux release assets? **Answered: Yes, the workflow triggers for every tag starting with `v`, including pre-release tags such as `v1.0.0-beta.1`.**
 
 ## 7. Change History
@@ -177,3 +177,4 @@ so it is always transparent what is implemented, in progress, or still open.
 | 2026-06-29 | Fixed Linux GitHub Actions builds: added `libsecret-1-dev` to all Linux build steps because `flutter_secure_storage_linux` requires it; updated README prerequisites and troubleshooting section |
 | 2026-06-29 | Implemented NF10: CI now runs tests on every push; release workflow has an explicit test gate and only builds/attaches Android APK and Linux bundle when tests pass |
 | 2026-06-29 | Changed release trigger from manual GitHub Release creation to tag-based automation: pushing any tag starting with `v` now creates a release with attached Android APK and Linux bundle; updated README with release instructions |
+| 2026-06-29 | Fixed `release.yml` permission error: added `permissions: contents: write` to enable GitHub release creation; added `permissions: contents: read` to `ci.yml`; documented required repository setting in README and requirements |
