@@ -80,8 +80,8 @@ GitHub Actions workflows are defined in `.github/workflows/`:
 
 - `ci.yml`: runs tests and builds the Linux and Android apps on every push and pull request.
 - `release.yml`: builds Linux and Android release artifacts and attaches them to GitHub Releases.
-
-Tests must pass before any artifact is built.
+  The Android APK is attached as `bgg-meeple-android.apk`, the Linux bundle as `bgg-meeple-linux-<tag>.tar.gz`.
+  Tests must pass before any artifact is built.
 
 ## Project conventions
 

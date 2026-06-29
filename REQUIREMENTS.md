@@ -94,7 +94,7 @@ so it is always transparent what is implemented, in progress, or still open.
 | NF07 | implemented | Secure credential storage | BGG credentials are stored using platform-appropriate secure storage (e.g. Keychain/Keystore or encrypted shared preferences) | must |
 | NF08 | implemented | Device-local view state | The only data that may differ between devices are view settings, filters, search text, sort order, and selected card fields; game data is identical after sync | must |
 | NF09 | implemented | Unit test coverage | All business logic, data, and service layers have unit tests; UI tests are added where they provide clear value | must |
-| NF10 | open | CI build gate | GitHub Actions runs the full test suite on every push; the build/pipeline fails if any test fails; no artifacts are built unless all tests pass | must |
+| NF10 | implemented | CI build gate | GitHub Actions runs the full test suite on every push; the build/pipeline fails if any test fails; no artifacts are built unless all tests pass | must |
 | NF11 | implemented | Continuous compilation | Every push triggers a GitHub Actions workflow that compiles the app for the supported target platforms | must |
 | NF12 | implemented | Release asset attachment | Creating a GitHub Release triggers a workflow that builds release artifacts and attaches them to the release automatically | must |
 
@@ -134,6 +134,9 @@ so it is always transparent what is implemented, in progress, or still open.
 - Which platforms should be explicitly supported? (Android, Linux Desktop; Web optional if effort is justified)
 - Should search/filter state persist when leaving and returning to the main screen? (Yes – covered by F26.)
 - Which persistence adapter should be used for the local cache? Drift is prepared in `pubspec.yaml`; final schema to be designed. **Answered: Drift will be used as the local persistence adapter.**
+- CI/CD gating: Should the full test suite run on every push to any branch, and should the release workflow re-run tests or wait for an external CI result? **Answered: CI runs on every push to any branch; the release workflow re-runs tests as an explicit `needs: test` gate so it is self-contained and works for releases created from any branch/tag.**
+- How should Android release artifacts be named? **Answered: Android APK is attached as `bgg-meeple-android.apk` (no version number in filename).**
+- Should pre-releases also receive Android and Linux release assets? **Answered: Yes, the workflow triggers for every release event of type `created`, including pre-releases.**
 
 ## 7. Change History
 
@@ -171,3 +174,4 @@ so it is always transparent what is implemented, in progress, or still open.
 | 2026-06-27 | Implemented UX10: added a compact/table-view toggle left of the sync button in the main app bar; `CollectionBloc` tracks `isCompactMode`, the compact list shows only the game name, and a widget test verifies the toggle switches between card and compact views |
 | 2026-06-27 | Fixed search scope: live search now only matches game names (custom name and BGG names), not version edition names; added `CollectionViewCleared` event so the search-field X clears search text, filters, and sort order together |
 | 2026-06-27 | Fixed bug: persisted search text is now restored into the search field on startup, so users see why the collection list is filtered and can clear the query immediately |
+| 2026-06-29 | Implemented NF10: CI now runs tests on every push; release workflow has an explicit test gate and only builds/attaches Android APK and Linux bundle when tests pass |
