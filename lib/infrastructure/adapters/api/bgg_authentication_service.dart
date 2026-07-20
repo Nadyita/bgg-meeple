@@ -49,7 +49,24 @@ class BggAuthenticationService implements AuthenticationService {
       throw Exception('BGG authentication failed: no session cookies received');
     }
 
-    return BggSession(sessionCookies: cookies);
+    final token = _extractApiToken(response.body);
+
+    return BggSession(sessionCookies: cookies, apiToken: token);
+  }
+
+  String? _extractApiToken(String body) {
+    try {
+      final decoded = jsonDecode(body) as Map<String, dynamic>;
+      final token = decoded['token'] as String?;
+      if (token != null && token.trim().isNotEmpty) {
+        return token.trim();
+      }
+    } on FormatException {
+      // Not a JSON body - no token available.
+    } on TypeError {
+      // Unexpected JSON structure.
+    }
+    return null;
   }
 
   String? _extractErrorMessage(String body) {

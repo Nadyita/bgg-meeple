@@ -6,10 +6,10 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../../domain/ports/thumbnail_cache.dart';
 
-/// File-system based thumbnail cache.
+/// File-system based image cache.
 ///
-/// Stores downloaded thumbnails in the app's temporary directory so they
-/// survive restarts and remain available offline.
+/// Stores downloaded images (thumbnails and full game images) in the app's
+/// temporary directory so they survive restarts and remain available offline.
 class FileThumbnailCache implements ThumbnailCache {
   FileThumbnailCache({http.Client? httpClient})
     : _client = httpClient ?? http.Client();
@@ -56,6 +56,6 @@ class FileThumbnailCache implements ThumbnailCache {
     final directory = await getTemporaryDirectory();
     final hash = url.hashCode.toRadixString(16);
     final extension = p.extension(Uri.parse(url).path);
-    return p.join(directory.path, 'thumbnails', '$hash$extension');
+    return p.join(directory.path, 'images', '$hash$extension');
   }
 }

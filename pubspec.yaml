@@ -35,6 +35,7 @@ dependencies:
   intl: any
   http: ^1.3.0
   xml: ^6.5.0
+  collection: ^1.19.0
   drift: ^2.26.0
   drift_flutter: ^0.2.4
   sqlite3_flutter_libs: ^0.5.34

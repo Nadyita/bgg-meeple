@@ -17,6 +17,7 @@ void main() {
     test('saves session cookies to secure storage', () async {
       const session = BggSession(
         sessionCookies: 'bggusername=foo; bggpassword=bar; SessionID=abc',
+        apiToken: 'my-api-token',
       );
 
       await store.save(session);
@@ -25,13 +26,15 @@ void main() {
         await storage.read(key: 'bgg_session_cookies'),
         'bggusername=foo; bggpassword=bar; SessionID=abc',
       );
+      expect(await storage.read(key: 'bgg_api_token'), 'my-api-token');
     });
 
-    test('loads stored session', () async {
+    test('loads stored session with api token', () async {
       await storage.write(
         key: 'bgg_session_cookies',
         value: 'bggusername=foo; bggpassword=bar; SessionID=abc',
       );
+      await storage.write(key: 'bgg_api_token', value: 'my-api-token');
 
       final result = await store.load();
 
@@ -40,6 +43,7 @@ void main() {
         result!.sessionCookies,
         'bggusername=foo; bggpassword=bar; SessionID=abc',
       );
+      expect(result.apiToken, 'my-api-token');
     });
 
     test('returns null when no session is stored', () async {

@@ -138,6 +138,22 @@ class _SettingsFormState extends State<_SettingsForm> {
                     SettingsPasswordChanged(value),
                   ),
                 ),
+                const SizedBox(height: 16),
+                TextField(
+                  key: const Key('settingsApiTokenField'),
+                  decoration: InputDecoration(
+                    labelText: localizations.settingsBggApiTokenLabel,
+                    hintText: localizations.settingsBggApiTokenHint,
+                  ),
+                  controller: TextEditingController(text: state.apiToken)
+                    ..selection = TextSelection.collapsed(
+                      offset: state.apiToken.length,
+                    ),
+                  obscureText: true,
+                  onChanged: (value) => context.read<SettingsBloc>().add(
+                    SettingsApiTokenChanged(value),
+                  ),
+                ),
                 const SizedBox(height: 24),
                 ElevatedButton.icon(
                   key: const Key('settingsSaveButton'),

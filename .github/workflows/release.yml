@@ -5,12 +5,11 @@ on:
     tags:
       - "v*"
 
-permissions:
-  contents: write
-
 jobs:
   test:
     name: Run tests
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -38,6 +37,8 @@ jobs:
   build-and-attach:
     name: Build and attach release assets
     needs: test
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

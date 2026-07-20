@@ -2142,6 +2142,17 @@ class $BoardGamesTable extends BoardGames
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _playingTimeMeta = const VerificationMeta(
+    'playingTime',
+  );
+  @override
+  late final GeneratedColumn<int> playingTime = GeneratedColumn<int>(
+    'playing_time',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _minAgeMeta = const VerificationMeta('minAge');
   @override
   late final GeneratedColumn<int> minAge = GeneratedColumn<int>(
@@ -2162,6 +2173,193 @@ class $BoardGamesTable extends BoardGames
     type: DriftSqlType.double,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _averageRatingMeta = const VerificationMeta(
+    'averageRating',
+  );
+  @override
+  late final GeneratedColumn<double> averageRating = GeneratedColumn<double>(
+    'average_rating',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _userCountMeta = const VerificationMeta(
+    'userCount',
+  );
+  @override
+  late final GeneratedColumn<int> userCount = GeneratedColumn<int>(
+    'user_count',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _numOwnedMeta = const VerificationMeta(
+    'numOwned',
+  );
+  @override
+  late final GeneratedColumn<int> numOwned = GeneratedColumn<int>(
+    'num_owned',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _numTradingMeta = const VerificationMeta(
+    'numTrading',
+  );
+  @override
+  late final GeneratedColumn<int> numTrading = GeneratedColumn<int>(
+    'num_trading',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _numWantingMeta = const VerificationMeta(
+    'numWanting',
+  );
+  @override
+  late final GeneratedColumn<int> numWanting = GeneratedColumn<int>(
+    'num_wanting',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _numWishingMeta = const VerificationMeta(
+    'numWishing',
+  );
+  @override
+  late final GeneratedColumn<int> numWishing = GeneratedColumn<int>(
+    'num_wishing',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _averageWeightMeta = const VerificationMeta(
+    'averageWeight',
+  );
+  @override
+  late final GeneratedColumn<double> averageWeight = GeneratedColumn<double>(
+    'average_weight',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _descriptionMeta = const VerificationMeta(
+    'description',
+  );
+  @override
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+    'description',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _categoriesMeta = const VerificationMeta(
+    'categories',
+  );
+  @override
+  late final GeneratedColumn<String> categories = GeneratedColumn<String>(
+    'categories',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _mechanicsMeta = const VerificationMeta(
+    'mechanics',
+  );
+  @override
+  late final GeneratedColumn<String> mechanics = GeneratedColumn<String>(
+    'mechanics',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _designersMeta = const VerificationMeta(
+    'designers',
+  );
+  @override
+  late final GeneratedColumn<String> designers = GeneratedColumn<String>(
+    'designers',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _artistsMeta = const VerificationMeta(
+    'artists',
+  );
+  @override
+  late final GeneratedColumn<String> artists = GeneratedColumn<String>(
+    'artists',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _publishersMeta = const VerificationMeta(
+    'publishers',
+  );
+  @override
+  late final GeneratedColumn<String> publishers = GeneratedColumn<String>(
+    'publishers',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _familiesMeta = const VerificationMeta(
+    'families',
+  );
+  @override
+  late final GeneratedColumn<String> families = GeneratedColumn<String>(
+    'families',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _languageDependenceMeta =
+      const VerificationMeta('languageDependence');
+  @override
+  late final GeneratedColumn<String> languageDependence =
+      GeneratedColumn<String>(
+        'language_dependence',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _bestPlayerCountMeta = const VerificationMeta(
+    'bestPlayerCount',
+  );
+  @override
+  late final GeneratedColumn<String> bestPlayerCount = GeneratedColumn<String>(
+    'best_player_count',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _recommendedPlayerCountMeta =
+      const VerificationMeta('recommendedPlayerCount');
+  @override
+  late final GeneratedColumn<String> recommendedPlayerCount =
+      GeneratedColumn<String>(
+        'recommended_player_count',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -2172,8 +2370,26 @@ class $BoardGamesTable extends BoardGames
     maxPlayers,
     minPlayTime,
     maxPlayTime,
+    playingTime,
     minAge,
     bayesAverage,
+    averageRating,
+    userCount,
+    numOwned,
+    numTrading,
+    numWanting,
+    numWishing,
+    averageWeight,
+    description,
+    categories,
+    mechanics,
+    designers,
+    artists,
+    publishers,
+    families,
+    languageDependence,
+    bestPlayerCount,
+    recommendedPlayerCount,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -2244,6 +2460,15 @@ class $BoardGamesTable extends BoardGames
         ),
       );
     }
+    if (data.containsKey('playing_time')) {
+      context.handle(
+        _playingTimeMeta,
+        playingTime.isAcceptableOrUnknown(
+          data['playing_time']!,
+          _playingTimeMeta,
+        ),
+      );
+    }
     if (data.containsKey('min_age')) {
       context.handle(
         _minAgeMeta,
@@ -2256,6 +2481,126 @@ class $BoardGamesTable extends BoardGames
         bayesAverage.isAcceptableOrUnknown(
           data['bayes_average']!,
           _bayesAverageMeta,
+        ),
+      );
+    }
+    if (data.containsKey('average_rating')) {
+      context.handle(
+        _averageRatingMeta,
+        averageRating.isAcceptableOrUnknown(
+          data['average_rating']!,
+          _averageRatingMeta,
+        ),
+      );
+    }
+    if (data.containsKey('user_count')) {
+      context.handle(
+        _userCountMeta,
+        userCount.isAcceptableOrUnknown(data['user_count']!, _userCountMeta),
+      );
+    }
+    if (data.containsKey('num_owned')) {
+      context.handle(
+        _numOwnedMeta,
+        numOwned.isAcceptableOrUnknown(data['num_owned']!, _numOwnedMeta),
+      );
+    }
+    if (data.containsKey('num_trading')) {
+      context.handle(
+        _numTradingMeta,
+        numTrading.isAcceptableOrUnknown(data['num_trading']!, _numTradingMeta),
+      );
+    }
+    if (data.containsKey('num_wanting')) {
+      context.handle(
+        _numWantingMeta,
+        numWanting.isAcceptableOrUnknown(data['num_wanting']!, _numWantingMeta),
+      );
+    }
+    if (data.containsKey('num_wishing')) {
+      context.handle(
+        _numWishingMeta,
+        numWishing.isAcceptableOrUnknown(data['num_wishing']!, _numWishingMeta),
+      );
+    }
+    if (data.containsKey('average_weight')) {
+      context.handle(
+        _averageWeightMeta,
+        averageWeight.isAcceptableOrUnknown(
+          data['average_weight']!,
+          _averageWeightMeta,
+        ),
+      );
+    }
+    if (data.containsKey('description')) {
+      context.handle(
+        _descriptionMeta,
+        description.isAcceptableOrUnknown(
+          data['description']!,
+          _descriptionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('categories')) {
+      context.handle(
+        _categoriesMeta,
+        categories.isAcceptableOrUnknown(data['categories']!, _categoriesMeta),
+      );
+    }
+    if (data.containsKey('mechanics')) {
+      context.handle(
+        _mechanicsMeta,
+        mechanics.isAcceptableOrUnknown(data['mechanics']!, _mechanicsMeta),
+      );
+    }
+    if (data.containsKey('designers')) {
+      context.handle(
+        _designersMeta,
+        designers.isAcceptableOrUnknown(data['designers']!, _designersMeta),
+      );
+    }
+    if (data.containsKey('artists')) {
+      context.handle(
+        _artistsMeta,
+        artists.isAcceptableOrUnknown(data['artists']!, _artistsMeta),
+      );
+    }
+    if (data.containsKey('publishers')) {
+      context.handle(
+        _publishersMeta,
+        publishers.isAcceptableOrUnknown(data['publishers']!, _publishersMeta),
+      );
+    }
+    if (data.containsKey('families')) {
+      context.handle(
+        _familiesMeta,
+        families.isAcceptableOrUnknown(data['families']!, _familiesMeta),
+      );
+    }
+    if (data.containsKey('language_dependence')) {
+      context.handle(
+        _languageDependenceMeta,
+        languageDependence.isAcceptableOrUnknown(
+          data['language_dependence']!,
+          _languageDependenceMeta,
+        ),
+      );
+    }
+    if (data.containsKey('best_player_count')) {
+      context.handle(
+        _bestPlayerCountMeta,
+        bestPlayerCount.isAcceptableOrUnknown(
+          data['best_player_count']!,
+          _bestPlayerCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('recommended_player_count')) {
+      context.handle(
+        _recommendedPlayerCountMeta,
+        recommendedPlayerCount.isAcceptableOrUnknown(
+          data['recommended_player_count']!,
+          _recommendedPlayerCountMeta,
         ),
       );
     }
@@ -2300,6 +2645,10 @@ class $BoardGamesTable extends BoardGames
         DriftSqlType.int,
         data['${effectivePrefix}max_play_time'],
       ),
+      playingTime: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}playing_time'],
+      ),
       minAge: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}min_age'],
@@ -2307,6 +2656,74 @@ class $BoardGamesTable extends BoardGames
       bayesAverage: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
         data['${effectivePrefix}bayes_average'],
+      ),
+      averageRating: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}average_rating'],
+      ),
+      userCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}user_count'],
+      ),
+      numOwned: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}num_owned'],
+      ),
+      numTrading: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}num_trading'],
+      ),
+      numWanting: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}num_wanting'],
+      ),
+      numWishing: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}num_wishing'],
+      ),
+      averageWeight: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}average_weight'],
+      ),
+      description: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}description'],
+      ),
+      categories: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}categories'],
+      ),
+      mechanics: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mechanics'],
+      ),
+      designers: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}designers'],
+      ),
+      artists: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}artists'],
+      ),
+      publishers: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}publishers'],
+      ),
+      families: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}families'],
+      ),
+      languageDependence: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}language_dependence'],
+      ),
+      bestPlayerCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}best_player_count'],
+      ),
+      recommendedPlayerCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}recommended_player_count'],
       ),
     );
   }
@@ -2326,8 +2743,26 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
   final int? maxPlayers;
   final int? minPlayTime;
   final int? maxPlayTime;
+  final int? playingTime;
   final int? minAge;
   final double? bayesAverage;
+  final double? averageRating;
+  final int? userCount;
+  final int? numOwned;
+  final int? numTrading;
+  final int? numWanting;
+  final int? numWishing;
+  final double? averageWeight;
+  final String? description;
+  final String? categories;
+  final String? mechanics;
+  final String? designers;
+  final String? artists;
+  final String? publishers;
+  final String? families;
+  final String? languageDependence;
+  final String? bestPlayerCount;
+  final String? recommendedPlayerCount;
   const BoardGame({
     required this.id,
     this.imageUrl,
@@ -2337,8 +2772,26 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
     this.maxPlayers,
     this.minPlayTime,
     this.maxPlayTime,
+    this.playingTime,
     this.minAge,
     this.bayesAverage,
+    this.averageRating,
+    this.userCount,
+    this.numOwned,
+    this.numTrading,
+    this.numWanting,
+    this.numWishing,
+    this.averageWeight,
+    this.description,
+    this.categories,
+    this.mechanics,
+    this.designers,
+    this.artists,
+    this.publishers,
+    this.families,
+    this.languageDependence,
+    this.bestPlayerCount,
+    this.recommendedPlayerCount,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -2365,11 +2818,67 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
     if (!nullToAbsent || maxPlayTime != null) {
       map['max_play_time'] = Variable<int>(maxPlayTime);
     }
+    if (!nullToAbsent || playingTime != null) {
+      map['playing_time'] = Variable<int>(playingTime);
+    }
     if (!nullToAbsent || minAge != null) {
       map['min_age'] = Variable<int>(minAge);
     }
     if (!nullToAbsent || bayesAverage != null) {
       map['bayes_average'] = Variable<double>(bayesAverage);
+    }
+    if (!nullToAbsent || averageRating != null) {
+      map['average_rating'] = Variable<double>(averageRating);
+    }
+    if (!nullToAbsent || userCount != null) {
+      map['user_count'] = Variable<int>(userCount);
+    }
+    if (!nullToAbsent || numOwned != null) {
+      map['num_owned'] = Variable<int>(numOwned);
+    }
+    if (!nullToAbsent || numTrading != null) {
+      map['num_trading'] = Variable<int>(numTrading);
+    }
+    if (!nullToAbsent || numWanting != null) {
+      map['num_wanting'] = Variable<int>(numWanting);
+    }
+    if (!nullToAbsent || numWishing != null) {
+      map['num_wishing'] = Variable<int>(numWishing);
+    }
+    if (!nullToAbsent || averageWeight != null) {
+      map['average_weight'] = Variable<double>(averageWeight);
+    }
+    if (!nullToAbsent || description != null) {
+      map['description'] = Variable<String>(description);
+    }
+    if (!nullToAbsent || categories != null) {
+      map['categories'] = Variable<String>(categories);
+    }
+    if (!nullToAbsent || mechanics != null) {
+      map['mechanics'] = Variable<String>(mechanics);
+    }
+    if (!nullToAbsent || designers != null) {
+      map['designers'] = Variable<String>(designers);
+    }
+    if (!nullToAbsent || artists != null) {
+      map['artists'] = Variable<String>(artists);
+    }
+    if (!nullToAbsent || publishers != null) {
+      map['publishers'] = Variable<String>(publishers);
+    }
+    if (!nullToAbsent || families != null) {
+      map['families'] = Variable<String>(families);
+    }
+    if (!nullToAbsent || languageDependence != null) {
+      map['language_dependence'] = Variable<String>(languageDependence);
+    }
+    if (!nullToAbsent || bestPlayerCount != null) {
+      map['best_player_count'] = Variable<String>(bestPlayerCount);
+    }
+    if (!nullToAbsent || recommendedPlayerCount != null) {
+      map['recommended_player_count'] = Variable<String>(
+        recommendedPlayerCount,
+      );
     }
     return map;
   }
@@ -2398,12 +2907,66 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
       maxPlayTime: maxPlayTime == null && nullToAbsent
           ? const Value.absent()
           : Value(maxPlayTime),
+      playingTime: playingTime == null && nullToAbsent
+          ? const Value.absent()
+          : Value(playingTime),
       minAge: minAge == null && nullToAbsent
           ? const Value.absent()
           : Value(minAge),
       bayesAverage: bayesAverage == null && nullToAbsent
           ? const Value.absent()
           : Value(bayesAverage),
+      averageRating: averageRating == null && nullToAbsent
+          ? const Value.absent()
+          : Value(averageRating),
+      userCount: userCount == null && nullToAbsent
+          ? const Value.absent()
+          : Value(userCount),
+      numOwned: numOwned == null && nullToAbsent
+          ? const Value.absent()
+          : Value(numOwned),
+      numTrading: numTrading == null && nullToAbsent
+          ? const Value.absent()
+          : Value(numTrading),
+      numWanting: numWanting == null && nullToAbsent
+          ? const Value.absent()
+          : Value(numWanting),
+      numWishing: numWishing == null && nullToAbsent
+          ? const Value.absent()
+          : Value(numWishing),
+      averageWeight: averageWeight == null && nullToAbsent
+          ? const Value.absent()
+          : Value(averageWeight),
+      description: description == null && nullToAbsent
+          ? const Value.absent()
+          : Value(description),
+      categories: categories == null && nullToAbsent
+          ? const Value.absent()
+          : Value(categories),
+      mechanics: mechanics == null && nullToAbsent
+          ? const Value.absent()
+          : Value(mechanics),
+      designers: designers == null && nullToAbsent
+          ? const Value.absent()
+          : Value(designers),
+      artists: artists == null && nullToAbsent
+          ? const Value.absent()
+          : Value(artists),
+      publishers: publishers == null && nullToAbsent
+          ? const Value.absent()
+          : Value(publishers),
+      families: families == null && nullToAbsent
+          ? const Value.absent()
+          : Value(families),
+      languageDependence: languageDependence == null && nullToAbsent
+          ? const Value.absent()
+          : Value(languageDependence),
+      bestPlayerCount: bestPlayerCount == null && nullToAbsent
+          ? const Value.absent()
+          : Value(bestPlayerCount),
+      recommendedPlayerCount: recommendedPlayerCount == null && nullToAbsent
+          ? const Value.absent()
+          : Value(recommendedPlayerCount),
     );
   }
 
@@ -2421,8 +2984,30 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
       maxPlayers: serializer.fromJson<int?>(json['maxPlayers']),
       minPlayTime: serializer.fromJson<int?>(json['minPlayTime']),
       maxPlayTime: serializer.fromJson<int?>(json['maxPlayTime']),
+      playingTime: serializer.fromJson<int?>(json['playingTime']),
       minAge: serializer.fromJson<int?>(json['minAge']),
       bayesAverage: serializer.fromJson<double?>(json['bayesAverage']),
+      averageRating: serializer.fromJson<double?>(json['averageRating']),
+      userCount: serializer.fromJson<int?>(json['userCount']),
+      numOwned: serializer.fromJson<int?>(json['numOwned']),
+      numTrading: serializer.fromJson<int?>(json['numTrading']),
+      numWanting: serializer.fromJson<int?>(json['numWanting']),
+      numWishing: serializer.fromJson<int?>(json['numWishing']),
+      averageWeight: serializer.fromJson<double?>(json['averageWeight']),
+      description: serializer.fromJson<String?>(json['description']),
+      categories: serializer.fromJson<String?>(json['categories']),
+      mechanics: serializer.fromJson<String?>(json['mechanics']),
+      designers: serializer.fromJson<String?>(json['designers']),
+      artists: serializer.fromJson<String?>(json['artists']),
+      publishers: serializer.fromJson<String?>(json['publishers']),
+      families: serializer.fromJson<String?>(json['families']),
+      languageDependence: serializer.fromJson<String?>(
+        json['languageDependence'],
+      ),
+      bestPlayerCount: serializer.fromJson<String?>(json['bestPlayerCount']),
+      recommendedPlayerCount: serializer.fromJson<String?>(
+        json['recommendedPlayerCount'],
+      ),
     );
   }
   @override
@@ -2437,8 +3022,28 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
       'maxPlayers': serializer.toJson<int?>(maxPlayers),
       'minPlayTime': serializer.toJson<int?>(minPlayTime),
       'maxPlayTime': serializer.toJson<int?>(maxPlayTime),
+      'playingTime': serializer.toJson<int?>(playingTime),
       'minAge': serializer.toJson<int?>(minAge),
       'bayesAverage': serializer.toJson<double?>(bayesAverage),
+      'averageRating': serializer.toJson<double?>(averageRating),
+      'userCount': serializer.toJson<int?>(userCount),
+      'numOwned': serializer.toJson<int?>(numOwned),
+      'numTrading': serializer.toJson<int?>(numTrading),
+      'numWanting': serializer.toJson<int?>(numWanting),
+      'numWishing': serializer.toJson<int?>(numWishing),
+      'averageWeight': serializer.toJson<double?>(averageWeight),
+      'description': serializer.toJson<String?>(description),
+      'categories': serializer.toJson<String?>(categories),
+      'mechanics': serializer.toJson<String?>(mechanics),
+      'designers': serializer.toJson<String?>(designers),
+      'artists': serializer.toJson<String?>(artists),
+      'publishers': serializer.toJson<String?>(publishers),
+      'families': serializer.toJson<String?>(families),
+      'languageDependence': serializer.toJson<String?>(languageDependence),
+      'bestPlayerCount': serializer.toJson<String?>(bestPlayerCount),
+      'recommendedPlayerCount': serializer.toJson<String?>(
+        recommendedPlayerCount,
+      ),
     };
   }
 
@@ -2451,8 +3056,26 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
     Value<int?> maxPlayers = const Value.absent(),
     Value<int?> minPlayTime = const Value.absent(),
     Value<int?> maxPlayTime = const Value.absent(),
+    Value<int?> playingTime = const Value.absent(),
     Value<int?> minAge = const Value.absent(),
     Value<double?> bayesAverage = const Value.absent(),
+    Value<double?> averageRating = const Value.absent(),
+    Value<int?> userCount = const Value.absent(),
+    Value<int?> numOwned = const Value.absent(),
+    Value<int?> numTrading = const Value.absent(),
+    Value<int?> numWanting = const Value.absent(),
+    Value<int?> numWishing = const Value.absent(),
+    Value<double?> averageWeight = const Value.absent(),
+    Value<String?> description = const Value.absent(),
+    Value<String?> categories = const Value.absent(),
+    Value<String?> mechanics = const Value.absent(),
+    Value<String?> designers = const Value.absent(),
+    Value<String?> artists = const Value.absent(),
+    Value<String?> publishers = const Value.absent(),
+    Value<String?> families = const Value.absent(),
+    Value<String?> languageDependence = const Value.absent(),
+    Value<String?> bestPlayerCount = const Value.absent(),
+    Value<String?> recommendedPlayerCount = const Value.absent(),
   }) => BoardGame(
     id: id ?? this.id,
     imageUrl: imageUrl.present ? imageUrl.value : this.imageUrl,
@@ -2464,8 +3087,36 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
     maxPlayers: maxPlayers.present ? maxPlayers.value : this.maxPlayers,
     minPlayTime: minPlayTime.present ? minPlayTime.value : this.minPlayTime,
     maxPlayTime: maxPlayTime.present ? maxPlayTime.value : this.maxPlayTime,
+    playingTime: playingTime.present ? playingTime.value : this.playingTime,
     minAge: minAge.present ? minAge.value : this.minAge,
     bayesAverage: bayesAverage.present ? bayesAverage.value : this.bayesAverage,
+    averageRating: averageRating.present
+        ? averageRating.value
+        : this.averageRating,
+    userCount: userCount.present ? userCount.value : this.userCount,
+    numOwned: numOwned.present ? numOwned.value : this.numOwned,
+    numTrading: numTrading.present ? numTrading.value : this.numTrading,
+    numWanting: numWanting.present ? numWanting.value : this.numWanting,
+    numWishing: numWishing.present ? numWishing.value : this.numWishing,
+    averageWeight: averageWeight.present
+        ? averageWeight.value
+        : this.averageWeight,
+    description: description.present ? description.value : this.description,
+    categories: categories.present ? categories.value : this.categories,
+    mechanics: mechanics.present ? mechanics.value : this.mechanics,
+    designers: designers.present ? designers.value : this.designers,
+    artists: artists.present ? artists.value : this.artists,
+    publishers: publishers.present ? publishers.value : this.publishers,
+    families: families.present ? families.value : this.families,
+    languageDependence: languageDependence.present
+        ? languageDependence.value
+        : this.languageDependence,
+    bestPlayerCount: bestPlayerCount.present
+        ? bestPlayerCount.value
+        : this.bestPlayerCount,
+    recommendedPlayerCount: recommendedPlayerCount.present
+        ? recommendedPlayerCount.value
+        : this.recommendedPlayerCount,
   );
   BoardGame copyWithCompanion(BoardGamesCompanion data) {
     return BoardGame(
@@ -2489,10 +3140,52 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
       maxPlayTime: data.maxPlayTime.present
           ? data.maxPlayTime.value
           : this.maxPlayTime,
+      playingTime: data.playingTime.present
+          ? data.playingTime.value
+          : this.playingTime,
       minAge: data.minAge.present ? data.minAge.value : this.minAge,
       bayesAverage: data.bayesAverage.present
           ? data.bayesAverage.value
           : this.bayesAverage,
+      averageRating: data.averageRating.present
+          ? data.averageRating.value
+          : this.averageRating,
+      userCount: data.userCount.present ? data.userCount.value : this.userCount,
+      numOwned: data.numOwned.present ? data.numOwned.value : this.numOwned,
+      numTrading: data.numTrading.present
+          ? data.numTrading.value
+          : this.numTrading,
+      numWanting: data.numWanting.present
+          ? data.numWanting.value
+          : this.numWanting,
+      numWishing: data.numWishing.present
+          ? data.numWishing.value
+          : this.numWishing,
+      averageWeight: data.averageWeight.present
+          ? data.averageWeight.value
+          : this.averageWeight,
+      description: data.description.present
+          ? data.description.value
+          : this.description,
+      categories: data.categories.present
+          ? data.categories.value
+          : this.categories,
+      mechanics: data.mechanics.present ? data.mechanics.value : this.mechanics,
+      designers: data.designers.present ? data.designers.value : this.designers,
+      artists: data.artists.present ? data.artists.value : this.artists,
+      publishers: data.publishers.present
+          ? data.publishers.value
+          : this.publishers,
+      families: data.families.present ? data.families.value : this.families,
+      languageDependence: data.languageDependence.present
+          ? data.languageDependence.value
+          : this.languageDependence,
+      bestPlayerCount: data.bestPlayerCount.present
+          ? data.bestPlayerCount.value
+          : this.bestPlayerCount,
+      recommendedPlayerCount: data.recommendedPlayerCount.present
+          ? data.recommendedPlayerCount.value
+          : this.recommendedPlayerCount,
     );
   }
 
@@ -2507,14 +3200,32 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
           ..write('maxPlayers: $maxPlayers, ')
           ..write('minPlayTime: $minPlayTime, ')
           ..write('maxPlayTime: $maxPlayTime, ')
+          ..write('playingTime: $playingTime, ')
           ..write('minAge: $minAge, ')
-          ..write('bayesAverage: $bayesAverage')
+          ..write('bayesAverage: $bayesAverage, ')
+          ..write('averageRating: $averageRating, ')
+          ..write('userCount: $userCount, ')
+          ..write('numOwned: $numOwned, ')
+          ..write('numTrading: $numTrading, ')
+          ..write('numWanting: $numWanting, ')
+          ..write('numWishing: $numWishing, ')
+          ..write('averageWeight: $averageWeight, ')
+          ..write('description: $description, ')
+          ..write('categories: $categories, ')
+          ..write('mechanics: $mechanics, ')
+          ..write('designers: $designers, ')
+          ..write('artists: $artists, ')
+          ..write('publishers: $publishers, ')
+          ..write('families: $families, ')
+          ..write('languageDependence: $languageDependence, ')
+          ..write('bestPlayerCount: $bestPlayerCount, ')
+          ..write('recommendedPlayerCount: $recommendedPlayerCount')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     id,
     imageUrl,
     thumbnailUrl,
@@ -2523,9 +3234,27 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
     maxPlayers,
     minPlayTime,
     maxPlayTime,
+    playingTime,
     minAge,
     bayesAverage,
-  );
+    averageRating,
+    userCount,
+    numOwned,
+    numTrading,
+    numWanting,
+    numWishing,
+    averageWeight,
+    description,
+    categories,
+    mechanics,
+    designers,
+    artists,
+    publishers,
+    families,
+    languageDependence,
+    bestPlayerCount,
+    recommendedPlayerCount,
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2538,8 +3267,26 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
           other.maxPlayers == this.maxPlayers &&
           other.minPlayTime == this.minPlayTime &&
           other.maxPlayTime == this.maxPlayTime &&
+          other.playingTime == this.playingTime &&
           other.minAge == this.minAge &&
-          other.bayesAverage == this.bayesAverage);
+          other.bayesAverage == this.bayesAverage &&
+          other.averageRating == this.averageRating &&
+          other.userCount == this.userCount &&
+          other.numOwned == this.numOwned &&
+          other.numTrading == this.numTrading &&
+          other.numWanting == this.numWanting &&
+          other.numWishing == this.numWishing &&
+          other.averageWeight == this.averageWeight &&
+          other.description == this.description &&
+          other.categories == this.categories &&
+          other.mechanics == this.mechanics &&
+          other.designers == this.designers &&
+          other.artists == this.artists &&
+          other.publishers == this.publishers &&
+          other.families == this.families &&
+          other.languageDependence == this.languageDependence &&
+          other.bestPlayerCount == this.bestPlayerCount &&
+          other.recommendedPlayerCount == this.recommendedPlayerCount);
 }
 
 class BoardGamesCompanion extends UpdateCompanion<BoardGame> {
@@ -2551,8 +3298,26 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGame> {
   final Value<int?> maxPlayers;
   final Value<int?> minPlayTime;
   final Value<int?> maxPlayTime;
+  final Value<int?> playingTime;
   final Value<int?> minAge;
   final Value<double?> bayesAverage;
+  final Value<double?> averageRating;
+  final Value<int?> userCount;
+  final Value<int?> numOwned;
+  final Value<int?> numTrading;
+  final Value<int?> numWanting;
+  final Value<int?> numWishing;
+  final Value<double?> averageWeight;
+  final Value<String?> description;
+  final Value<String?> categories;
+  final Value<String?> mechanics;
+  final Value<String?> designers;
+  final Value<String?> artists;
+  final Value<String?> publishers;
+  final Value<String?> families;
+  final Value<String?> languageDependence;
+  final Value<String?> bestPlayerCount;
+  final Value<String?> recommendedPlayerCount;
   const BoardGamesCompanion({
     this.id = const Value.absent(),
     this.imageUrl = const Value.absent(),
@@ -2562,8 +3327,26 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGame> {
     this.maxPlayers = const Value.absent(),
     this.minPlayTime = const Value.absent(),
     this.maxPlayTime = const Value.absent(),
+    this.playingTime = const Value.absent(),
     this.minAge = const Value.absent(),
     this.bayesAverage = const Value.absent(),
+    this.averageRating = const Value.absent(),
+    this.userCount = const Value.absent(),
+    this.numOwned = const Value.absent(),
+    this.numTrading = const Value.absent(),
+    this.numWanting = const Value.absent(),
+    this.numWishing = const Value.absent(),
+    this.averageWeight = const Value.absent(),
+    this.description = const Value.absent(),
+    this.categories = const Value.absent(),
+    this.mechanics = const Value.absent(),
+    this.designers = const Value.absent(),
+    this.artists = const Value.absent(),
+    this.publishers = const Value.absent(),
+    this.families = const Value.absent(),
+    this.languageDependence = const Value.absent(),
+    this.bestPlayerCount = const Value.absent(),
+    this.recommendedPlayerCount = const Value.absent(),
   });
   BoardGamesCompanion.insert({
     this.id = const Value.absent(),
@@ -2574,8 +3357,26 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGame> {
     this.maxPlayers = const Value.absent(),
     this.minPlayTime = const Value.absent(),
     this.maxPlayTime = const Value.absent(),
+    this.playingTime = const Value.absent(),
     this.minAge = const Value.absent(),
     this.bayesAverage = const Value.absent(),
+    this.averageRating = const Value.absent(),
+    this.userCount = const Value.absent(),
+    this.numOwned = const Value.absent(),
+    this.numTrading = const Value.absent(),
+    this.numWanting = const Value.absent(),
+    this.numWishing = const Value.absent(),
+    this.averageWeight = const Value.absent(),
+    this.description = const Value.absent(),
+    this.categories = const Value.absent(),
+    this.mechanics = const Value.absent(),
+    this.designers = const Value.absent(),
+    this.artists = const Value.absent(),
+    this.publishers = const Value.absent(),
+    this.families = const Value.absent(),
+    this.languageDependence = const Value.absent(),
+    this.bestPlayerCount = const Value.absent(),
+    this.recommendedPlayerCount = const Value.absent(),
   });
   static Insertable<BoardGame> custom({
     Expression<int>? id,
@@ -2586,8 +3387,26 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGame> {
     Expression<int>? maxPlayers,
     Expression<int>? minPlayTime,
     Expression<int>? maxPlayTime,
+    Expression<int>? playingTime,
     Expression<int>? minAge,
     Expression<double>? bayesAverage,
+    Expression<double>? averageRating,
+    Expression<int>? userCount,
+    Expression<int>? numOwned,
+    Expression<int>? numTrading,
+    Expression<int>? numWanting,
+    Expression<int>? numWishing,
+    Expression<double>? averageWeight,
+    Expression<String>? description,
+    Expression<String>? categories,
+    Expression<String>? mechanics,
+    Expression<String>? designers,
+    Expression<String>? artists,
+    Expression<String>? publishers,
+    Expression<String>? families,
+    Expression<String>? languageDependence,
+    Expression<String>? bestPlayerCount,
+    Expression<String>? recommendedPlayerCount,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2598,8 +3417,27 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGame> {
       if (maxPlayers != null) 'max_players': maxPlayers,
       if (minPlayTime != null) 'min_play_time': minPlayTime,
       if (maxPlayTime != null) 'max_play_time': maxPlayTime,
+      if (playingTime != null) 'playing_time': playingTime,
       if (minAge != null) 'min_age': minAge,
       if (bayesAverage != null) 'bayes_average': bayesAverage,
+      if (averageRating != null) 'average_rating': averageRating,
+      if (userCount != null) 'user_count': userCount,
+      if (numOwned != null) 'num_owned': numOwned,
+      if (numTrading != null) 'num_trading': numTrading,
+      if (numWanting != null) 'num_wanting': numWanting,
+      if (numWishing != null) 'num_wishing': numWishing,
+      if (averageWeight != null) 'average_weight': averageWeight,
+      if (description != null) 'description': description,
+      if (categories != null) 'categories': categories,
+      if (mechanics != null) 'mechanics': mechanics,
+      if (designers != null) 'designers': designers,
+      if (artists != null) 'artists': artists,
+      if (publishers != null) 'publishers': publishers,
+      if (families != null) 'families': families,
+      if (languageDependence != null) 'language_dependence': languageDependence,
+      if (bestPlayerCount != null) 'best_player_count': bestPlayerCount,
+      if (recommendedPlayerCount != null)
+        'recommended_player_count': recommendedPlayerCount,
     });
   }
 
@@ -2612,8 +3450,26 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGame> {
     Value<int?>? maxPlayers,
     Value<int?>? minPlayTime,
     Value<int?>? maxPlayTime,
+    Value<int?>? playingTime,
     Value<int?>? minAge,
     Value<double?>? bayesAverage,
+    Value<double?>? averageRating,
+    Value<int?>? userCount,
+    Value<int?>? numOwned,
+    Value<int?>? numTrading,
+    Value<int?>? numWanting,
+    Value<int?>? numWishing,
+    Value<double?>? averageWeight,
+    Value<String?>? description,
+    Value<String?>? categories,
+    Value<String?>? mechanics,
+    Value<String?>? designers,
+    Value<String?>? artists,
+    Value<String?>? publishers,
+    Value<String?>? families,
+    Value<String?>? languageDependence,
+    Value<String?>? bestPlayerCount,
+    Value<String?>? recommendedPlayerCount,
   }) {
     return BoardGamesCompanion(
       id: id ?? this.id,
@@ -2624,8 +3480,27 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGame> {
       maxPlayers: maxPlayers ?? this.maxPlayers,
       minPlayTime: minPlayTime ?? this.minPlayTime,
       maxPlayTime: maxPlayTime ?? this.maxPlayTime,
+      playingTime: playingTime ?? this.playingTime,
       minAge: minAge ?? this.minAge,
       bayesAverage: bayesAverage ?? this.bayesAverage,
+      averageRating: averageRating ?? this.averageRating,
+      userCount: userCount ?? this.userCount,
+      numOwned: numOwned ?? this.numOwned,
+      numTrading: numTrading ?? this.numTrading,
+      numWanting: numWanting ?? this.numWanting,
+      numWishing: numWishing ?? this.numWishing,
+      averageWeight: averageWeight ?? this.averageWeight,
+      description: description ?? this.description,
+      categories: categories ?? this.categories,
+      mechanics: mechanics ?? this.mechanics,
+      designers: designers ?? this.designers,
+      artists: artists ?? this.artists,
+      publishers: publishers ?? this.publishers,
+      families: families ?? this.families,
+      languageDependence: languageDependence ?? this.languageDependence,
+      bestPlayerCount: bestPlayerCount ?? this.bestPlayerCount,
+      recommendedPlayerCount:
+          recommendedPlayerCount ?? this.recommendedPlayerCount,
     );
   }
 
@@ -2656,11 +3531,67 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGame> {
     if (maxPlayTime.present) {
       map['max_play_time'] = Variable<int>(maxPlayTime.value);
     }
+    if (playingTime.present) {
+      map['playing_time'] = Variable<int>(playingTime.value);
+    }
     if (minAge.present) {
       map['min_age'] = Variable<int>(minAge.value);
     }
     if (bayesAverage.present) {
       map['bayes_average'] = Variable<double>(bayesAverage.value);
+    }
+    if (averageRating.present) {
+      map['average_rating'] = Variable<double>(averageRating.value);
+    }
+    if (userCount.present) {
+      map['user_count'] = Variable<int>(userCount.value);
+    }
+    if (numOwned.present) {
+      map['num_owned'] = Variable<int>(numOwned.value);
+    }
+    if (numTrading.present) {
+      map['num_trading'] = Variable<int>(numTrading.value);
+    }
+    if (numWanting.present) {
+      map['num_wanting'] = Variable<int>(numWanting.value);
+    }
+    if (numWishing.present) {
+      map['num_wishing'] = Variable<int>(numWishing.value);
+    }
+    if (averageWeight.present) {
+      map['average_weight'] = Variable<double>(averageWeight.value);
+    }
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
+    }
+    if (categories.present) {
+      map['categories'] = Variable<String>(categories.value);
+    }
+    if (mechanics.present) {
+      map['mechanics'] = Variable<String>(mechanics.value);
+    }
+    if (designers.present) {
+      map['designers'] = Variable<String>(designers.value);
+    }
+    if (artists.present) {
+      map['artists'] = Variable<String>(artists.value);
+    }
+    if (publishers.present) {
+      map['publishers'] = Variable<String>(publishers.value);
+    }
+    if (families.present) {
+      map['families'] = Variable<String>(families.value);
+    }
+    if (languageDependence.present) {
+      map['language_dependence'] = Variable<String>(languageDependence.value);
+    }
+    if (bestPlayerCount.present) {
+      map['best_player_count'] = Variable<String>(bestPlayerCount.value);
+    }
+    if (recommendedPlayerCount.present) {
+      map['recommended_player_count'] = Variable<String>(
+        recommendedPlayerCount.value,
+      );
     }
     return map;
   }
@@ -2676,8 +3607,26 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGame> {
           ..write('maxPlayers: $maxPlayers, ')
           ..write('minPlayTime: $minPlayTime, ')
           ..write('maxPlayTime: $maxPlayTime, ')
+          ..write('playingTime: $playingTime, ')
           ..write('minAge: $minAge, ')
-          ..write('bayesAverage: $bayesAverage')
+          ..write('bayesAverage: $bayesAverage, ')
+          ..write('averageRating: $averageRating, ')
+          ..write('userCount: $userCount, ')
+          ..write('numOwned: $numOwned, ')
+          ..write('numTrading: $numTrading, ')
+          ..write('numWanting: $numWanting, ')
+          ..write('numWishing: $numWishing, ')
+          ..write('averageWeight: $averageWeight, ')
+          ..write('description: $description, ')
+          ..write('categories: $categories, ')
+          ..write('mechanics: $mechanics, ')
+          ..write('designers: $designers, ')
+          ..write('artists: $artists, ')
+          ..write('publishers: $publishers, ')
+          ..write('families: $families, ')
+          ..write('languageDependence: $languageDependence, ')
+          ..write('bestPlayerCount: $bestPlayerCount, ')
+          ..write('recommendedPlayerCount: $recommendedPlayerCount')
           ..write(')'))
         .toString();
   }
@@ -4372,8 +5321,26 @@ typedef $$BoardGamesTableCreateCompanionBuilder =
       Value<int?> maxPlayers,
       Value<int?> minPlayTime,
       Value<int?> maxPlayTime,
+      Value<int?> playingTime,
       Value<int?> minAge,
       Value<double?> bayesAverage,
+      Value<double?> averageRating,
+      Value<int?> userCount,
+      Value<int?> numOwned,
+      Value<int?> numTrading,
+      Value<int?> numWanting,
+      Value<int?> numWishing,
+      Value<double?> averageWeight,
+      Value<String?> description,
+      Value<String?> categories,
+      Value<String?> mechanics,
+      Value<String?> designers,
+      Value<String?> artists,
+      Value<String?> publishers,
+      Value<String?> families,
+      Value<String?> languageDependence,
+      Value<String?> bestPlayerCount,
+      Value<String?> recommendedPlayerCount,
     });
 typedef $$BoardGamesTableUpdateCompanionBuilder =
     BoardGamesCompanion Function({
@@ -4385,8 +5352,26 @@ typedef $$BoardGamesTableUpdateCompanionBuilder =
       Value<int?> maxPlayers,
       Value<int?> minPlayTime,
       Value<int?> maxPlayTime,
+      Value<int?> playingTime,
       Value<int?> minAge,
       Value<double?> bayesAverage,
+      Value<double?> averageRating,
+      Value<int?> userCount,
+      Value<int?> numOwned,
+      Value<int?> numTrading,
+      Value<int?> numWanting,
+      Value<int?> numWishing,
+      Value<double?> averageWeight,
+      Value<String?> description,
+      Value<String?> categories,
+      Value<String?> mechanics,
+      Value<String?> designers,
+      Value<String?> artists,
+      Value<String?> publishers,
+      Value<String?> families,
+      Value<String?> languageDependence,
+      Value<String?> bestPlayerCount,
+      Value<String?> recommendedPlayerCount,
     });
 
 final class $$BoardGamesTableReferences
@@ -4464,6 +5449,11 @@ class $$BoardGamesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<int> get playingTime => $composableBuilder(
+    column: $table.playingTime,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<int> get minAge => $composableBuilder(
     column: $table.minAge,
     builder: (column) => ColumnFilters(column),
@@ -4471,6 +5461,91 @@ class $$BoardGamesTableFilterComposer
 
   ColumnFilters<double> get bayesAverage => $composableBuilder(
     column: $table.bayesAverage,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get averageRating => $composableBuilder(
+    column: $table.averageRating,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get userCount => $composableBuilder(
+    column: $table.userCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get numOwned => $composableBuilder(
+    column: $table.numOwned,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get numTrading => $composableBuilder(
+    column: $table.numTrading,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get numWanting => $composableBuilder(
+    column: $table.numWanting,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get numWishing => $composableBuilder(
+    column: $table.numWishing,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get averageWeight => $composableBuilder(
+    column: $table.averageWeight,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get categories => $composableBuilder(
+    column: $table.categories,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get mechanics => $composableBuilder(
+    column: $table.mechanics,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get designers => $composableBuilder(
+    column: $table.designers,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get artists => $composableBuilder(
+    column: $table.artists,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get publishers => $composableBuilder(
+    column: $table.publishers,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get families => $composableBuilder(
+    column: $table.families,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get languageDependence => $composableBuilder(
+    column: $table.languageDependence,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get bestPlayerCount => $composableBuilder(
+    column: $table.bestPlayerCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get recommendedPlayerCount => $composableBuilder(
+    column: $table.recommendedPlayerCount,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -4549,6 +5624,11 @@ class $$BoardGamesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get playingTime => $composableBuilder(
+    column: $table.playingTime,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get minAge => $composableBuilder(
     column: $table.minAge,
     builder: (column) => ColumnOrderings(column),
@@ -4556,6 +5636,91 @@ class $$BoardGamesTableOrderingComposer
 
   ColumnOrderings<double> get bayesAverage => $composableBuilder(
     column: $table.bayesAverage,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get averageRating => $composableBuilder(
+    column: $table.averageRating,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get userCount => $composableBuilder(
+    column: $table.userCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get numOwned => $composableBuilder(
+    column: $table.numOwned,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get numTrading => $composableBuilder(
+    column: $table.numTrading,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get numWanting => $composableBuilder(
+    column: $table.numWanting,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get numWishing => $composableBuilder(
+    column: $table.numWishing,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get averageWeight => $composableBuilder(
+    column: $table.averageWeight,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get categories => $composableBuilder(
+    column: $table.categories,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get mechanics => $composableBuilder(
+    column: $table.mechanics,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get designers => $composableBuilder(
+    column: $table.designers,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get artists => $composableBuilder(
+    column: $table.artists,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get publishers => $composableBuilder(
+    column: $table.publishers,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get families => $composableBuilder(
+    column: $table.families,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get languageDependence => $composableBuilder(
+    column: $table.languageDependence,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get bestPlayerCount => $composableBuilder(
+    column: $table.bestPlayerCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get recommendedPlayerCount => $composableBuilder(
+    column: $table.recommendedPlayerCount,
     builder: (column) => ColumnOrderings(column),
   );
 }
@@ -4605,11 +5770,89 @@ class $$BoardGamesTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<int> get playingTime => $composableBuilder(
+    column: $table.playingTime,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<int> get minAge =>
       $composableBuilder(column: $table.minAge, builder: (column) => column);
 
   GeneratedColumn<double> get bayesAverage => $composableBuilder(
     column: $table.bayesAverage,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get averageRating => $composableBuilder(
+    column: $table.averageRating,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get userCount =>
+      $composableBuilder(column: $table.userCount, builder: (column) => column);
+
+  GeneratedColumn<int> get numOwned =>
+      $composableBuilder(column: $table.numOwned, builder: (column) => column);
+
+  GeneratedColumn<int> get numTrading => $composableBuilder(
+    column: $table.numTrading,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get numWanting => $composableBuilder(
+    column: $table.numWanting,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get numWishing => $composableBuilder(
+    column: $table.numWishing,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<double> get averageWeight => $composableBuilder(
+    column: $table.averageWeight,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get description => $composableBuilder(
+    column: $table.description,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get categories => $composableBuilder(
+    column: $table.categories,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get mechanics =>
+      $composableBuilder(column: $table.mechanics, builder: (column) => column);
+
+  GeneratedColumn<String> get designers =>
+      $composableBuilder(column: $table.designers, builder: (column) => column);
+
+  GeneratedColumn<String> get artists =>
+      $composableBuilder(column: $table.artists, builder: (column) => column);
+
+  GeneratedColumn<String> get publishers => $composableBuilder(
+    column: $table.publishers,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get families =>
+      $composableBuilder(column: $table.families, builder: (column) => column);
+
+  GeneratedColumn<String> get languageDependence => $composableBuilder(
+    column: $table.languageDependence,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get bestPlayerCount => $composableBuilder(
+    column: $table.bestPlayerCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get recommendedPlayerCount => $composableBuilder(
+    column: $table.recommendedPlayerCount,
     builder: (column) => column,
   );
 
@@ -4675,8 +5918,26 @@ class $$BoardGamesTableTableManager
                 Value<int?> maxPlayers = const Value.absent(),
                 Value<int?> minPlayTime = const Value.absent(),
                 Value<int?> maxPlayTime = const Value.absent(),
+                Value<int?> playingTime = const Value.absent(),
                 Value<int?> minAge = const Value.absent(),
                 Value<double?> bayesAverage = const Value.absent(),
+                Value<double?> averageRating = const Value.absent(),
+                Value<int?> userCount = const Value.absent(),
+                Value<int?> numOwned = const Value.absent(),
+                Value<int?> numTrading = const Value.absent(),
+                Value<int?> numWanting = const Value.absent(),
+                Value<int?> numWishing = const Value.absent(),
+                Value<double?> averageWeight = const Value.absent(),
+                Value<String?> description = const Value.absent(),
+                Value<String?> categories = const Value.absent(),
+                Value<String?> mechanics = const Value.absent(),
+                Value<String?> designers = const Value.absent(),
+                Value<String?> artists = const Value.absent(),
+                Value<String?> publishers = const Value.absent(),
+                Value<String?> families = const Value.absent(),
+                Value<String?> languageDependence = const Value.absent(),
+                Value<String?> bestPlayerCount = const Value.absent(),
+                Value<String?> recommendedPlayerCount = const Value.absent(),
               }) => BoardGamesCompanion(
                 id: id,
                 imageUrl: imageUrl,
@@ -4686,8 +5947,26 @@ class $$BoardGamesTableTableManager
                 maxPlayers: maxPlayers,
                 minPlayTime: minPlayTime,
                 maxPlayTime: maxPlayTime,
+                playingTime: playingTime,
                 minAge: minAge,
                 bayesAverage: bayesAverage,
+                averageRating: averageRating,
+                userCount: userCount,
+                numOwned: numOwned,
+                numTrading: numTrading,
+                numWanting: numWanting,
+                numWishing: numWishing,
+                averageWeight: averageWeight,
+                description: description,
+                categories: categories,
+                mechanics: mechanics,
+                designers: designers,
+                artists: artists,
+                publishers: publishers,
+                families: families,
+                languageDependence: languageDependence,
+                bestPlayerCount: bestPlayerCount,
+                recommendedPlayerCount: recommendedPlayerCount,
               ),
           createCompanionCallback:
               ({
@@ -4699,8 +5978,26 @@ class $$BoardGamesTableTableManager
                 Value<int?> maxPlayers = const Value.absent(),
                 Value<int?> minPlayTime = const Value.absent(),
                 Value<int?> maxPlayTime = const Value.absent(),
+                Value<int?> playingTime = const Value.absent(),
                 Value<int?> minAge = const Value.absent(),
                 Value<double?> bayesAverage = const Value.absent(),
+                Value<double?> averageRating = const Value.absent(),
+                Value<int?> userCount = const Value.absent(),
+                Value<int?> numOwned = const Value.absent(),
+                Value<int?> numTrading = const Value.absent(),
+                Value<int?> numWanting = const Value.absent(),
+                Value<int?> numWishing = const Value.absent(),
+                Value<double?> averageWeight = const Value.absent(),
+                Value<String?> description = const Value.absent(),
+                Value<String?> categories = const Value.absent(),
+                Value<String?> mechanics = const Value.absent(),
+                Value<String?> designers = const Value.absent(),
+                Value<String?> artists = const Value.absent(),
+                Value<String?> publishers = const Value.absent(),
+                Value<String?> families = const Value.absent(),
+                Value<String?> languageDependence = const Value.absent(),
+                Value<String?> bestPlayerCount = const Value.absent(),
+                Value<String?> recommendedPlayerCount = const Value.absent(),
               }) => BoardGamesCompanion.insert(
                 id: id,
                 imageUrl: imageUrl,
@@ -4710,8 +6007,26 @@ class $$BoardGamesTableTableManager
                 maxPlayers: maxPlayers,
                 minPlayTime: minPlayTime,
                 maxPlayTime: maxPlayTime,
+                playingTime: playingTime,
                 minAge: minAge,
                 bayesAverage: bayesAverage,
+                averageRating: averageRating,
+                userCount: userCount,
+                numOwned: numOwned,
+                numTrading: numTrading,
+                numWanting: numWanting,
+                numWishing: numWishing,
+                averageWeight: averageWeight,
+                description: description,
+                categories: categories,
+                mechanics: mechanics,
+                designers: designers,
+                artists: artists,
+                publishers: publishers,
+                families: families,
+                languageDependence: languageDependence,
+                bestPlayerCount: bestPlayerCount,
+                recommendedPlayerCount: recommendedPlayerCount,
               ),
           withReferenceMapper: (p0) => p0
               .map(

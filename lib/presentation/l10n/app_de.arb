@@ -36,6 +36,8 @@
   "collectionEmptySearch": "Keine Spiele entsprechen der Suche.",
   "settingsBggUsernameLabel": "BGG-Benutzername",
   "settingsBggPasswordLabel": "BGG-Passwort",
+  "settingsBggApiTokenLabel": "BGG-API-Token (optional)",
+  "settingsBggApiTokenHint": "Erforderlich für Spieldetails von /xmlapi2/thing",
   "settingsSaveCredentialsButton": "Zugangsdaten speichern",
   "settingsTestLoginButton": "Login testen",
   "settingsSyncCollectionButton": "Sammlung synchronisieren",
@@ -251,5 +253,27 @@
         "type": "String"
       }
     }
-  }
+  },
+  "detailBackTooltip": "Zurück",
+  "detailOpenBggTooltip": "Auf BoardGameGeek öffnen",
+  "detailAlternateNames": "{count, plural, =1 {1 alternativer Name} other {{count} alternative Namen}}",
+  "@detailAlternateNames": {
+    "description": "Label zum Aufklappen alternativer/lokalisierter Namen",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "detailOriginalName": "Originalname",
+  "detailYearPublished": "Erscheinungsjahr",
+  "detailPlayerCount": "Spieler",
+  "detailPlayingTime": "Spieldauer",
+  "detailRating": "Bewertung",
+  "detailRank": "Rang",
+  "detailVersion": "Version",
+  "detailPlays": "Partien",
+  "detailUserCount": "Anzahl Bewertungen",
+  "detailNotAvailable": "–",
+  "detailGameNotFound": "Spiel nicht gefunden"
 }

@@ -31,6 +31,15 @@ class SettingsPasswordChanged extends SettingsEvent {
   List<Object?> get props => [password];
 }
 
+class SettingsApiTokenChanged extends SettingsEvent {
+  const SettingsApiTokenChanged(this.apiToken);
+
+  final String apiToken;
+
+  @override
+  List<Object?> get props => [apiToken];
+}
+
 class SettingsCredentialsSaved extends SettingsEvent {
   const SettingsCredentialsSaved();
 }

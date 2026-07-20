@@ -50,6 +50,27 @@ class DriftCollectionStore implements CollectionStore {
   }
 
   @override
+  Future<domain.CollectionItem?> loadById(int thingId, int collId) async {
+    final exactRows = await (_db.select(
+      _db.collectionItems,
+    )..where((i) => i.thingId.equals(thingId) & i.collId.equals(collId))).get();
+    if (exactRows.isNotEmpty) {
+      return _toEntity(exactRows.first);
+    }
+
+    // Fallback: some items may have collId == 0 in older syncs, or the caller
+    // may not know the collId. Return the first matching thingId.
+    final fallbackRows = await (_db.select(
+      _db.collectionItems,
+    )..where((i) => i.thingId.equals(thingId))).get();
+    if (fallbackRows.isNotEmpty) {
+      return _toEntity(fallbackRows.first);
+    }
+
+    return null;
+  }
+
+  @override
   Future<void> clear() async {
     await _db.delete(_db.collectionItems).go();
     await _db.delete(_db.versions).go();
@@ -111,6 +132,7 @@ class DriftCollectionStore implements CollectionStore {
 
     return domain.CollectionItem(
       thingId: row.thingId,
+      collId: row.collId,
       version: version != null
           ? VersionInfo(
               id: version.bggVersionId,

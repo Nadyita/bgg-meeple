@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
 import 'package:http/http.dart' as http;
 import 'package:xml/xml.dart';
 
@@ -43,6 +44,8 @@ class BggApiClient implements BggApi, AuthenticationService {
   static const _baseUrl = 'https://boardgamegeek.com';
   static const _loginPath = '/login/api/v1';
   static const _collectionPath = '/xmlapi2/collection';
+  static const _thingPath = '/xmlapi2/thing';
+  static const _maxThingIdsPerRequest = 20;
 
   final http.Client _client;
   final SessionStore? _sessionStore;
@@ -63,6 +66,9 @@ class BggApiClient implements BggApi, AuthenticationService {
       }),
     );
 
+    // ignore: avoid_print
+    print('[BggApiClient] Login response status: ${response.statusCode}');
+
     if (response.statusCode == 400) {
       final message = _extractLoginError(response.body);
       throw Exception('BGG authentication failed: $message');
@@ -75,7 +81,15 @@ class BggApiClient implements BggApi, AuthenticationService {
     }
 
     final cookies = _extractCookies(response.headers['set-cookie']);
-    _session = cookies;
+    final token = _extractApiToken(response.body);
+    // ignore: avoid_print
+    print(
+      '[BggApiClient] Extracted token: ${token != null ? 'yes (length ${token.length})' : 'no'}',
+    );
+    _session = BggSession(
+      sessionCookies: cookies.sessionCookies,
+      apiToken: token,
+    );
     await _sessionStore?.save(_session!);
     return _session!;
   }
@@ -97,10 +111,49 @@ class BggApiClient implements BggApi, AuthenticationService {
 
   @override
   Future<List<BoardGame>> fetchGames(List<int> ids) async {
-    throw UnsupportedError(
-      'fetchGames is disabled because BGG XML API2 /thing requires an '
-      'application token. Game details are loaded from the collection response.',
+    await _ensureSessionLoaded();
+
+    if (ids.isEmpty) return [];
+
+    final session = _session;
+    // ignore: avoid_print
+    print('[BggApiClient] fetchGames called for ${ids.length} ids');
+    // ignore: avoid_print
+    print(
+      '[BggApiClient] session has cookies: ${session?.hasCookies}, has token: ${session?.hasApiToken}',
     );
+
+    if (session == null || !session.hasApiToken) {
+      // ignore: avoid_print
+      print('[BggApiClient] No API token available, skipping /thing fetch');
+      return [];
+    }
+
+    final games = <BoardGame>[];
+    for (var i = 0; i < ids.length; i += _maxThingIdsPerRequest) {
+      final batch = ids.skip(i).take(_maxThingIdsPerRequest).toList();
+      final uri = Uri.parse(
+        '$_baseUrl$_thingPath',
+      ).replace(queryParameters: {'id': batch.join(','), 'stats': '1'});
+      // ignore: avoid_print
+      print('[BggApiClient] Fetching /thing for ids: $batch');
+
+      final response = await _getWithRetry(uri, useToken: true);
+
+      // ignore: avoid_print
+      print(
+        '[BggApiClient] /thing response status: ${response.statusCode}, length: ${response.body.length}',
+      );
+
+      final root = _parseXml(response.body);
+      final items =
+          root.getElement('items')?.findElements('item').toList() ?? [];
+      // ignore: avoid_print
+      print('[BggApiClient] /thing parsed ${items.length} items');
+      games.addAll(items.map(_parseBoardGame));
+    }
+
+    return games;
   }
 
   Future<void> _ensureSessionLoaded() async {
@@ -114,9 +167,12 @@ class BggApiClient implements BggApi, AuthenticationService {
     }
   }
 
-  Future<http.Response> _getWithRetry(Uri uri) async {
+  Future<http.Response> _getWithRetry(Uri uri, {bool useToken = false}) async {
     for (var attempt = 0; attempt < _maxRetries; attempt++) {
-      final response = await _client.get(uri, headers: _authHeaders);
+      final response = await _client.get(
+        uri,
+        headers: useToken ? _tokenHeaders : _authHeaders,
+      );
 
       if (response.statusCode == 401 || response.statusCode == 403) {
         throw BggSessionExpiredException(
@@ -146,6 +202,14 @@ class BggApiClient implements BggApi, AuthenticationService {
       return {};
     }
     return {'Cookie': session.sessionCookies};
+  }
+
+  Map<String, String> get _tokenHeaders {
+    final session = _session;
+    if (session == null || !session.hasApiToken) {
+      return {};
+    }
+    return {'Authorization': 'Bearer ${session.apiToken}'};
   }
 
   String _extractLoginError(String body) {
@@ -195,6 +259,22 @@ class BggApiClient implements BggApi, AuthenticationService {
     }
 
     return BggSession(sessionCookies: entries.join('; '));
+  }
+
+  /// Extracts an API bearer token from the JSON login response, if present.
+  String? _extractApiToken(String body) {
+    try {
+      final decoded = jsonDecode(body) as Map<String, dynamic>;
+      final token = decoded['token'] as String?;
+      if (token != null && token.trim().isNotEmpty) {
+        return token.trim();
+      }
+    } on FormatException {
+      // Not a JSON body - no token available.
+    } on TypeError {
+      // Unexpected JSON structure.
+    }
+    return null;
   }
 
   /// Extracts BGG-specific cookie values from a possibly combined
@@ -414,6 +494,192 @@ class BggApiClient implements BggApi, AuthenticationService {
         value.toUpperCase() == 'NOT RANKED') {
       return null;
     }
+    return int.tryParse(value);
+  }
+
+  BoardGame _parseBoardGame(XmlElement item) {
+    final id = int.parse(item.getAttribute('id') ?? '0');
+    final names = _parseThingNames(item);
+
+    final stats = item.getElement('statistics');
+    final ratings = stats?.getElement('ratings');
+
+    final description = _childText(item, 'description');
+    final minPlayers = _childInt(item, 'minplayers');
+    final maxPlayers = _childInt(item, 'maxplayers');
+    final minPlayTime = _childInt(item, 'minplaytime');
+    final maxPlayTime = _childInt(item, 'maxplaytime');
+    final playingTime = _childInt(item, 'playingtime');
+    final minAge = _childInt(item, 'minage');
+    final yearPublished = _childInt(item, 'yearpublished');
+
+    return BoardGame(
+      id: id,
+      names: names,
+      imageUrl: _childText(item, 'image'),
+      thumbnailUrl: _childText(item, 'thumbnail'),
+      yearPublished: yearPublished,
+      minPlayers: minPlayers,
+      maxPlayers: maxPlayers,
+      minPlayTime: minPlayTime,
+      maxPlayTime: maxPlayTime,
+      playingTime: playingTime,
+      minAge: minAge,
+      bayesAverage: _ratingValue(ratings, 'bayesaverage'),
+      averageRating: _ratingValue(ratings, 'average'),
+      userCount: _ratingInt(ratings, 'usersrated'),
+      numOwned: _ratingInt(ratings, 'owned'),
+      numTrading: _ratingInt(ratings, 'trading'),
+      numWanting: _ratingInt(ratings, 'wanting'),
+      numWishing: _ratingInt(ratings, 'wishing'),
+      averageWeight: _ratingValue(ratings, 'averageweight'),
+      description: description,
+      categories: _linkValues(item, 'boardgamecategory'),
+      mechanics: _linkValues(item, 'boardgamemechanic'),
+      designers: _linkValues(item, 'boardgamedesigner'),
+      artists: _linkValues(item, 'boardgameartist'),
+      publishers: _linkValues(item, 'boardgamepublisher'),
+      families: _linkValues(item, 'boardgamefamily'),
+      languageDependence: _languageDependence(item),
+      bestPlayerCount: _bestPlayerCount(item),
+      recommendedPlayerCount: _recommendedPlayerCount(item),
+    );
+  }
+
+  List<LocalizedName> _parseThingNames(XmlElement item) {
+    final names = <LocalizedName>[];
+    for (final name in item.findElements('name')) {
+      final value = name.getAttribute('value');
+      if (value == null || value.isEmpty) continue;
+      final type = name.getAttribute('type');
+      names.add(
+        LocalizedName(
+          value: value,
+          language: null,
+          isPrimary: type == 'primary',
+        ),
+      );
+    }
+    return names;
+  }
+
+  List<String> _linkValues(XmlElement item, String linkType) {
+    return item
+        .findElements('link')
+        .where((e) => e.getAttribute('type') == linkType)
+        .map((e) => e.getAttribute('value'))
+        .whereType<String>()
+        .where((v) => v.isNotEmpty)
+        .toList();
+  }
+
+  String? _languageDependence(XmlElement item) {
+    final poll = item
+        .findElements('poll')
+        .firstWhereOrNull(
+          (p) => p.getAttribute('name') == 'language_dependence',
+        );
+    if (poll == null) return null;
+
+    final results = poll.findElements('results').firstOrNull;
+    if (results == null) return null;
+
+    XmlElement? winner;
+    var winnerVotes = -1;
+    for (final result in results.findElements('result')) {
+      final votesText = result.getAttribute('numvotes');
+      final votes = int.tryParse(votesText ?? '');
+      if (votes != null && votes > winnerVotes) {
+        winnerVotes = votes;
+        winner = result;
+      }
+    }
+
+    if (winner == null) return null;
+    final level = winner.getAttribute('level');
+    final value = winner.getAttribute('value');
+    if (value != null && value.isNotEmpty) return value;
+    return level;
+  }
+
+  String? _bestPlayerCount(XmlElement item) {
+    final poll = item
+        .findElements('poll')
+        .firstWhereOrNull(
+          (p) => p.getAttribute('name') == 'suggested_numplayers',
+        );
+    if (poll == null) return null;
+
+    XmlElement? winner;
+    var winnerVotes = -1;
+    for (final result in poll.findAllElements('result')) {
+      final numPlayers = result.getAttribute('numplayers');
+      if (numPlayers == null || numPlayers.isEmpty) continue;
+      final votesText = result.getAttribute('numvotes');
+      final votes = int.tryParse(votesText ?? '');
+      if (votes != null && votes > winnerVotes) {
+        winnerVotes = votes;
+        winner = result;
+      }
+    }
+
+    return winner?.getAttribute('numplayers');
+  }
+
+  String? _recommendedPlayerCount(XmlElement item) {
+    final poll = item
+        .findElements('poll')
+        .firstWhereOrNull(
+          (p) => p.getAttribute('name') == 'suggested_numplayers',
+        );
+    if (poll == null) return null;
+
+    final recommended = <String>[];
+    for (final results in poll.findElements('results')) {
+      final numPlayers = results.getAttribute('numplayers');
+      if (numPlayers == null || numPlayers.isEmpty) continue;
+
+      var recommendedVotes = 0;
+      var totalVotes = 0;
+      for (final result in results.findElements('result')) {
+        final value = result.getAttribute('value');
+        final votesText = result.getAttribute('numvotes');
+        final votes = int.tryParse(votesText ?? '') ?? 0;
+        totalVotes += votes;
+        if (value == 'Recommended') {
+          recommendedVotes += votes;
+        }
+      }
+
+      if (totalVotes > 0 && recommendedVotes / totalVotes >= 0.5) {
+        recommended.add(numPlayers);
+      }
+    }
+
+    if (recommended.isEmpty) return null;
+    return recommended.join(', ');
+  }
+
+  double? _ratingValue(XmlElement? ratings, String tag) {
+    if (ratings == null) return null;
+    final element = ratings.getElement(tag);
+    if (element == null) return null;
+    final value = element.getAttribute('value');
+    if (value == null ||
+        value.isEmpty ||
+        value.toUpperCase() == 'N/A' ||
+        value.toUpperCase() == 'NOT RANKED') {
+      return null;
+    }
+    return double.tryParse(value);
+  }
+
+  int? _ratingInt(XmlElement? ratings, String tag) {
+    if (ratings == null) return null;
+    final element = ratings.getElement(tag);
+    if (element == null) return null;
+    final value = element.getAttribute('value');
+    if (value == null || value.isEmpty) return null;
     return int.tryParse(value);
   }
 

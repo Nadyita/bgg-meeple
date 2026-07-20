@@ -10,10 +10,16 @@ import '../l10n/app_localizations.dart';
 
 /// Card widget displaying a single collection item.
 class CollectionCard extends StatelessWidget {
-  const CollectionCard({super.key, required this.item, this.config});
+  const CollectionCard({
+    super.key,
+    required this.item,
+    this.config,
+    this.onTap,
+  });
 
   final CollectionItem item;
   final CardLayoutConfig? config;
+  final VoidCallback? onTap;
 
   CardLayoutConfig get _config => config ?? const CardLayoutConfig();
 
@@ -25,58 +31,62 @@ class CollectionCard extends StatelessWidget {
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (effectiveConfig.showThumbnail) ...[
-                  _Thumbnail(
-                    url: item.thumbnailUrl,
-                    localPath: item.thumbnailLocalPath,
-                  ),
-                  const SizedBox(width: 12),
-                ],
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        _displayName,
-                        style: textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      if (_versionSubtitle != null &&
-                          effectiveConfig.showVersionSubtitle) ...[
-                        const SizedBox(height: 2),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (effectiveConfig.showThumbnail) ...[
+                    _Thumbnail(
+                      url: item.thumbnailUrl,
+                      localPath: item.thumbnailLocalPath,
+                    ),
+                    const SizedBox(width: 12),
+                  ],
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         Text(
-                          _versionSubtitle!,
-                          style: textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurfaceVariant,
+                          _displayName,
+                          style: textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
                           ),
-                          maxLines: 1,
+                          maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
+                        if (_versionSubtitle != null &&
+                            effectiveConfig.showVersionSubtitle) ...[
+                          const SizedBox(height: 2),
+                          Text(
+                            _versionSubtitle!,
+                            style: textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onSurfaceVariant,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                        ..._buildMetadataLines(context, effectiveConfig),
                       ],
-                      ..._buildMetadataLines(context, effectiveConfig),
-                    ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 6,
-              runSpacing: 4,
-              children: _buildSubTypeChips(context),
-            ),
-          ],
+                ],
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 6,
+                runSpacing: 4,
+                children: _buildSubTypeChips(context),
+              ),
+            ],
+          ),
         ),
       ),
     );

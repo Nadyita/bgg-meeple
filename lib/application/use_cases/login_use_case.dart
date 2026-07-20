@@ -28,7 +28,18 @@ class LoginUseCase {
     final session = await _authenticationService.authenticate(
       effectiveCredentials,
     );
-    await _sessionStore.save(session);
-    return session;
+
+    // If the user has provided a manual API token, merge it into the session so
+    // that /xmlapi2/thing can use it when the login response does not include
+    // a token.
+    final mergedSession = session.apiToken == null || session.apiToken!.isEmpty
+        ? BggSession(
+            sessionCookies: session.sessionCookies,
+            apiToken: effectiveCredentials.apiToken,
+          )
+        : session;
+
+    await _sessionStore.save(mergedSession);
+    return mergedSession;
   }
 }

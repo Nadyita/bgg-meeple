@@ -3,6 +3,7 @@ import '../../domain/entities/collection_item.dart';
 import '../../domain/ports/bgg_api.dart';
 import '../../domain/ports/collection_store.dart';
 import '../../domain/ports/credential_store.dart';
+import '../../domain/ports/game_store.dart';
 import '../../domain/ports/session_store.dart';
 import '../../domain/ports/thumbnail_cache.dart';
 import '../../infrastructure/adapters/api/bgg_api_client.dart';
@@ -31,15 +32,16 @@ class SyncResult {
 
 /// Syncs the user's BGG collection to the local cache.
 ///
-/// Loads stored credentials, authenticates if needed, fetches the collection
-/// (which already contains game details and version info), and stores it
-/// locally. Emits progress updates through [onProgress].
+/// Loads stored credentials, authenticates if needed, fetches the collection,
+/// fetches full game details for every unique game, caches thumbnails, and
+/// stores everything locally. Emits progress updates through [onProgress].
 class SyncCollectionUseCase {
   const SyncCollectionUseCase(
     this._credentialStore,
     this._sessionStore,
     this._bggApi,
     this._collectionStore,
+    this._gameStore,
     this._thumbnailCache,
   );
 
@@ -47,6 +49,7 @@ class SyncCollectionUseCase {
   final SessionStore _sessionStore;
   final BggApi _bggApi;
   final CollectionStore _collectionStore;
+  final GameStore _gameStore;
   final ThumbnailCache _thumbnailCache;
 
   /// Runs the sync.
@@ -85,6 +88,8 @@ class SyncCollectionUseCase {
     void Function(SyncProgress)? onProgress,
   }) async {
     final items = await _bggApi.fetchCollection(credentials.username);
+    // ignore: avoid_print
+    print('[SyncCollectionUseCase] Fetched ${items.length} collection items');
     onProgress?.call(
       SyncProgress(
         phase: 'collection',
@@ -93,7 +98,28 @@ class SyncCollectionUseCase {
       ),
     );
 
+    final uniqueThingIds = items.map((i) => i.thingId).toSet().toList();
+    // ignore: avoid_print
+    print(
+      '[SyncCollectionUseCase] Fetching details for ${uniqueThingIds.length} unique games',
+    );
+    final games = await _bggApi.fetchGames(uniqueThingIds);
+    // ignore: avoid_print
+    print('[SyncCollectionUseCase] Received ${games.length} games from /thing');
+    onProgress?.call(
+      SyncProgress(
+        phase: 'details',
+        loaded: games.length,
+        total: uniqueThingIds.length,
+      ),
+    );
+
     await _collectionStore.saveAll(items);
+    await _gameStore.saveAll(games);
+    // ignore: avoid_print
+    print(
+      '[SyncCollectionUseCase] Saved ${items.length} items and ${games.length} games',
+    );
 
     for (var i = 0; i < items.length; i++) {
       final item = items[i];

@@ -15,7 +15,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration {
@@ -24,80 +24,17 @@ class AppDatabase extends _$AppDatabase {
         await m.createAll();
       },
       onUpgrade: (Migrator m, int from, int to) async {
-        if (from < 2) {
+        if (from < 7) {
+          // Schema v7 introduces many new game-detail columns and changes the
+          // way localized names are linked. Cache data is repopulated on next
+          // sync, so we recreate all tables rather than migrating in place.
           for (final table in allTables) {
             await m.deleteTable(table.actualTableName);
           }
           await m.createAll();
-        }
-        if (from == 2) {
-          final hasColumn = await _hasColumn(
-            m,
-            collectionItems.actualTableName,
-            collectionItems.primaryName.name,
-          );
-          if (!hasColumn) {
-            await m.addColumn(collectionItems, collectionItems.primaryName);
-          }
-        }
-        if (from == 3) {
-          final hasColumn = await _hasColumn(
-            m,
-            collectionItems.actualTableName,
-            collectionItems.thumbnailLocalPath.name,
-          );
-          if (!hasColumn) {
-            await m.addColumn(
-              collectionItems,
-              collectionItems.thumbnailLocalPath,
-            );
-          }
-        }
-        if (from == 4) {
-          // Added collId so the same game in different editions can be stored
-          // as separate collection items. Because collId is part of the primary
-          // key and must be NOT NULL, existing rows cannot be migrated in place.
-          // The cache is a copy of BGG data, so we recreate all tables and let
-          // the next sync repopulate them.
-          for (final table in allTables) {
-            await m.deleteTable(table.actualTableName);
-          }
-          await m.createAll();
-        }
-        if (from == 5) {
-          final hasBggRank = await _hasColumn(
-            m,
-            collectionItems.actualTableName,
-            collectionItems.bggRank.name,
-          );
-          if (!hasBggRank) {
-            await m.addColumn(collectionItems, collectionItems.bggRank);
-          }
-          final hasUserCount = await _hasColumn(
-            m,
-            collectionItems.actualTableName,
-            collectionItems.geekRatingUserCount.name,
-          );
-          if (!hasUserCount) {
-            await m.addColumn(
-              collectionItems,
-              collectionItems.geekRatingUserCount,
-            );
-          }
         }
       },
     );
-  }
-
-  static Future<bool> _hasColumn(
-    Migrator m,
-    String tableName,
-    String columnName,
-  ) async {
-    final result = await m.database
-        .customSelect('PRAGMA table_info($tableName);')
-        .get();
-    return result.any((row) => row.read<String>('name') == columnName);
   }
 
   static QueryExecutor _openConnection() {
@@ -167,8 +104,26 @@ class BoardGames extends Table {
   IntColumn get maxPlayers => integer().nullable()();
   IntColumn get minPlayTime => integer().nullable()();
   IntColumn get maxPlayTime => integer().nullable()();
+  IntColumn get playingTime => integer().nullable()();
   IntColumn get minAge => integer().nullable()();
   RealColumn get bayesAverage => real().nullable()();
+  RealColumn get averageRating => real().nullable()();
+  IntColumn get userCount => integer().nullable()();
+  IntColumn get numOwned => integer().nullable()();
+  IntColumn get numTrading => integer().nullable()();
+  IntColumn get numWanting => integer().nullable()();
+  IntColumn get numWishing => integer().nullable()();
+  RealColumn get averageWeight => real().nullable()();
+  TextColumn get description => text().nullable()();
+  TextColumn get categories => text().nullable()();
+  TextColumn get mechanics => text().nullable()();
+  TextColumn get designers => text().nullable()();
+  TextColumn get artists => text().nullable()();
+  TextColumn get publishers => text().nullable()();
+  TextColumn get families => text().nullable()();
+  TextColumn get languageDependence => text().nullable()();
+  TextColumn get bestPlayerCount => text().nullable()();
+  TextColumn get recommendedPlayerCount => text().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};

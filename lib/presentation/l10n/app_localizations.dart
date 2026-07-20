@@ -320,6 +320,18 @@ abstract class AppLocalizations {
   /// **'BGG Password'**
   String get settingsBggPasswordLabel;
 
+  /// No description provided for @settingsBggApiTokenLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'BGG API Token (optional)'**
+  String get settingsBggApiTokenLabel;
+
+  /// No description provided for @settingsBggApiTokenHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Required for game details from /xmlapi2/thing'**
+  String get settingsBggApiTokenHint;
+
   /// No description provided for @settingsSaveCredentialsButton.
   ///
   /// In en, this message translates to:
@@ -619,6 +631,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to save card layout: {details}'**
   String errorSaveCardLayout(String details);
+
+  /// No description provided for @detailBackTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get detailBackTooltip;
+
+  /// No description provided for @detailOpenBggTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Open on BoardGameGeek'**
+  String get detailOpenBggTooltip;
+
+  /// Label that expands to show alternate/localized game names
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1 {1 alternate name} other {{count} alternate names}}'**
+  String detailAlternateNames(int count);
+
+  /// No description provided for @detailOriginalName.
+  ///
+  /// In en, this message translates to:
+  /// **'Original name'**
+  String get detailOriginalName;
+
+  /// No description provided for @detailYearPublished.
+  ///
+  /// In en, this message translates to:
+  /// **'Year published'**
+  String get detailYearPublished;
+
+  /// No description provided for @detailPlayerCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Players'**
+  String get detailPlayerCount;
+
+  /// No description provided for @detailPlayingTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Playing time'**
+  String get detailPlayingTime;
+
+  /// No description provided for @detailRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating'**
+  String get detailRating;
+
+  /// No description provided for @detailRank.
+  ///
+  /// In en, this message translates to:
+  /// **'Rank'**
+  String get detailRank;
+
+  /// No description provided for @detailVersion.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get detailVersion;
+
+  /// No description provided for @detailPlays.
+  ///
+  /// In en, this message translates to:
+  /// **'Plays'**
+  String get detailPlays;
+
+  /// No description provided for @detailUserCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of ratings'**
+  String get detailUserCount;
+
+  /// No description provided for @detailNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'–'**
+  String get detailNotAvailable;
+
+  /// No description provided for @detailGameNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Game not found'**
+  String get detailGameNotFound;
 }
 
 class _AppLocalizationsDelegate

@@ -13,6 +13,7 @@ class SettingsState extends Equatable {
   const SettingsState({
     this.username = '',
     this.password = '',
+    this.apiToken = '',
     this.isLoading = false,
     this.isSaving = false,
     this.isLoggingIn = false,
@@ -27,6 +28,7 @@ class SettingsState extends Equatable {
 
   final String username;
   final String password;
+  final String apiToken;
   final bool isLoading;
   final bool isSaving;
   final bool isLoggingIn;
@@ -47,6 +49,7 @@ class SettingsState extends Equatable {
   SettingsState copyWith({
     String? username,
     String? password,
+    String? apiToken,
     bool? isLoading,
     bool? isSaving,
     bool? isLoggingIn,
@@ -66,6 +69,7 @@ class SettingsState extends Equatable {
     return SettingsState(
       username: username ?? this.username,
       password: password ?? this.password,
+      apiToken: apiToken ?? this.apiToken,
       isLoading: isLoading ?? this.isLoading,
       isSaving: isSaving ?? this.isSaving,
       isLoggingIn: isLoggingIn ?? this.isLoggingIn,
@@ -87,6 +91,7 @@ class SettingsState extends Equatable {
   List<Object?> get props => [
     username,
     password,
+    apiToken,
     isLoading,
     isSaving,
     isLoggingIn,

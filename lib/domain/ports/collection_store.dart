@@ -8,6 +8,10 @@ abstract class CollectionStore {
   /// Returns all cached collection items.
   Future<List<CollectionItem>> loadAll();
 
+  /// Returns the cached collection item with the given [thingId] and [collId],
+  /// or `null` if not found.
+  Future<CollectionItem?> loadById(int thingId, int collId);
+
   /// Deletes all cached collection items.
   Future<void> clear();
 }

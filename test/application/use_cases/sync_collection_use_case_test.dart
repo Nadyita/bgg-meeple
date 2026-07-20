@@ -5,6 +5,7 @@ import 'package:bgg_meeple/domain/entities/collection_item.dart';
 import 'package:bgg_meeple/domain/ports/bgg_api.dart';
 import 'package:bgg_meeple/domain/ports/collection_store.dart';
 import 'package:bgg_meeple/domain/ports/credential_store.dart';
+import 'package:bgg_meeple/domain/ports/game_store.dart';
 import 'package:bgg_meeple/domain/ports/session_store.dart';
 import 'package:bgg_meeple/domain/ports/thumbnail_cache.dart';
 import 'package:bgg_meeple/infrastructure/adapters/api/bgg_api_client.dart';
@@ -18,6 +19,8 @@ class _MockSessionStore extends Mock implements SessionStore {}
 class _MockBggApi extends Mock implements BggApi {}
 
 class _MockCollectionStore extends Mock implements CollectionStore {}
+
+class _MockGameStore extends Mock implements GameStore {}
 
 class _MockThumbnailCache extends Mock implements ThumbnailCache {}
 
@@ -33,6 +36,7 @@ void main() {
     late SessionStore sessionStore;
     late BggApi bggApi;
     late CollectionStore collectionStore;
+    late GameStore gameStore;
     late ThumbnailCache thumbnailCache;
     late SyncCollectionUseCase useCase;
 
@@ -48,14 +52,19 @@ void main() {
       sessionStore = _MockSessionStore();
       bggApi = _MockBggApi();
       collectionStore = _MockCollectionStore();
+      gameStore = _MockGameStore();
       thumbnailCache = _MockThumbnailCache();
       useCase = SyncCollectionUseCase(
         credentialStore,
         sessionStore,
         bggApi,
         collectionStore,
+        gameStore,
         thumbnailCache,
       );
+
+      when(() => bggApi.fetchGames(any())).thenAnswer((_) async => []);
+      when(() => gameStore.saveAll(any())).thenAnswer((_) async {});
     });
 
     const credentials = BggCredentials(
@@ -221,16 +230,19 @@ void main() {
 
       await useCase(onProgress: progressUpdates.add);
 
-      expect(progressUpdates.length, 3);
+      expect(progressUpdates.length, 4);
       expect(progressUpdates[0].phase, 'collection');
       expect(progressUpdates[0].loaded, 2);
       expect(progressUpdates[0].total, 2);
-      expect(progressUpdates[1].phase, 'thumbnails');
-      expect(progressUpdates[1].loaded, 1);
+      expect(progressUpdates[1].phase, 'details');
+      expect(progressUpdates[1].loaded, 0);
       expect(progressUpdates[1].total, 2);
       expect(progressUpdates[2].phase, 'thumbnails');
-      expect(progressUpdates[2].loaded, 2);
+      expect(progressUpdates[2].loaded, 1);
       expect(progressUpdates[2].total, 2);
+      expect(progressUpdates[3].phase, 'thumbnails');
+      expect(progressUpdates[3].loaded, 2);
+      expect(progressUpdates[3].total, 2);
     });
   });
 }

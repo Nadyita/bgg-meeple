@@ -2,6 +2,7 @@ import 'package:bgg_meeple/application/use_cases/load_card_layout_use_case.dart'
 import 'package:bgg_meeple/application/use_cases/load_collection_use_case.dart';
 import 'package:bgg_meeple/application/use_cases/load_collection_view_use_case.dart';
 import 'package:bgg_meeple/application/use_cases/load_credentials_use_case.dart';
+import 'package:bgg_meeple/application/use_cases/load_game_details_use_case.dart';
 import 'package:bgg_meeple/application/use_cases/save_collection_view_use_case.dart';
 import 'package:bgg_meeple/application/use_cases/sync_collection_use_case.dart';
 import 'package:bgg_meeple/domain/entities/collection_item.dart';
@@ -23,6 +24,8 @@ class _MockLoadCardLayout extends Mock implements LoadCardLayoutUseCase {}
 
 class _MockLoadCollectionView extends Mock
     implements LoadCollectionViewUseCase {}
+
+class _MockLoadGameDetails extends Mock implements LoadGameDetailsUseCase {}
 
 class _MockSaveCollectionView extends Mock
     implements SaveCollectionViewUseCase {}
@@ -50,6 +53,7 @@ void main() {
     late LoadCollectionUseCase loadCollection;
     late LoadCardLayoutUseCase loadCardLayout;
     late LoadCollectionViewUseCase loadCollectionView;
+    late LoadGameDetailsUseCase loadGameDetails;
     late SaveCollectionViewUseCase saveCollectionView;
     late LoadCredentialsUseCase loadCredentials;
     late SyncCollectionUseCase syncCollection;
@@ -58,6 +62,7 @@ void main() {
       loadCollection = _MockLoadCollection();
       loadCardLayout = _MockLoadCardLayout();
       loadCollectionView = _MockLoadCollectionView();
+      loadGameDetails = _MockLoadGameDetails();
       saveCollectionView = _MockSaveCollectionView();
       loadCredentials = _MockLoadCredentials();
       syncCollection = _MockSyncCollection();
@@ -88,6 +93,9 @@ void main() {
       when(
         loadCollectionView.call,
       ).thenAnswer((_) async => const CollectionView());
+      when(
+        () => loadGameDetails.call(any(), any()),
+      ).thenAnswer((_) async => null);
       when(() => saveCollectionView.call(any())).thenAnswer((_) async {});
       when(loadCredentials.call).thenAnswer((_) async => null);
     });
@@ -106,6 +114,7 @@ void main() {
         _buildApp(
           home: CollectionPage(
             loadCollection: loadCollection,
+            loadGameDetails: loadGameDetails,
             loadCardLayout: loadCardLayout,
             loadCollectionView: loadCollectionView,
             saveCollectionView: saveCollectionView,
@@ -130,6 +139,7 @@ void main() {
         _buildApp(
           home: CollectionPage(
             loadCollection: loadCollection,
+            loadGameDetails: loadGameDetails,
             loadCardLayout: loadCardLayout,
             loadCollectionView: loadCollectionView,
             saveCollectionView: saveCollectionView,

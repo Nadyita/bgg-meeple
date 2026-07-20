@@ -31,6 +31,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     on<SettingsLoaded>(_onLoaded);
     on<SettingsUsernameChanged>(_onUsernameChanged);
     on<SettingsPasswordChanged>(_onPasswordChanged);
+    on<SettingsApiTokenChanged>(_onApiTokenChanged);
     on<SettingsCredentialsSaved>(_onCredentialsSaved);
     on<SettingsLoginRequested>(_onLoginRequested);
     on<SettingsSyncRequested>(_onSyncRequested);
@@ -59,6 +60,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
           isLoading: false,
           username: credentials?.username ?? '',
           password: credentials?.password ?? '',
+          apiToken: credentials?.apiToken ?? '',
           cardLayout: cardLayout,
         ),
       );
@@ -103,6 +105,21 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     );
   }
 
+  void _onApiTokenChanged(
+    SettingsApiTokenChanged event,
+    Emitter<SettingsState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        apiToken: event.apiToken,
+        saveSuccess: false,
+        loginSuccess: false,
+        syncSuccess: false,
+        clearError: true,
+      ),
+    );
+  }
+
   Future<void> _onLoginRequested(
     SettingsLoginRequested event,
     Emitter<SettingsState> emit,
@@ -113,6 +130,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
         credentials: BggCredentials(
           username: state.username,
           password: state.password,
+          apiToken: state.apiToken.isNotEmpty ? state.apiToken : null,
         ),
       );
       emit(state.copyWith(isLoggingIn: false, loginSuccess: true));
@@ -172,7 +190,11 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     emit(state.copyWith(isSaving: true, clearError: true));
     try {
       await saveCredentials(
-        BggCredentials(username: state.username, password: state.password),
+        BggCredentials(
+          username: state.username,
+          password: state.password,
+          apiToken: state.apiToken.isNotEmpty ? state.apiToken : null,
+        ),
       );
       emit(state.copyWith(isSaving: false, saveSuccess: true));
     } on Exception catch (e) {

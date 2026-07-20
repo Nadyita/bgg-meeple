@@ -28,7 +28,7 @@ void main() {
       apiClient = BggApiClient(httpClient: client, sessionStore: sessionStore);
     });
 
-    test('authenticates and stores session cookies', () async {
+    test('authenticates and stores session cookies plus api token', () async {
       const credentials = BggCredentials(
         username: 'meepleUser',
         password: 'secret',
@@ -42,7 +42,7 @@ void main() {
         ),
       ).thenAnswer(
         (_) async => http.Response(
-          '',
+          '{"token":"bearer-token-123"}',
           200,
           headers: {
             'set-cookie':
@@ -57,6 +57,7 @@ void main() {
       expect(session.sessionCookies, contains('bggusername=meepleUser'));
       expect(session.sessionCookies, contains('bggpassword=secret'));
       expect(session.sessionCookies, contains('SessionID=abc123'));
+      expect(session.apiToken, 'bearer-token-123');
       verify(() => sessionStore.save(any())).called(1);
     });
 

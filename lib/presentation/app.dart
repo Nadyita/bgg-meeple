@@ -35,6 +35,7 @@ class BggMeepleApp extends StatelessWidget {
               darkTheme: _theme(Brightness.dark),
               home: CollectionPage(
                 loadCollection: ServiceLocator.instance.loadCollection,
+                loadGameDetails: ServiceLocator.instance.loadGameDetails,
                 loadCardLayout: ServiceLocator.instance.loadCardLayout,
                 loadCollectionView: ServiceLocator.instance.loadCollectionView,
                 saveCollectionView: ServiceLocator.instance.saveCollectionView,

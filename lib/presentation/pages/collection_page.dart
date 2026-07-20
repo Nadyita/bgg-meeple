@@ -5,6 +5,7 @@ import '../../application/use_cases/load_card_layout_use_case.dart';
 import '../../application/use_cases/load_collection_use_case.dart';
 import '../../application/use_cases/load_collection_view_use_case.dart';
 import '../../application/use_cases/load_credentials_use_case.dart';
+import '../../application/use_cases/load_game_details_use_case.dart';
 import '../../application/use_cases/save_collection_view_use_case.dart';
 import '../../application/use_cases/sync_collection_use_case.dart';
 import '../../domain/entities/collection_item.dart';
@@ -20,6 +21,7 @@ import '../blocs/collection/collection_event.dart';
 import '../blocs/collection/collection_state.dart';
 import '../l10n/app_localizations.dart';
 import '../widgets/collection_card.dart';
+import 'game_detail_page.dart';
 import 'settings_page.dart';
 
 /// Main page showing the user's BGG collection.
@@ -27,6 +29,7 @@ class CollectionPage extends StatelessWidget {
   const CollectionPage({
     super.key,
     required this.loadCollection,
+    required this.loadGameDetails,
     required this.loadCardLayout,
     required this.loadCollectionView,
     required this.saveCollectionView,
@@ -35,6 +38,7 @@ class CollectionPage extends StatelessWidget {
   });
 
   final LoadCollectionUseCase loadCollection;
+  final LoadGameDetailsUseCase loadGameDetails;
   final LoadCardLayoutUseCase loadCardLayout;
   final LoadCollectionViewUseCase loadCollectionView;
   final SaveCollectionViewUseCase saveCollectionView;
@@ -52,13 +56,15 @@ class CollectionPage extends StatelessWidget {
         loadCredentials: loadCredentials,
         syncCollection: syncCollection,
       )..add(const CollectionLoaded()),
-      child: const _CollectionView(),
+      child: _CollectionView(loadGameDetails: loadGameDetails),
     );
   }
 }
 
 class _CollectionView extends StatefulWidget {
-  const _CollectionView();
+  const _CollectionView({required this.loadGameDetails});
+
+  final LoadGameDetailsUseCase loadGameDetails;
 
   @override
   State<_CollectionView> createState() => _CollectionViewState();
@@ -234,9 +240,11 @@ class _CollectionViewState extends State<_CollectionView> {
                       : ListView.builder(
                           itemCount: state.filteredItems.length,
                           itemBuilder: (context, index) {
+                            final item = state.filteredItems[index];
                             return CollectionCard(
-                              item: state.filteredItems[index],
+                              item: item,
                               config: state.cardLayout,
+                              onTap: () => _openGameDetail(context, item),
                             );
                           },
                         ),
@@ -268,6 +276,18 @@ class _CollectionViewState extends State<_CollectionView> {
     if (context.mounted) {
       context.read<CollectionBloc>().add(const CollectionCardLayoutReloaded());
     }
+  }
+
+  void _openGameDetail(BuildContext context, CollectionItem item) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => GameDetailPage(
+          thingId: item.thingId,
+          collId: item.collId ?? item.thingId,
+          loadGameDetails: widget.loadGameDetails,
+        ),
+      ),
+    );
   }
 
   void _showSortBottomSheet(BuildContext context, CollectionSort initial) {

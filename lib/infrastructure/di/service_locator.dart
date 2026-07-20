@@ -4,6 +4,7 @@ import '../../application/use_cases/load_card_layout_use_case.dart';
 import '../../application/use_cases/load_collection_use_case.dart';
 import '../../application/use_cases/load_collection_view_use_case.dart';
 import '../../application/use_cases/load_credentials_use_case.dart';
+import '../../application/use_cases/load_game_details_use_case.dart';
 import '../../application/use_cases/load_theme_config_use_case.dart';
 import '../../application/use_cases/login_use_case.dart';
 import '../../application/use_cases/save_card_layout_use_case.dart';
@@ -59,6 +60,7 @@ class ServiceLocator {
   late final LoadThemeConfigUseCase loadThemeConfig;
   late final SaveThemeConfigUseCase saveThemeConfig;
   late final LoadCollectionUseCase loadCollection;
+  late final LoadGameDetailsUseCase loadGameDetails;
   late final LoadCredentialsUseCase loadCredentials;
   late final SaveCredentialsUseCase saveCredentials;
   late final LoginUseCase login;
@@ -78,6 +80,11 @@ class ServiceLocator {
     _thumbnailCache = FileThumbnailCache();
 
     loadCollection = LoadCollectionUseCase(_collectionStore);
+    loadGameDetails = LoadGameDetailsUseCase(
+      _collectionStore,
+      gameStore,
+      _thumbnailCache,
+    );
     loadCardLayout = LoadCardLayoutUseCase(_cardLayoutStore);
     saveCardLayout = SaveCardLayoutUseCase(_cardLayoutStore);
     loadCollectionView = LoadCollectionViewUseCase(_collectionViewStore);
@@ -92,6 +99,7 @@ class ServiceLocator {
       _sessionStore,
       _bggApi,
       _collectionStore,
+      gameStore,
       _thumbnailCache,
     );
   }

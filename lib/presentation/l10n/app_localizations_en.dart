@@ -121,6 +121,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsBggPasswordLabel => 'BGG Password';
 
   @override
+  String get settingsBggApiTokenLabel => 'BGG API Token (optional)';
+
+  @override
+  String get settingsBggApiTokenHint =>
+      'Required for game details from /xmlapi2/thing';
+
+  @override
   String get settingsSaveCredentialsButton => 'Save Credentials';
 
   @override
@@ -311,4 +318,54 @@ class AppLocalizationsEn extends AppLocalizations {
   String errorSaveCardLayout(String details) {
     return 'Failed to save card layout: $details';
   }
+
+  @override
+  String get detailBackTooltip => 'Back';
+
+  @override
+  String get detailOpenBggTooltip => 'Open on BoardGameGeek';
+
+  @override
+  String detailAlternateNames(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count alternate names',
+      one: '1 alternate name',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get detailOriginalName => 'Original name';
+
+  @override
+  String get detailYearPublished => 'Year published';
+
+  @override
+  String get detailPlayerCount => 'Players';
+
+  @override
+  String get detailPlayingTime => 'Playing time';
+
+  @override
+  String get detailRating => 'Rating';
+
+  @override
+  String get detailRank => 'Rank';
+
+  @override
+  String get detailVersion => 'Version';
+
+  @override
+  String get detailPlays => 'Plays';
+
+  @override
+  String get detailUserCount => 'Number of ratings';
+
+  @override
+  String get detailNotAvailable => '–';
+
+  @override
+  String get detailGameNotFound => 'Game not found';
 }

@@ -15,6 +15,10 @@ class _MockAuthenticationService extends Mock
     implements AuthenticationService {}
 
 void main() {
+  setUpAll(() {
+    registerFallbackValue(const BggSession(sessionCookies: ''));
+  });
+
   group('LoginUseCase', () {
     late CredentialStore credentialStore;
     late SessionStore sessionStore;
@@ -38,19 +42,44 @@ void main() {
         password: 'secret',
       );
       const session = BggSession(sessionCookies: 'bggSession=abc123');
+      const mergedSession = BggSession(
+        sessionCookies: 'bggSession=abc123',
+        apiToken: null,
+      );
 
       when(
         () => authenticationService.authenticate(credentials),
       ).thenAnswer((_) async => session);
-      when(() => sessionStore.save(session)).thenAnswer((_) async => {});
+      when(() => sessionStore.save(any())).thenAnswer((_) async => {});
 
       final result = await useCase(credentials: credentials);
 
-      expect(result, equals(session));
+      expect(result.sessionCookies, equals(mergedSession.sessionCookies));
       verify(() => authenticationService.authenticate(credentials)).called(1);
-      verify(() => sessionStore.save(session)).called(1);
+      verify(() => sessionStore.save(any())).called(1);
       verifyNever(credentialStore.load);
     });
+
+    test(
+      'merges stored API token into session when login response has no token',
+      () async {
+        const credentials = BggCredentials(
+          username: 'meepleUser',
+          password: 'secret',
+          apiToken: 'manual-token',
+        );
+        const session = BggSession(sessionCookies: 'bggSession=abc123');
+
+        when(
+          () => authenticationService.authenticate(credentials),
+        ).thenAnswer((_) async => session);
+        when(() => sessionStore.save(any())).thenAnswer((_) async => {});
+
+        final result = await useCase(credentials: credentials);
+
+        expect(result.apiToken, equals('manual-token'));
+      },
+    );
 
     test('loads credentials from store when none are provided', () async {
       const credentials = BggCredentials(
@@ -63,14 +92,14 @@ void main() {
       when(
         () => authenticationService.authenticate(credentials),
       ).thenAnswer((_) async => session);
-      when(() => sessionStore.save(session)).thenAnswer((_) async => {});
+      when(() => sessionStore.save(any())).thenAnswer((_) async => {});
 
       final result = await useCase();
 
-      expect(result, equals(session));
+      expect(result.sessionCookies, equals(session.sessionCookies));
       verify(credentialStore.load).called(1);
       verify(() => authenticationService.authenticate(credentials)).called(1);
-      verify(() => sessionStore.save(session)).called(1);
+      verify(() => sessionStore.save(any())).called(1);
     });
 
     test(

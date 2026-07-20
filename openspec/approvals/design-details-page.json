@@ -1,0 +1,25 @@
+{
+  "changeId": "design-details-page",
+  "status": "in_progress",
+  "approvals": [
+    {
+      "approver": "user",
+      "approvedAt": "2026-07-14T14:21:03.588Z"
+    }
+  ],
+  "rejections": [],
+  "history": [
+    {
+      "action": "request_approval",
+      "by": "ai-assistant",
+      "at": "2026-07-14T14:17:22.672Z"
+    },
+    {
+      "action": "approved",
+      "by": "user",
+      "at": "2026-07-14T14:21:03.588Z"
+    }
+  ],
+  "requestedAt": "2026-07-14T14:17:22.672Z",
+  "requestedBy": "ai-assistant"
+}
