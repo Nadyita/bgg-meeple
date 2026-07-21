@@ -40,6 +40,58 @@ flutter build apk --release
 
 The release APK is written to `build/app/outputs/flutter-apk/app-release.apk`.
 
+When no release signing credentials are configured, the build falls back to the debug signing key. This is fine for local testing, but release artifacts that are distributed to users must be signed with the project's release keystore.
+
+### Android release signing
+
+Release builds must be signed with the shared project keystore so that users can install updates over existing versions. The keystore file and passwords are **never committed** to the repository.
+
+#### Required secrets
+
+- `BGG_MEEPL_KEYSTORE_BASE64`: Base64-encoded content of `bgg_meeple_release.keystore`
+- `BGG_MEEPL_KEYSTORE_PASSWORD`: Keystore password
+- `BGG_MEEPL_KEY_ALIAS`: Key alias (default: `bgg_meeple`)
+- `BGG_MEEPL_KEY_PASSWORD`: Key password
+
+#### Creating the release keystore
+
+Run the following command once and keep the resulting file in a safe place. Losing the keystore makes it impossible to publish updates to existing installations.
+
+```bash
+keytool -genkey -v \
+  -keystore bgg_meeple_release.keystore \
+  -alias bgg_meeple \
+  -keyalg RSA \
+  -keysize 2048 \
+  -validity 10000 \
+  -storepass YOUR_KEYSTORE_PASSWORD \
+  -keypass YOUR_KEY_PASSWORD \
+  -dname "CN=BGG Meeple, O=BGG Meeple, C=DE"
+```
+
+#### Configuring GitHub Actions
+
+1. Go to **Settings → Secrets and variables → Actions** in the GitHub repository.
+2. Add the four secrets listed above.
+3. Encode the keystore for the secret:
+   ```bash
+   base64 -w 0 bgg_meeple_release.keystore
+   ```
+
+The `release.yml` workflow decodes the keystore, builds a signed APK, and removes the decoded file after the build.
+
+#### Building a signed release locally
+
+If you have the keystore file locally, you can build a signed release APK by exporting the credentials:
+
+```bash
+export BGG_MEEPL_KEYSTORE_PATH=/path/to/bgg_meeple_release.keystore
+export BGG_MEEPL_KEYSTORE_PASSWORD=YOUR_KEYSTORE_PASSWORD
+export BGG_MEEPL_KEY_ALIAS=bgg_meeple
+export BGG_MEEPL_KEY_PASSWORD=YOUR_KEY_PASSWORD
+flutter build apk --release
+```
+
 ### Create a release
 
 Releases are created automatically from Git tags that start with `v`:

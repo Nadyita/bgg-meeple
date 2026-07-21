@@ -66,6 +66,7 @@ Each capability links to its authoritative OpenSpec spec. Detailed acceptance cr
 | Settings and theme | [`openspec/specs/settings-and-theme/spec.md`](openspec/specs/settings-and-theme/spec.md) | UX01–UX02, UX05 | implemented |
 | CI/CD | [`openspec/specs/ci-cd/spec.md`](openspec/specs/ci-cd/spec.md) | NF10–NF12, T07–T08 | implemented |
 | App icon | [`openspec/specs/app-icon/spec.md`](openspec/specs/app-icon/spec.md) | NF01, NF04 | implemented |
+| Android release signing | [`openspec/specs/android-release-signing/spec.md`](openspec/specs/android-release-signing/spec.md) | NF13 | planned |
 
 ### Discarded requirements
 

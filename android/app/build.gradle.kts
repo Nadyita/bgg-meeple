@@ -25,11 +25,29 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        create("release") {
+            val releaseKeystorePath = System.getenv("BGG_MEEPL_KEYSTORE_PATH")
+                ?: "../keystore/bgg_meeple_release.keystore"
+            storeFile = file(releaseKeystorePath)
+            storePassword = System.getenv("BGG_MEEPL_KEYSTORE_PASSWORD")
+            keyAlias = System.getenv("BGG_MEEPL_KEY_ALIAS") ?: "bgg_meeple"
+            keyPassword = System.getenv("BGG_MEEPL_KEY_PASSWORD")
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = if (
+                System.getenv("BGG_MEEPL_KEYSTORE_PASSWORD") != null &&
+                System.getenv("BGG_MEEPL_KEY_PASSWORD") != null
+            ) {
+                signingConfigs.getByName("release")
+            } else {
+                // Fall back to debug signing when release credentials are not available
+                // (e.g. local development without a release keystore).
+                signingConfigs.getByName("debug")
+            }
         }
     }
 }
