@@ -62,6 +62,17 @@ void main() {
       );
     });
 
+    test('release signing config resolves keystore path from project root', () {
+      final content = buildFile.readAsStringSync();
+
+      expect(
+        content.contains('rootProject.file(relativePath)'),
+        isTrue,
+        reason:
+            'release config must resolve the keystore path from the project root',
+      );
+    });
+
     test('.gitignore protects keystore files', () {
       final gitignore = File('android/.gitignore').readAsStringSync();
 
