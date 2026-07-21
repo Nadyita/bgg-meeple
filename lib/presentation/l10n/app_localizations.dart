@@ -701,7 +701,7 @@ abstract class AppLocalizations {
   /// No description provided for @detailUserCount.
   ///
   /// In en, this message translates to:
-  /// **'Number of ratings'**
+  /// **'votes'**
   String get detailUserCount;
 
   /// No description provided for @detailNotAvailable.

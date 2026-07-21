@@ -362,7 +362,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get detailPlays => 'Partien';
 
   @override
-  String get detailUserCount => 'Anzahl Bewertungen';
+  String get detailUserCount => 'Bewertungen';
 
   @override
   String get detailNotAvailable => '–';

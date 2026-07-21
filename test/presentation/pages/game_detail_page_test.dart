@@ -221,7 +221,38 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.textContaining('Rating'), findsOneWidget);
-      expect(find.text('7.35 (1234 Number of ratings)'), findsOneWidget);
+      expect(find.text('7.35 (1234 votes)'), findsOneWidget);
+    });
+
+    testWidgets('shows rating with vote count in German', (tester) async {
+      const item = CollectionItem(
+        thingId: 1,
+        collId: 1,
+        names: [LocalizedName(value: 'Catan', language: null, isPrimary: true)],
+        bayesAverage: 7.35,
+        geekRatingUserCount: 1234,
+      );
+
+      when(
+        () => loadGameDetails.call(1, 1),
+      ).thenAnswer((_) async => const GameDetails(collectionItem: item));
+
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: const Locale('de'),
+          home: GameDetailPage(
+            thingId: 1,
+            collId: 1,
+            loadGameDetails: loadGameDetails,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Bewertung:'), findsOneWidget);
+      expect(find.text('7.35 (1234 Bewertungen)'), findsOneWidget);
     });
 
     testWidgets('detail fields follow the spec order', (tester) async {

@@ -70,3 +70,12 @@ The detail page SHALL be closable via the app-bar back arrow, the Escape key, or
 #### Scenario: Escape key closes detail page
 - **WHEN** the user presses the Escape key on Linux Desktop
 - **THEN** the detail page closes and the collection list is shown
+
+### Requirement: Detail page labels are concise and grammatically correct
+All labels used on the detail page SHALL be concise and fit their interpolation context. Labels that are appended directly to a numeric value SHALL be plain nouns and SHALL NOT repeat counting words such as "Anzahl" or "Number of".
+
+#### Scenario: User count label fits the parenthesized rating format
+- **WHEN** the app shows the rating together with the user count
+- **THEN** the formatted line uses a short, grammatically correct label after the number, e.g. `6.19 (5567 votes)` in English
+- **AND** the German equivalent reads as `6.19 (5567 Bewertungen)`
+

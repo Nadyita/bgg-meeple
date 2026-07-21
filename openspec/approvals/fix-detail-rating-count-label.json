@@ -1,0 +1,29 @@
+{
+  "changeId": "fix-detail-rating-count-label",
+  "status": "in_progress",
+  "approvals": [
+    {
+      "approver": "user",
+      "approvedAt": "2026-07-21T12:37:34.631Z"
+    }
+  ],
+  "rejections": [],
+  "history": [
+    {
+      "action": "request_approval",
+      "by": "ai-assistant",
+      "at": "2026-07-21T12:36:56.597Z",
+      "details": "Reviewers: user"
+    },
+    {
+      "action": "approved",
+      "by": "user",
+      "at": "2026-07-21T12:37:34.631Z"
+    }
+  ],
+  "requestedAt": "2026-07-21T12:36:56.597Z",
+  "requestedBy": "ai-assistant",
+  "reviewers": [
+    "user"
+  ]
+}

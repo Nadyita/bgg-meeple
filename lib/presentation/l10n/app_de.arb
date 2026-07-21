@@ -273,7 +273,7 @@
   "detailRank": "Rang",
   "detailVersion": "Version",
   "detailPlays": "Partien",
-  "detailUserCount": "Anzahl Bewertungen",
+  "detailUserCount": "Bewertungen",
   "detailNotAvailable": "–",
   "detailGameNotFound": "Spiel nicht gefunden"
 }

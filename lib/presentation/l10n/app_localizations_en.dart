@@ -361,7 +361,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get detailPlays => 'Plays';
 
   @override
-  String get detailUserCount => 'Number of ratings';
+  String get detailUserCount => 'votes';
 
   @override
   String get detailNotAvailable => '–';
