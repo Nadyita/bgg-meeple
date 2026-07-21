@@ -29,14 +29,18 @@ You MUST follow the workflow below.
      or cross-cutting decisions are needed).
    - `tasks.md` — implementation checklist with `- [ ]` tasks. Include 
      test tasks here; they are not optional.
-4. Present tasks.md to the user and wait for explicit confirmation 
+4. Create and work on a dedicated Git branch named exactly like the 
+   change ID (e.g. `add-user-auth`). Every feature or change MUST live on 
+   its own branch; never implement multiple changes on the same branch and 
+   never commit directly to the default branch.
+5. Present `tasks.md` to the user and wait for explicit confirmation
    (e.g., "yes", "looks good", "implement this") before writing any code. 
    Do not call any approval tools; wait for a chat message.
-5. Write tests alongside the implementation, not after. Every feature or 
+6. Write tests alongside the implementation, not after. Every feature or 
    behavioral change MUST have corresponding test coverage.
-6. Update task status with `openspec_update_task` as you complete work.
-7. Validate with `openspec_validate_change` before finishing.
-8. Archive completed changes with `openspec_archive_change`.
+7. Update task status with `openspec_update_task` as you complete work.
+8. Validate with `openspec_validate_change` before finishing.
+9. Archive completed changes with `openspec_archive_change`.
 
 ## Spec Integrity (Non-Negotiable)
 
