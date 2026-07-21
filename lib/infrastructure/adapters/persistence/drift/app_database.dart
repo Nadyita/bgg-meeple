@@ -7,15 +7,24 @@ import 'package:path_provider/path_provider.dart';
 
 part 'app_database.g.dart';
 
-/// Drift database that caches BGG collection, game details and version data.
-@DriftDatabase(tables: [CollectionItems, BoardGames, LocalizedNames, Versions])
+/// Drift database that caches BGG collection, game details, version, and play data.
+@DriftDatabase(
+  tables: [
+    CollectionItems,
+    BoardGames,
+    LocalizedNames,
+    Versions,
+    Plays,
+    PlayPlayers,
+  ],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? _openConnection());
 
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration {
@@ -24,10 +33,10 @@ class AppDatabase extends _$AppDatabase {
         await m.createAll();
       },
       onUpgrade: (Migrator m, int from, int to) async {
-        if (from < 7) {
-          // Schema v7 introduces many new game-detail columns and changes the
-          // way localized names are linked. Cache data is repopulated on next
-          // sync, so we recreate all tables rather than migrating in place.
+        if (from < 8) {
+          // Schema v8 adds play and play_player tables. Cache data is
+          // repopulated on next sync, so we recreate all tables rather than
+          // migrating in place.
           for (final table in allTables) {
             await m.deleteTable(table.actualTableName);
           }
@@ -129,6 +138,49 @@ class BoardGames extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+/// Local cache for selected BGG versions/editions.
+class Versions extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get bggVersionId => integer()();
+  TextColumn get name => text()();
+  IntColumn get year => integer().nullable()();
+}
+
+/// Local cache for a single logged BGG play.
+class Plays extends Table {
+  IntColumn get id => integer()();
+  IntColumn get thingId => integer()();
+  TextColumn get gameName => text()();
+  TextColumn get date => text()();
+  IntColumn get quantity => integer().withDefault(const Constant(1))();
+  IntColumn get length => integer().withDefault(const Constant(0))();
+  BoolColumn get incomplete => boolean().withDefault(const Constant(false))();
+  BoolColumn get noWinStats => boolean().withDefault(const Constant(false))();
+  TextColumn get location => text().nullable()();
+  TextColumn get comments => text().nullable()();
+  TextColumn get subtypes =>
+      text().withDefault(const Constant('[]')).nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
+}
+
+/// Local cache for a player participating in a logged BGG play.
+class PlayPlayers extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get playId =>
+      integer().customConstraint('REFERENCES plays(id) NOT NULL')();
+  TextColumn get username => text().nullable()();
+  IntColumn get userId => integer().nullable()();
+  TextColumn get name => text().nullable()();
+  TextColumn get startPosition => text().nullable()();
+  TextColumn get color => text().nullable()();
+  TextColumn get score => text().nullable()();
+  BoolColumn get newPlayer => boolean().withDefault(const Constant(false))();
+  RealColumn get rating => real().nullable()();
+  BoolColumn get win => boolean().withDefault(const Constant(false))();
+}
+
 /// Localized or alternate names for a board game or version.
 class LocalizedNames extends Table {
   IntColumn get id => integer().autoIncrement()();
@@ -139,12 +191,4 @@ class LocalizedNames extends Table {
   TextColumn get value => text()();
   TextColumn get language => text().nullable()();
   BoolColumn get isPrimary => boolean().withDefault(const Constant(false))();
-}
-
-/// Local cache for selected BGG versions/editions.
-class Versions extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  IntColumn get bggVersionId => integer()();
-  TextColumn get name => text()();
-  IntColumn get year => integer().nullable()();
 }

@@ -7,6 +7,7 @@ import '../../domain/ports/game_store.dart';
 import '../../domain/ports/session_store.dart';
 import '../../domain/ports/thumbnail_cache.dart';
 import '../../infrastructure/adapters/api/bgg_api_client.dart';
+import 'sync_plays_use_case.dart';
 
 /// Progress event emitted while a sync is running.
 class SyncProgress {
@@ -42,8 +43,9 @@ class SyncCollectionUseCase {
     this._bggApi,
     this._collectionStore,
     this._gameStore,
-    this._thumbnailCache,
-  );
+    this._thumbnailCache, {
+    this.syncPlays,
+  });
 
   final CredentialStore _credentialStore;
   final SessionStore _sessionStore;
@@ -51,6 +53,7 @@ class SyncCollectionUseCase {
   final CollectionStore _collectionStore;
   final GameStore _gameStore;
   final ThumbnailCache _thumbnailCache;
+  final SyncPlaysUseCase? syncPlays;
 
   /// Runs the sync.
   Future<SyncResult> call({void Function(SyncProgress)? onProgress}) async {
@@ -133,6 +136,11 @@ class SyncCollectionUseCase {
     }
 
     await _collectionStore.saveAll(items);
+
+    final syncPlays = this.syncPlays;
+    if (syncPlays != null) {
+      await syncPlays(onProgress: onProgress);
+    }
 
     stopwatch.stop();
     return SyncResult(items: items, duration: stopwatch.elapsed);

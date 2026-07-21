@@ -4041,6 +4041,1299 @@ class LocalizedNamesCompanion extends UpdateCompanion<LocalizedName> {
   }
 }
 
+class $PlaysTable extends Plays with TableInfo<$PlaysTable, Play> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $PlaysTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _thingIdMeta = const VerificationMeta(
+    'thingId',
+  );
+  @override
+  late final GeneratedColumn<int> thingId = GeneratedColumn<int>(
+    'thing_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _gameNameMeta = const VerificationMeta(
+    'gameName',
+  );
+  @override
+  late final GeneratedColumn<String> gameName = GeneratedColumn<String>(
+    'game_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _dateMeta = const VerificationMeta('date');
+  @override
+  late final GeneratedColumn<String> date = GeneratedColumn<String>(
+    'date',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _quantityMeta = const VerificationMeta(
+    'quantity',
+  );
+  @override
+  late final GeneratedColumn<int> quantity = GeneratedColumn<int>(
+    'quantity',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _lengthMeta = const VerificationMeta('length');
+  @override
+  late final GeneratedColumn<int> length = GeneratedColumn<int>(
+    'length',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _incompleteMeta = const VerificationMeta(
+    'incomplete',
+  );
+  @override
+  late final GeneratedColumn<bool> incomplete = GeneratedColumn<bool>(
+    'incomplete',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("incomplete" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _noWinStatsMeta = const VerificationMeta(
+    'noWinStats',
+  );
+  @override
+  late final GeneratedColumn<bool> noWinStats = GeneratedColumn<bool>(
+    'no_win_stats',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("no_win_stats" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _locationMeta = const VerificationMeta(
+    'location',
+  );
+  @override
+  late final GeneratedColumn<String> location = GeneratedColumn<String>(
+    'location',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _commentsMeta = const VerificationMeta(
+    'comments',
+  );
+  @override
+  late final GeneratedColumn<String> comments = GeneratedColumn<String>(
+    'comments',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _subtypesMeta = const VerificationMeta(
+    'subtypes',
+  );
+  @override
+  late final GeneratedColumn<String> subtypes = GeneratedColumn<String>(
+    'subtypes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('[]'),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    thingId,
+    gameName,
+    date,
+    quantity,
+    length,
+    incomplete,
+    noWinStats,
+    location,
+    comments,
+    subtypes,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'plays';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Play> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('thing_id')) {
+      context.handle(
+        _thingIdMeta,
+        thingId.isAcceptableOrUnknown(data['thing_id']!, _thingIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_thingIdMeta);
+    }
+    if (data.containsKey('game_name')) {
+      context.handle(
+        _gameNameMeta,
+        gameName.isAcceptableOrUnknown(data['game_name']!, _gameNameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_gameNameMeta);
+    }
+    if (data.containsKey('date')) {
+      context.handle(
+        _dateMeta,
+        date.isAcceptableOrUnknown(data['date']!, _dateMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_dateMeta);
+    }
+    if (data.containsKey('quantity')) {
+      context.handle(
+        _quantityMeta,
+        quantity.isAcceptableOrUnknown(data['quantity']!, _quantityMeta),
+      );
+    }
+    if (data.containsKey('length')) {
+      context.handle(
+        _lengthMeta,
+        length.isAcceptableOrUnknown(data['length']!, _lengthMeta),
+      );
+    }
+    if (data.containsKey('incomplete')) {
+      context.handle(
+        _incompleteMeta,
+        incomplete.isAcceptableOrUnknown(data['incomplete']!, _incompleteMeta),
+      );
+    }
+    if (data.containsKey('no_win_stats')) {
+      context.handle(
+        _noWinStatsMeta,
+        noWinStats.isAcceptableOrUnknown(
+          data['no_win_stats']!,
+          _noWinStatsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('location')) {
+      context.handle(
+        _locationMeta,
+        location.isAcceptableOrUnknown(data['location']!, _locationMeta),
+      );
+    }
+    if (data.containsKey('comments')) {
+      context.handle(
+        _commentsMeta,
+        comments.isAcceptableOrUnknown(data['comments']!, _commentsMeta),
+      );
+    }
+    if (data.containsKey('subtypes')) {
+      context.handle(
+        _subtypesMeta,
+        subtypes.isAcceptableOrUnknown(data['subtypes']!, _subtypesMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Play map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Play(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      thingId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}thing_id'],
+      )!,
+      gameName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}game_name'],
+      )!,
+      date: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}date'],
+      )!,
+      quantity: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}quantity'],
+      )!,
+      length: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}length'],
+      )!,
+      incomplete: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}incomplete'],
+      )!,
+      noWinStats: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}no_win_stats'],
+      )!,
+      location: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}location'],
+      ),
+      comments: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}comments'],
+      ),
+      subtypes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}subtypes'],
+      ),
+    );
+  }
+
+  @override
+  $PlaysTable createAlias(String alias) {
+    return $PlaysTable(attachedDatabase, alias);
+  }
+}
+
+class Play extends DataClass implements Insertable<Play> {
+  final int id;
+  final int thingId;
+  final String gameName;
+  final String date;
+  final int quantity;
+  final int length;
+  final bool incomplete;
+  final bool noWinStats;
+  final String? location;
+  final String? comments;
+  final String? subtypes;
+  const Play({
+    required this.id,
+    required this.thingId,
+    required this.gameName,
+    required this.date,
+    required this.quantity,
+    required this.length,
+    required this.incomplete,
+    required this.noWinStats,
+    this.location,
+    this.comments,
+    this.subtypes,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['thing_id'] = Variable<int>(thingId);
+    map['game_name'] = Variable<String>(gameName);
+    map['date'] = Variable<String>(date);
+    map['quantity'] = Variable<int>(quantity);
+    map['length'] = Variable<int>(length);
+    map['incomplete'] = Variable<bool>(incomplete);
+    map['no_win_stats'] = Variable<bool>(noWinStats);
+    if (!nullToAbsent || location != null) {
+      map['location'] = Variable<String>(location);
+    }
+    if (!nullToAbsent || comments != null) {
+      map['comments'] = Variable<String>(comments);
+    }
+    if (!nullToAbsent || subtypes != null) {
+      map['subtypes'] = Variable<String>(subtypes);
+    }
+    return map;
+  }
+
+  PlaysCompanion toCompanion(bool nullToAbsent) {
+    return PlaysCompanion(
+      id: Value(id),
+      thingId: Value(thingId),
+      gameName: Value(gameName),
+      date: Value(date),
+      quantity: Value(quantity),
+      length: Value(length),
+      incomplete: Value(incomplete),
+      noWinStats: Value(noWinStats),
+      location: location == null && nullToAbsent
+          ? const Value.absent()
+          : Value(location),
+      comments: comments == null && nullToAbsent
+          ? const Value.absent()
+          : Value(comments),
+      subtypes: subtypes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(subtypes),
+    );
+  }
+
+  factory Play.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Play(
+      id: serializer.fromJson<int>(json['id']),
+      thingId: serializer.fromJson<int>(json['thingId']),
+      gameName: serializer.fromJson<String>(json['gameName']),
+      date: serializer.fromJson<String>(json['date']),
+      quantity: serializer.fromJson<int>(json['quantity']),
+      length: serializer.fromJson<int>(json['length']),
+      incomplete: serializer.fromJson<bool>(json['incomplete']),
+      noWinStats: serializer.fromJson<bool>(json['noWinStats']),
+      location: serializer.fromJson<String?>(json['location']),
+      comments: serializer.fromJson<String?>(json['comments']),
+      subtypes: serializer.fromJson<String?>(json['subtypes']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'thingId': serializer.toJson<int>(thingId),
+      'gameName': serializer.toJson<String>(gameName),
+      'date': serializer.toJson<String>(date),
+      'quantity': serializer.toJson<int>(quantity),
+      'length': serializer.toJson<int>(length),
+      'incomplete': serializer.toJson<bool>(incomplete),
+      'noWinStats': serializer.toJson<bool>(noWinStats),
+      'location': serializer.toJson<String?>(location),
+      'comments': serializer.toJson<String?>(comments),
+      'subtypes': serializer.toJson<String?>(subtypes),
+    };
+  }
+
+  Play copyWith({
+    int? id,
+    int? thingId,
+    String? gameName,
+    String? date,
+    int? quantity,
+    int? length,
+    bool? incomplete,
+    bool? noWinStats,
+    Value<String?> location = const Value.absent(),
+    Value<String?> comments = const Value.absent(),
+    Value<String?> subtypes = const Value.absent(),
+  }) => Play(
+    id: id ?? this.id,
+    thingId: thingId ?? this.thingId,
+    gameName: gameName ?? this.gameName,
+    date: date ?? this.date,
+    quantity: quantity ?? this.quantity,
+    length: length ?? this.length,
+    incomplete: incomplete ?? this.incomplete,
+    noWinStats: noWinStats ?? this.noWinStats,
+    location: location.present ? location.value : this.location,
+    comments: comments.present ? comments.value : this.comments,
+    subtypes: subtypes.present ? subtypes.value : this.subtypes,
+  );
+  Play copyWithCompanion(PlaysCompanion data) {
+    return Play(
+      id: data.id.present ? data.id.value : this.id,
+      thingId: data.thingId.present ? data.thingId.value : this.thingId,
+      gameName: data.gameName.present ? data.gameName.value : this.gameName,
+      date: data.date.present ? data.date.value : this.date,
+      quantity: data.quantity.present ? data.quantity.value : this.quantity,
+      length: data.length.present ? data.length.value : this.length,
+      incomplete: data.incomplete.present
+          ? data.incomplete.value
+          : this.incomplete,
+      noWinStats: data.noWinStats.present
+          ? data.noWinStats.value
+          : this.noWinStats,
+      location: data.location.present ? data.location.value : this.location,
+      comments: data.comments.present ? data.comments.value : this.comments,
+      subtypes: data.subtypes.present ? data.subtypes.value : this.subtypes,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Play(')
+          ..write('id: $id, ')
+          ..write('thingId: $thingId, ')
+          ..write('gameName: $gameName, ')
+          ..write('date: $date, ')
+          ..write('quantity: $quantity, ')
+          ..write('length: $length, ')
+          ..write('incomplete: $incomplete, ')
+          ..write('noWinStats: $noWinStats, ')
+          ..write('location: $location, ')
+          ..write('comments: $comments, ')
+          ..write('subtypes: $subtypes')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    thingId,
+    gameName,
+    date,
+    quantity,
+    length,
+    incomplete,
+    noWinStats,
+    location,
+    comments,
+    subtypes,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Play &&
+          other.id == this.id &&
+          other.thingId == this.thingId &&
+          other.gameName == this.gameName &&
+          other.date == this.date &&
+          other.quantity == this.quantity &&
+          other.length == this.length &&
+          other.incomplete == this.incomplete &&
+          other.noWinStats == this.noWinStats &&
+          other.location == this.location &&
+          other.comments == this.comments &&
+          other.subtypes == this.subtypes);
+}
+
+class PlaysCompanion extends UpdateCompanion<Play> {
+  final Value<int> id;
+  final Value<int> thingId;
+  final Value<String> gameName;
+  final Value<String> date;
+  final Value<int> quantity;
+  final Value<int> length;
+  final Value<bool> incomplete;
+  final Value<bool> noWinStats;
+  final Value<String?> location;
+  final Value<String?> comments;
+  final Value<String?> subtypes;
+  const PlaysCompanion({
+    this.id = const Value.absent(),
+    this.thingId = const Value.absent(),
+    this.gameName = const Value.absent(),
+    this.date = const Value.absent(),
+    this.quantity = const Value.absent(),
+    this.length = const Value.absent(),
+    this.incomplete = const Value.absent(),
+    this.noWinStats = const Value.absent(),
+    this.location = const Value.absent(),
+    this.comments = const Value.absent(),
+    this.subtypes = const Value.absent(),
+  });
+  PlaysCompanion.insert({
+    this.id = const Value.absent(),
+    required int thingId,
+    required String gameName,
+    required String date,
+    this.quantity = const Value.absent(),
+    this.length = const Value.absent(),
+    this.incomplete = const Value.absent(),
+    this.noWinStats = const Value.absent(),
+    this.location = const Value.absent(),
+    this.comments = const Value.absent(),
+    this.subtypes = const Value.absent(),
+  }) : thingId = Value(thingId),
+       gameName = Value(gameName),
+       date = Value(date);
+  static Insertable<Play> custom({
+    Expression<int>? id,
+    Expression<int>? thingId,
+    Expression<String>? gameName,
+    Expression<String>? date,
+    Expression<int>? quantity,
+    Expression<int>? length,
+    Expression<bool>? incomplete,
+    Expression<bool>? noWinStats,
+    Expression<String>? location,
+    Expression<String>? comments,
+    Expression<String>? subtypes,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (thingId != null) 'thing_id': thingId,
+      if (gameName != null) 'game_name': gameName,
+      if (date != null) 'date': date,
+      if (quantity != null) 'quantity': quantity,
+      if (length != null) 'length': length,
+      if (incomplete != null) 'incomplete': incomplete,
+      if (noWinStats != null) 'no_win_stats': noWinStats,
+      if (location != null) 'location': location,
+      if (comments != null) 'comments': comments,
+      if (subtypes != null) 'subtypes': subtypes,
+    });
+  }
+
+  PlaysCompanion copyWith({
+    Value<int>? id,
+    Value<int>? thingId,
+    Value<String>? gameName,
+    Value<String>? date,
+    Value<int>? quantity,
+    Value<int>? length,
+    Value<bool>? incomplete,
+    Value<bool>? noWinStats,
+    Value<String?>? location,
+    Value<String?>? comments,
+    Value<String?>? subtypes,
+  }) {
+    return PlaysCompanion(
+      id: id ?? this.id,
+      thingId: thingId ?? this.thingId,
+      gameName: gameName ?? this.gameName,
+      date: date ?? this.date,
+      quantity: quantity ?? this.quantity,
+      length: length ?? this.length,
+      incomplete: incomplete ?? this.incomplete,
+      noWinStats: noWinStats ?? this.noWinStats,
+      location: location ?? this.location,
+      comments: comments ?? this.comments,
+      subtypes: subtypes ?? this.subtypes,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (thingId.present) {
+      map['thing_id'] = Variable<int>(thingId.value);
+    }
+    if (gameName.present) {
+      map['game_name'] = Variable<String>(gameName.value);
+    }
+    if (date.present) {
+      map['date'] = Variable<String>(date.value);
+    }
+    if (quantity.present) {
+      map['quantity'] = Variable<int>(quantity.value);
+    }
+    if (length.present) {
+      map['length'] = Variable<int>(length.value);
+    }
+    if (incomplete.present) {
+      map['incomplete'] = Variable<bool>(incomplete.value);
+    }
+    if (noWinStats.present) {
+      map['no_win_stats'] = Variable<bool>(noWinStats.value);
+    }
+    if (location.present) {
+      map['location'] = Variable<String>(location.value);
+    }
+    if (comments.present) {
+      map['comments'] = Variable<String>(comments.value);
+    }
+    if (subtypes.present) {
+      map['subtypes'] = Variable<String>(subtypes.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PlaysCompanion(')
+          ..write('id: $id, ')
+          ..write('thingId: $thingId, ')
+          ..write('gameName: $gameName, ')
+          ..write('date: $date, ')
+          ..write('quantity: $quantity, ')
+          ..write('length: $length, ')
+          ..write('incomplete: $incomplete, ')
+          ..write('noWinStats: $noWinStats, ')
+          ..write('location: $location, ')
+          ..write('comments: $comments, ')
+          ..write('subtypes: $subtypes')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $PlayPlayersTable extends PlayPlayers
+    with TableInfo<$PlayPlayersTable, PlayPlayer> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $PlayPlayersTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _playIdMeta = const VerificationMeta('playId');
+  @override
+  late final GeneratedColumn<int> playId = GeneratedColumn<int>(
+    'play_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'REFERENCES plays(id) NOT NULL',
+  );
+  static const VerificationMeta _usernameMeta = const VerificationMeta(
+    'username',
+  );
+  @override
+  late final GeneratedColumn<String> username = GeneratedColumn<String>(
+    'username',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<int> userId = GeneratedColumn<int>(
+    'user_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _startPositionMeta = const VerificationMeta(
+    'startPosition',
+  );
+  @override
+  late final GeneratedColumn<String> startPosition = GeneratedColumn<String>(
+    'start_position',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _colorMeta = const VerificationMeta('color');
+  @override
+  late final GeneratedColumn<String> color = GeneratedColumn<String>(
+    'color',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _scoreMeta = const VerificationMeta('score');
+  @override
+  late final GeneratedColumn<String> score = GeneratedColumn<String>(
+    'score',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _newPlayerMeta = const VerificationMeta(
+    'newPlayer',
+  );
+  @override
+  late final GeneratedColumn<bool> newPlayer = GeneratedColumn<bool>(
+    'new_player',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("new_player" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _ratingMeta = const VerificationMeta('rating');
+  @override
+  late final GeneratedColumn<double> rating = GeneratedColumn<double>(
+    'rating',
+    aliasedName,
+    true,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _winMeta = const VerificationMeta('win');
+  @override
+  late final GeneratedColumn<bool> win = GeneratedColumn<bool>(
+    'win',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("win" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    playId,
+    username,
+    userId,
+    name,
+    startPosition,
+    color,
+    score,
+    newPlayer,
+    rating,
+    win,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'play_players';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<PlayPlayer> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('play_id')) {
+      context.handle(
+        _playIdMeta,
+        playId.isAcceptableOrUnknown(data['play_id']!, _playIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_playIdMeta);
+    }
+    if (data.containsKey('username')) {
+      context.handle(
+        _usernameMeta,
+        username.isAcceptableOrUnknown(data['username']!, _usernameMeta),
+      );
+    }
+    if (data.containsKey('user_id')) {
+      context.handle(
+        _userIdMeta,
+        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
+      );
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    }
+    if (data.containsKey('start_position')) {
+      context.handle(
+        _startPositionMeta,
+        startPosition.isAcceptableOrUnknown(
+          data['start_position']!,
+          _startPositionMeta,
+        ),
+      );
+    }
+    if (data.containsKey('color')) {
+      context.handle(
+        _colorMeta,
+        color.isAcceptableOrUnknown(data['color']!, _colorMeta),
+      );
+    }
+    if (data.containsKey('score')) {
+      context.handle(
+        _scoreMeta,
+        score.isAcceptableOrUnknown(data['score']!, _scoreMeta),
+      );
+    }
+    if (data.containsKey('new_player')) {
+      context.handle(
+        _newPlayerMeta,
+        newPlayer.isAcceptableOrUnknown(data['new_player']!, _newPlayerMeta),
+      );
+    }
+    if (data.containsKey('rating')) {
+      context.handle(
+        _ratingMeta,
+        rating.isAcceptableOrUnknown(data['rating']!, _ratingMeta),
+      );
+    }
+    if (data.containsKey('win')) {
+      context.handle(
+        _winMeta,
+        win.isAcceptableOrUnknown(data['win']!, _winMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  PlayPlayer map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return PlayPlayer(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      playId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}play_id'],
+      )!,
+      username: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}username'],
+      ),
+      userId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}user_id'],
+      ),
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      ),
+      startPosition: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}start_position'],
+      ),
+      color: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}color'],
+      ),
+      score: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}score'],
+      ),
+      newPlayer: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}new_player'],
+      )!,
+      rating: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}rating'],
+      ),
+      win: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}win'],
+      )!,
+    );
+  }
+
+  @override
+  $PlayPlayersTable createAlias(String alias) {
+    return $PlayPlayersTable(attachedDatabase, alias);
+  }
+}
+
+class PlayPlayer extends DataClass implements Insertable<PlayPlayer> {
+  final int id;
+  final int playId;
+  final String? username;
+  final int? userId;
+  final String? name;
+  final String? startPosition;
+  final String? color;
+  final String? score;
+  final bool newPlayer;
+  final double? rating;
+  final bool win;
+  const PlayPlayer({
+    required this.id,
+    required this.playId,
+    this.username,
+    this.userId,
+    this.name,
+    this.startPosition,
+    this.color,
+    this.score,
+    required this.newPlayer,
+    this.rating,
+    required this.win,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['play_id'] = Variable<int>(playId);
+    if (!nullToAbsent || username != null) {
+      map['username'] = Variable<String>(username);
+    }
+    if (!nullToAbsent || userId != null) {
+      map['user_id'] = Variable<int>(userId);
+    }
+    if (!nullToAbsent || name != null) {
+      map['name'] = Variable<String>(name);
+    }
+    if (!nullToAbsent || startPosition != null) {
+      map['start_position'] = Variable<String>(startPosition);
+    }
+    if (!nullToAbsent || color != null) {
+      map['color'] = Variable<String>(color);
+    }
+    if (!nullToAbsent || score != null) {
+      map['score'] = Variable<String>(score);
+    }
+    map['new_player'] = Variable<bool>(newPlayer);
+    if (!nullToAbsent || rating != null) {
+      map['rating'] = Variable<double>(rating);
+    }
+    map['win'] = Variable<bool>(win);
+    return map;
+  }
+
+  PlayPlayersCompanion toCompanion(bool nullToAbsent) {
+    return PlayPlayersCompanion(
+      id: Value(id),
+      playId: Value(playId),
+      username: username == null && nullToAbsent
+          ? const Value.absent()
+          : Value(username),
+      userId: userId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(userId),
+      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
+      startPosition: startPosition == null && nullToAbsent
+          ? const Value.absent()
+          : Value(startPosition),
+      color: color == null && nullToAbsent
+          ? const Value.absent()
+          : Value(color),
+      score: score == null && nullToAbsent
+          ? const Value.absent()
+          : Value(score),
+      newPlayer: Value(newPlayer),
+      rating: rating == null && nullToAbsent
+          ? const Value.absent()
+          : Value(rating),
+      win: Value(win),
+    );
+  }
+
+  factory PlayPlayer.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return PlayPlayer(
+      id: serializer.fromJson<int>(json['id']),
+      playId: serializer.fromJson<int>(json['playId']),
+      username: serializer.fromJson<String?>(json['username']),
+      userId: serializer.fromJson<int?>(json['userId']),
+      name: serializer.fromJson<String?>(json['name']),
+      startPosition: serializer.fromJson<String?>(json['startPosition']),
+      color: serializer.fromJson<String?>(json['color']),
+      score: serializer.fromJson<String?>(json['score']),
+      newPlayer: serializer.fromJson<bool>(json['newPlayer']),
+      rating: serializer.fromJson<double?>(json['rating']),
+      win: serializer.fromJson<bool>(json['win']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'playId': serializer.toJson<int>(playId),
+      'username': serializer.toJson<String?>(username),
+      'userId': serializer.toJson<int?>(userId),
+      'name': serializer.toJson<String?>(name),
+      'startPosition': serializer.toJson<String?>(startPosition),
+      'color': serializer.toJson<String?>(color),
+      'score': serializer.toJson<String?>(score),
+      'newPlayer': serializer.toJson<bool>(newPlayer),
+      'rating': serializer.toJson<double?>(rating),
+      'win': serializer.toJson<bool>(win),
+    };
+  }
+
+  PlayPlayer copyWith({
+    int? id,
+    int? playId,
+    Value<String?> username = const Value.absent(),
+    Value<int?> userId = const Value.absent(),
+    Value<String?> name = const Value.absent(),
+    Value<String?> startPosition = const Value.absent(),
+    Value<String?> color = const Value.absent(),
+    Value<String?> score = const Value.absent(),
+    bool? newPlayer,
+    Value<double?> rating = const Value.absent(),
+    bool? win,
+  }) => PlayPlayer(
+    id: id ?? this.id,
+    playId: playId ?? this.playId,
+    username: username.present ? username.value : this.username,
+    userId: userId.present ? userId.value : this.userId,
+    name: name.present ? name.value : this.name,
+    startPosition: startPosition.present
+        ? startPosition.value
+        : this.startPosition,
+    color: color.present ? color.value : this.color,
+    score: score.present ? score.value : this.score,
+    newPlayer: newPlayer ?? this.newPlayer,
+    rating: rating.present ? rating.value : this.rating,
+    win: win ?? this.win,
+  );
+  PlayPlayer copyWithCompanion(PlayPlayersCompanion data) {
+    return PlayPlayer(
+      id: data.id.present ? data.id.value : this.id,
+      playId: data.playId.present ? data.playId.value : this.playId,
+      username: data.username.present ? data.username.value : this.username,
+      userId: data.userId.present ? data.userId.value : this.userId,
+      name: data.name.present ? data.name.value : this.name,
+      startPosition: data.startPosition.present
+          ? data.startPosition.value
+          : this.startPosition,
+      color: data.color.present ? data.color.value : this.color,
+      score: data.score.present ? data.score.value : this.score,
+      newPlayer: data.newPlayer.present ? data.newPlayer.value : this.newPlayer,
+      rating: data.rating.present ? data.rating.value : this.rating,
+      win: data.win.present ? data.win.value : this.win,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PlayPlayer(')
+          ..write('id: $id, ')
+          ..write('playId: $playId, ')
+          ..write('username: $username, ')
+          ..write('userId: $userId, ')
+          ..write('name: $name, ')
+          ..write('startPosition: $startPosition, ')
+          ..write('color: $color, ')
+          ..write('score: $score, ')
+          ..write('newPlayer: $newPlayer, ')
+          ..write('rating: $rating, ')
+          ..write('win: $win')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    playId,
+    username,
+    userId,
+    name,
+    startPosition,
+    color,
+    score,
+    newPlayer,
+    rating,
+    win,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is PlayPlayer &&
+          other.id == this.id &&
+          other.playId == this.playId &&
+          other.username == this.username &&
+          other.userId == this.userId &&
+          other.name == this.name &&
+          other.startPosition == this.startPosition &&
+          other.color == this.color &&
+          other.score == this.score &&
+          other.newPlayer == this.newPlayer &&
+          other.rating == this.rating &&
+          other.win == this.win);
+}
+
+class PlayPlayersCompanion extends UpdateCompanion<PlayPlayer> {
+  final Value<int> id;
+  final Value<int> playId;
+  final Value<String?> username;
+  final Value<int?> userId;
+  final Value<String?> name;
+  final Value<String?> startPosition;
+  final Value<String?> color;
+  final Value<String?> score;
+  final Value<bool> newPlayer;
+  final Value<double?> rating;
+  final Value<bool> win;
+  const PlayPlayersCompanion({
+    this.id = const Value.absent(),
+    this.playId = const Value.absent(),
+    this.username = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.name = const Value.absent(),
+    this.startPosition = const Value.absent(),
+    this.color = const Value.absent(),
+    this.score = const Value.absent(),
+    this.newPlayer = const Value.absent(),
+    this.rating = const Value.absent(),
+    this.win = const Value.absent(),
+  });
+  PlayPlayersCompanion.insert({
+    this.id = const Value.absent(),
+    required int playId,
+    this.username = const Value.absent(),
+    this.userId = const Value.absent(),
+    this.name = const Value.absent(),
+    this.startPosition = const Value.absent(),
+    this.color = const Value.absent(),
+    this.score = const Value.absent(),
+    this.newPlayer = const Value.absent(),
+    this.rating = const Value.absent(),
+    this.win = const Value.absent(),
+  }) : playId = Value(playId);
+  static Insertable<PlayPlayer> custom({
+    Expression<int>? id,
+    Expression<int>? playId,
+    Expression<String>? username,
+    Expression<int>? userId,
+    Expression<String>? name,
+    Expression<String>? startPosition,
+    Expression<String>? color,
+    Expression<String>? score,
+    Expression<bool>? newPlayer,
+    Expression<double>? rating,
+    Expression<bool>? win,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (playId != null) 'play_id': playId,
+      if (username != null) 'username': username,
+      if (userId != null) 'user_id': userId,
+      if (name != null) 'name': name,
+      if (startPosition != null) 'start_position': startPosition,
+      if (color != null) 'color': color,
+      if (score != null) 'score': score,
+      if (newPlayer != null) 'new_player': newPlayer,
+      if (rating != null) 'rating': rating,
+      if (win != null) 'win': win,
+    });
+  }
+
+  PlayPlayersCompanion copyWith({
+    Value<int>? id,
+    Value<int>? playId,
+    Value<String?>? username,
+    Value<int?>? userId,
+    Value<String?>? name,
+    Value<String?>? startPosition,
+    Value<String?>? color,
+    Value<String?>? score,
+    Value<bool>? newPlayer,
+    Value<double?>? rating,
+    Value<bool>? win,
+  }) {
+    return PlayPlayersCompanion(
+      id: id ?? this.id,
+      playId: playId ?? this.playId,
+      username: username ?? this.username,
+      userId: userId ?? this.userId,
+      name: name ?? this.name,
+      startPosition: startPosition ?? this.startPosition,
+      color: color ?? this.color,
+      score: score ?? this.score,
+      newPlayer: newPlayer ?? this.newPlayer,
+      rating: rating ?? this.rating,
+      win: win ?? this.win,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (playId.present) {
+      map['play_id'] = Variable<int>(playId.value);
+    }
+    if (username.present) {
+      map['username'] = Variable<String>(username.value);
+    }
+    if (userId.present) {
+      map['user_id'] = Variable<int>(userId.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (startPosition.present) {
+      map['start_position'] = Variable<String>(startPosition.value);
+    }
+    if (color.present) {
+      map['color'] = Variable<String>(color.value);
+    }
+    if (score.present) {
+      map['score'] = Variable<String>(score.value);
+    }
+    if (newPlayer.present) {
+      map['new_player'] = Variable<bool>(newPlayer.value);
+    }
+    if (rating.present) {
+      map['rating'] = Variable<double>(rating.value);
+    }
+    if (win.present) {
+      map['win'] = Variable<bool>(win.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('PlayPlayersCompanion(')
+          ..write('id: $id, ')
+          ..write('playId: $playId, ')
+          ..write('username: $username, ')
+          ..write('userId: $userId, ')
+          ..write('name: $name, ')
+          ..write('startPosition: $startPosition, ')
+          ..write('color: $color, ')
+          ..write('score: $score, ')
+          ..write('newPlayer: $newPlayer, ')
+          ..write('rating: $rating, ')
+          ..write('win: $win')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -4050,6 +5343,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   );
   late final $BoardGamesTable boardGames = $BoardGamesTable(this);
   late final $LocalizedNamesTable localizedNames = $LocalizedNamesTable(this);
+  late final $PlaysTable plays = $PlaysTable(this);
+  late final $PlayPlayersTable playPlayers = $PlayPlayersTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -4059,6 +5354,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     collectionItems,
     boardGames,
     localizedNames,
+    plays,
+    playPlayers,
   ];
 }
 
@@ -6516,6 +7813,836 @@ typedef $$LocalizedNamesTableProcessedTableManager =
       LocalizedName,
       PrefetchHooks Function({bool boardGameId, bool versionId})
     >;
+typedef $$PlaysTableCreateCompanionBuilder =
+    PlaysCompanion Function({
+      Value<int> id,
+      required int thingId,
+      required String gameName,
+      required String date,
+      Value<int> quantity,
+      Value<int> length,
+      Value<bool> incomplete,
+      Value<bool> noWinStats,
+      Value<String?> location,
+      Value<String?> comments,
+      Value<String?> subtypes,
+    });
+typedef $$PlaysTableUpdateCompanionBuilder =
+    PlaysCompanion Function({
+      Value<int> id,
+      Value<int> thingId,
+      Value<String> gameName,
+      Value<String> date,
+      Value<int> quantity,
+      Value<int> length,
+      Value<bool> incomplete,
+      Value<bool> noWinStats,
+      Value<String?> location,
+      Value<String?> comments,
+      Value<String?> subtypes,
+    });
+
+final class $$PlaysTableReferences
+    extends BaseReferences<_$AppDatabase, $PlaysTable, Play> {
+  $$PlaysTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$PlayPlayersTable, List<PlayPlayer>>
+  _playPlayersRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.playPlayers,
+    aliasName: $_aliasNameGenerator(db.plays.id, db.playPlayers.playId),
+  );
+
+  $$PlayPlayersTableProcessedTableManager get playPlayersRefs {
+    final manager = $$PlayPlayersTableTableManager(
+      $_db,
+      $_db.playPlayers,
+    ).filter((f) => f.playId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_playPlayersRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$PlaysTableFilterComposer extends Composer<_$AppDatabase, $PlaysTable> {
+  $$PlaysTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get thingId => $composableBuilder(
+    column: $table.thingId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get gameName => $composableBuilder(
+    column: $table.gameName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get quantity => $composableBuilder(
+    column: $table.quantity,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get length => $composableBuilder(
+    column: $table.length,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get incomplete => $composableBuilder(
+    column: $table.incomplete,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get noWinStats => $composableBuilder(
+    column: $table.noWinStats,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get location => $composableBuilder(
+    column: $table.location,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get comments => $composableBuilder(
+    column: $table.comments,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get subtypes => $composableBuilder(
+    column: $table.subtypes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> playPlayersRefs(
+    Expression<bool> Function($$PlayPlayersTableFilterComposer f) f,
+  ) {
+    final $$PlayPlayersTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.playPlayers,
+      getReferencedColumn: (t) => t.playId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PlayPlayersTableFilterComposer(
+            $db: $db,
+            $table: $db.playPlayers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$PlaysTableOrderingComposer
+    extends Composer<_$AppDatabase, $PlaysTable> {
+  $$PlaysTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get thingId => $composableBuilder(
+    column: $table.thingId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get gameName => $composableBuilder(
+    column: $table.gameName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get quantity => $composableBuilder(
+    column: $table.quantity,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get length => $composableBuilder(
+    column: $table.length,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get incomplete => $composableBuilder(
+    column: $table.incomplete,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get noWinStats => $composableBuilder(
+    column: $table.noWinStats,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get location => $composableBuilder(
+    column: $table.location,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get comments => $composableBuilder(
+    column: $table.comments,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get subtypes => $composableBuilder(
+    column: $table.subtypes,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$PlaysTableAnnotationComposer
+    extends Composer<_$AppDatabase, $PlaysTable> {
+  $$PlaysTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get thingId =>
+      $composableBuilder(column: $table.thingId, builder: (column) => column);
+
+  GeneratedColumn<String> get gameName =>
+      $composableBuilder(column: $table.gameName, builder: (column) => column);
+
+  GeneratedColumn<String> get date =>
+      $composableBuilder(column: $table.date, builder: (column) => column);
+
+  GeneratedColumn<int> get quantity =>
+      $composableBuilder(column: $table.quantity, builder: (column) => column);
+
+  GeneratedColumn<int> get length =>
+      $composableBuilder(column: $table.length, builder: (column) => column);
+
+  GeneratedColumn<bool> get incomplete => $composableBuilder(
+    column: $table.incomplete,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get noWinStats => $composableBuilder(
+    column: $table.noWinStats,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get location =>
+      $composableBuilder(column: $table.location, builder: (column) => column);
+
+  GeneratedColumn<String> get comments =>
+      $composableBuilder(column: $table.comments, builder: (column) => column);
+
+  GeneratedColumn<String> get subtypes =>
+      $composableBuilder(column: $table.subtypes, builder: (column) => column);
+
+  Expression<T> playPlayersRefs<T extends Object>(
+    Expression<T> Function($$PlayPlayersTableAnnotationComposer a) f,
+  ) {
+    final $$PlayPlayersTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.playPlayers,
+      getReferencedColumn: (t) => t.playId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PlayPlayersTableAnnotationComposer(
+            $db: $db,
+            $table: $db.playPlayers,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$PlaysTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $PlaysTable,
+          Play,
+          $$PlaysTableFilterComposer,
+          $$PlaysTableOrderingComposer,
+          $$PlaysTableAnnotationComposer,
+          $$PlaysTableCreateCompanionBuilder,
+          $$PlaysTableUpdateCompanionBuilder,
+          (Play, $$PlaysTableReferences),
+          Play,
+          PrefetchHooks Function({bool playPlayersRefs})
+        > {
+  $$PlaysTableTableManager(_$AppDatabase db, $PlaysTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$PlaysTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$PlaysTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$PlaysTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> thingId = const Value.absent(),
+                Value<String> gameName = const Value.absent(),
+                Value<String> date = const Value.absent(),
+                Value<int> quantity = const Value.absent(),
+                Value<int> length = const Value.absent(),
+                Value<bool> incomplete = const Value.absent(),
+                Value<bool> noWinStats = const Value.absent(),
+                Value<String?> location = const Value.absent(),
+                Value<String?> comments = const Value.absent(),
+                Value<String?> subtypes = const Value.absent(),
+              }) => PlaysCompanion(
+                id: id,
+                thingId: thingId,
+                gameName: gameName,
+                date: date,
+                quantity: quantity,
+                length: length,
+                incomplete: incomplete,
+                noWinStats: noWinStats,
+                location: location,
+                comments: comments,
+                subtypes: subtypes,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int thingId,
+                required String gameName,
+                required String date,
+                Value<int> quantity = const Value.absent(),
+                Value<int> length = const Value.absent(),
+                Value<bool> incomplete = const Value.absent(),
+                Value<bool> noWinStats = const Value.absent(),
+                Value<String?> location = const Value.absent(),
+                Value<String?> comments = const Value.absent(),
+                Value<String?> subtypes = const Value.absent(),
+              }) => PlaysCompanion.insert(
+                id: id,
+                thingId: thingId,
+                gameName: gameName,
+                date: date,
+                quantity: quantity,
+                length: length,
+                incomplete: incomplete,
+                noWinStats: noWinStats,
+                location: location,
+                comments: comments,
+                subtypes: subtypes,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) =>
+                    (e.readTable(table), $$PlaysTableReferences(db, table, e)),
+              )
+              .toList(),
+          prefetchHooksCallback: ({playPlayersRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [if (playPlayersRefs) db.playPlayers],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (playPlayersRefs)
+                    await $_getPrefetchedData<Play, $PlaysTable, PlayPlayer>(
+                      currentTable: table,
+                      referencedTable: $$PlaysTableReferences
+                          ._playPlayersRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$PlaysTableReferences(db, table, p0).playPlayersRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.playId == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$PlaysTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $PlaysTable,
+      Play,
+      $$PlaysTableFilterComposer,
+      $$PlaysTableOrderingComposer,
+      $$PlaysTableAnnotationComposer,
+      $$PlaysTableCreateCompanionBuilder,
+      $$PlaysTableUpdateCompanionBuilder,
+      (Play, $$PlaysTableReferences),
+      Play,
+      PrefetchHooks Function({bool playPlayersRefs})
+    >;
+typedef $$PlayPlayersTableCreateCompanionBuilder =
+    PlayPlayersCompanion Function({
+      Value<int> id,
+      required int playId,
+      Value<String?> username,
+      Value<int?> userId,
+      Value<String?> name,
+      Value<String?> startPosition,
+      Value<String?> color,
+      Value<String?> score,
+      Value<bool> newPlayer,
+      Value<double?> rating,
+      Value<bool> win,
+    });
+typedef $$PlayPlayersTableUpdateCompanionBuilder =
+    PlayPlayersCompanion Function({
+      Value<int> id,
+      Value<int> playId,
+      Value<String?> username,
+      Value<int?> userId,
+      Value<String?> name,
+      Value<String?> startPosition,
+      Value<String?> color,
+      Value<String?> score,
+      Value<bool> newPlayer,
+      Value<double?> rating,
+      Value<bool> win,
+    });
+
+final class $$PlayPlayersTableReferences
+    extends BaseReferences<_$AppDatabase, $PlayPlayersTable, PlayPlayer> {
+  $$PlayPlayersTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $PlaysTable _playIdTable(_$AppDatabase db) => db.plays.createAlias(
+    $_aliasNameGenerator(db.playPlayers.playId, db.plays.id),
+  );
+
+  $$PlaysTableProcessedTableManager get playId {
+    final $_column = $_itemColumn<int>('play_id')!;
+
+    final manager = $$PlaysTableTableManager(
+      $_db,
+      $_db.plays,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_playIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$PlayPlayersTableFilterComposer
+    extends Composer<_$AppDatabase, $PlayPlayersTable> {
+  $$PlayPlayersTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get username => $composableBuilder(
+    column: $table.username,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get startPosition => $composableBuilder(
+    column: $table.startPosition,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get color => $composableBuilder(
+    column: $table.color,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get score => $composableBuilder(
+    column: $table.score,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get newPlayer => $composableBuilder(
+    column: $table.newPlayer,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get rating => $composableBuilder(
+    column: $table.rating,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get win => $composableBuilder(
+    column: $table.win,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$PlaysTableFilterComposer get playId {
+    final $$PlaysTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.playId,
+      referencedTable: $db.plays,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PlaysTableFilterComposer(
+            $db: $db,
+            $table: $db.plays,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$PlayPlayersTableOrderingComposer
+    extends Composer<_$AppDatabase, $PlayPlayersTable> {
+  $$PlayPlayersTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get username => $composableBuilder(
+    column: $table.username,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get startPosition => $composableBuilder(
+    column: $table.startPosition,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get color => $composableBuilder(
+    column: $table.color,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get score => $composableBuilder(
+    column: $table.score,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get newPlayer => $composableBuilder(
+    column: $table.newPlayer,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get rating => $composableBuilder(
+    column: $table.rating,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get win => $composableBuilder(
+    column: $table.win,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$PlaysTableOrderingComposer get playId {
+    final $$PlaysTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.playId,
+      referencedTable: $db.plays,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PlaysTableOrderingComposer(
+            $db: $db,
+            $table: $db.plays,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$PlayPlayersTableAnnotationComposer
+    extends Composer<_$AppDatabase, $PlayPlayersTable> {
+  $$PlayPlayersTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get username =>
+      $composableBuilder(column: $table.username, builder: (column) => column);
+
+  GeneratedColumn<int> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get startPosition => $composableBuilder(
+    column: $table.startPosition,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get color =>
+      $composableBuilder(column: $table.color, builder: (column) => column);
+
+  GeneratedColumn<String> get score =>
+      $composableBuilder(column: $table.score, builder: (column) => column);
+
+  GeneratedColumn<bool> get newPlayer =>
+      $composableBuilder(column: $table.newPlayer, builder: (column) => column);
+
+  GeneratedColumn<double> get rating =>
+      $composableBuilder(column: $table.rating, builder: (column) => column);
+
+  GeneratedColumn<bool> get win =>
+      $composableBuilder(column: $table.win, builder: (column) => column);
+
+  $$PlaysTableAnnotationComposer get playId {
+    final $$PlaysTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.playId,
+      referencedTable: $db.plays,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$PlaysTableAnnotationComposer(
+            $db: $db,
+            $table: $db.plays,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$PlayPlayersTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $PlayPlayersTable,
+          PlayPlayer,
+          $$PlayPlayersTableFilterComposer,
+          $$PlayPlayersTableOrderingComposer,
+          $$PlayPlayersTableAnnotationComposer,
+          $$PlayPlayersTableCreateCompanionBuilder,
+          $$PlayPlayersTableUpdateCompanionBuilder,
+          (PlayPlayer, $$PlayPlayersTableReferences),
+          PlayPlayer,
+          PrefetchHooks Function({bool playId})
+        > {
+  $$PlayPlayersTableTableManager(_$AppDatabase db, $PlayPlayersTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$PlayPlayersTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$PlayPlayersTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$PlayPlayersTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> playId = const Value.absent(),
+                Value<String?> username = const Value.absent(),
+                Value<int?> userId = const Value.absent(),
+                Value<String?> name = const Value.absent(),
+                Value<String?> startPosition = const Value.absent(),
+                Value<String?> color = const Value.absent(),
+                Value<String?> score = const Value.absent(),
+                Value<bool> newPlayer = const Value.absent(),
+                Value<double?> rating = const Value.absent(),
+                Value<bool> win = const Value.absent(),
+              }) => PlayPlayersCompanion(
+                id: id,
+                playId: playId,
+                username: username,
+                userId: userId,
+                name: name,
+                startPosition: startPosition,
+                color: color,
+                score: score,
+                newPlayer: newPlayer,
+                rating: rating,
+                win: win,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required int playId,
+                Value<String?> username = const Value.absent(),
+                Value<int?> userId = const Value.absent(),
+                Value<String?> name = const Value.absent(),
+                Value<String?> startPosition = const Value.absent(),
+                Value<String?> color = const Value.absent(),
+                Value<String?> score = const Value.absent(),
+                Value<bool> newPlayer = const Value.absent(),
+                Value<double?> rating = const Value.absent(),
+                Value<bool> win = const Value.absent(),
+              }) => PlayPlayersCompanion.insert(
+                id: id,
+                playId: playId,
+                username: username,
+                userId: userId,
+                name: name,
+                startPosition: startPosition,
+                color: color,
+                score: score,
+                newPlayer: newPlayer,
+                rating: rating,
+                win: win,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$PlayPlayersTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({playId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (playId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.playId,
+                                referencedTable: $$PlayPlayersTableReferences
+                                    ._playIdTable(db),
+                                referencedColumn: $$PlayPlayersTableReferences
+                                    ._playIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$PlayPlayersTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $PlayPlayersTable,
+      PlayPlayer,
+      $$PlayPlayersTableFilterComposer,
+      $$PlayPlayersTableOrderingComposer,
+      $$PlayPlayersTableAnnotationComposer,
+      $$PlayPlayersTableCreateCompanionBuilder,
+      $$PlayPlayersTableUpdateCompanionBuilder,
+      (PlayPlayer, $$PlayPlayersTableReferences),
+      PlayPlayer,
+      PrefetchHooks Function({bool playId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -6528,4 +8655,8 @@ class $AppDatabaseManager {
       $$BoardGamesTableTableManager(_db, _db.boardGames);
   $$LocalizedNamesTableTableManager get localizedNames =>
       $$LocalizedNamesTableTableManager(_db, _db.localizedNames);
+  $$PlaysTableTableManager get plays =>
+      $$PlaysTableTableManager(_db, _db.plays);
+  $$PlayPlayersTableTableManager get playPlayers =>
+      $$PlayPlayersTableTableManager(_db, _db.playPlayers);
 }

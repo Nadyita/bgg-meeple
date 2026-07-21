@@ -12,9 +12,9 @@ void main() {
       await db.close();
     });
 
-    test('schema version is 7', () {
+    test('schema version is 8', () {
       db = AppDatabase(NativeDatabase.memory());
-      expect(db.schemaVersion, 7);
+      expect(db.schemaVersion, 8);
     });
 
     test('migration strategy is configured', () {
@@ -36,16 +36,50 @@ void main() {
           'board_games',
           'localized_names',
           'versions',
+          'plays',
+          'play_players',
         ]),
       );
     });
 
     test(
-      'upgrade from v6 to v7 recreates tables with new game detail columns',
+      'upgrade from v7 to v8 recreates tables and includes play tables',
       () async {
         db = AppDatabase(NativeDatabase.memory());
         final migrator = db.createMigrator();
-        await db.migration.onUpgrade(migrator, 6, 7);
+        await db.migration.onUpgrade(migrator, 7, 8);
+
+        final tables = db.allSchemaEntities.whereType<TableInfo>().toList();
+        expect(
+          tables.map((t) => t.actualTableName),
+          containsAll(['plays', 'play_players']),
+        );
+
+        await db
+            .into(db.plays)
+            .insert(
+              PlaysCompanion(
+                id: const Value(1),
+                thingId: const Value(13),
+                gameName: const Value('Catan'),
+                date: const Value('2026-07-18'),
+                quantity: const Value(1),
+                length: const Value(60),
+              ),
+            );
+
+        final playRows = await db.select(db.plays).get();
+        expect(playRows.length, 1);
+        expect(playRows.single.gameName, 'Catan');
+      },
+    );
+
+    test(
+      'upgrade from v6 to v8 recreates tables with new game detail columns',
+      () async {
+        db = AppDatabase(NativeDatabase.memory());
+        final migrator = db.createMigrator();
+        await db.migration.onUpgrade(migrator, 6, 8);
 
         await db
             .into(db.boardGames)

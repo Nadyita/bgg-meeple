@@ -12,11 +12,13 @@ import '../../application/use_cases/save_collection_view_use_case.dart';
 import '../../application/use_cases/save_credentials_use_case.dart';
 import '../../application/use_cases/save_theme_config_use_case.dart';
 import '../../application/use_cases/sync_collection_use_case.dart';
+import '../../application/use_cases/sync_plays_use_case.dart';
 import '../../domain/ports/card_layout_store.dart';
 import '../../domain/ports/collection_store.dart';
 import '../../domain/ports/collection_view_store.dart';
 import '../../domain/ports/credential_store.dart';
 import '../../domain/ports/game_store.dart';
+import '../../domain/ports/play_store.dart';
 import '../../domain/ports/session_store.dart';
 import '../../domain/ports/theme_store.dart';
 import '../../domain/ports/thumbnail_cache.dart';
@@ -28,6 +30,7 @@ import '../adapters/cache/file_thumbnail_cache.dart';
 import '../adapters/persistence/drift/app_database.dart';
 import '../adapters/persistence/drift_collection_store.dart';
 import '../adapters/persistence/drift_game_store.dart';
+import '../adapters/persistence/drift_play_store.dart';
 import '../adapters/security/secure_credential_store.dart';
 import '../adapters/security/secure_session_store.dart';
 
@@ -46,6 +49,7 @@ class ServiceLocator {
   late final AppDatabase _appDatabase;
   late final CollectionStore _collectionStore;
   late final GameStore gameStore;
+  late final PlayStore _playStore;
 
   late final CardLayoutStore _cardLayoutStore;
   late final CollectionViewStore _collectionViewStore;
@@ -65,6 +69,7 @@ class ServiceLocator {
   late final SaveCredentialsUseCase saveCredentials;
   late final LoginUseCase login;
   late final SyncCollectionUseCase syncCollection;
+  late final SyncPlaysUseCase _syncPlays;
 
   void initialize() {
     _secureStorage = const FlutterSecureStorage();
@@ -74,6 +79,7 @@ class ServiceLocator {
     _appDatabase = AppDatabase();
     _collectionStore = DriftCollectionStore(_appDatabase);
     gameStore = DriftGameStore(_appDatabase);
+    _playStore = DriftPlayStore(_appDatabase);
     _cardLayoutStore = SharedPreferencesCardLayoutStore();
     _collectionViewStore = SharedPreferencesCollectionViewStore();
     _themeStore = SharedPreferencesThemeStore();
@@ -94,6 +100,7 @@ class ServiceLocator {
     loadCredentials = LoadCredentialsUseCase(_credentialStore);
     saveCredentials = SaveCredentialsUseCase(_credentialStore);
     login = LoginUseCase(_credentialStore, _sessionStore, _bggApi);
+    _syncPlays = SyncPlaysUseCase(_credentialStore, _bggApi, _playStore);
     syncCollection = SyncCollectionUseCase(
       _credentialStore,
       _sessionStore,
@@ -101,6 +108,7 @@ class ServiceLocator {
       _collectionStore,
       gameStore,
       _thumbnailCache,
+      syncPlays: _syncPlays,
     );
   }
 }
