@@ -62,14 +62,46 @@ void main() {
       );
     });
 
-    test('release signing config resolves keystore path from project root', () {
-      final content = buildFile.readAsStringSync();
+    test(
+      'release signing config handles absolute and relative keystore paths',
+      () {
+        final content = buildFile.readAsStringSync();
+
+        expect(
+          content.contains(
+            'val envPath = System.getenv("BGG_MEEPL_KEYSTORE_PATH")',
+          ),
+          isTrue,
+          reason: 'release config must read the keystore path from env',
+        );
+        expect(
+          content.contains('if (envPath != null)'),
+          isTrue,
+          reason: 'release config must branch on whether an env path is set',
+        );
+        expect(
+          content.contains('file(envPath)'),
+          isTrue,
+          reason: 'release config must use the env path directly when provided',
+        );
+        expect(
+          content.contains('file("../keystore/bgg_meeple_release.keystore")'),
+          isTrue,
+          reason:
+              'release config must fall back to a path relative to android/app/',
+        );
+      },
+    );
+
+    test('release workflow passes an absolute keystore path', () {
+      final workflow = File('.github/workflows/release.yml').readAsStringSync();
 
       expect(
-        content.contains('rootProject.file(relativePath)'),
+        workflow.contains(
+          r'${{ github.workspace }}/android/keystore/bgg_meeple_release.keystore',
+        ),
         isTrue,
-        reason:
-            'release config must resolve the keystore path from the project root',
+        reason: 'release workflow must pass an absolute keystore path',
       );
     });
 

@@ -28,11 +28,13 @@ android {
     signingConfigs {
         create("release") {
             val envPath = System.getenv("BGG_MEEPL_KEYSTORE_PATH")
-            val relativePath = envPath ?: "../keystore/bgg_meeple_release.keystore"
-            // Resolve relative paths against the project root so that both
-            // `flutter build apk` from the repository root and direct Gradle
-            // invocations find the keystore file.
-            storeFile = rootProject.file(relativePath)
+            // CI passes an absolute path; local builds fall back to a path
+            // relative to the app module directory (android/app/).
+            storeFile = if (envPath != null) {
+                file(envPath)
+            } else {
+                file("../keystore/bgg_meeple_release.keystore")
+            }
             storePassword = System.getenv("BGG_MEEPL_KEYSTORE_PASSWORD")
             keyAlias = System.getenv("BGG_MEEPL_KEY_ALIAS") ?: "bgg_meeple"
             keyPassword = System.getenv("BGG_MEEPL_KEY_PASSWORD")

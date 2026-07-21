@@ -78,7 +78,7 @@ jobs:
 
       - name: Build Android release
         env:
-          BGG_MEEPL_KEYSTORE_PATH: android/keystore/bgg_meeple_release.keystore
+          BGG_MEEPL_KEYSTORE_PATH: ${{ github.workspace }}/android/keystore/bgg_meeple_release.keystore
           BGG_MEEPL_KEYSTORE_PASSWORD: ${{ secrets.BGG_MEEPL_KEYSTORE_PASSWORD }}
           BGG_MEEPL_KEY_ALIAS: ${{ secrets.BGG_MEEPL_KEY_ALIAS }}
           BGG_MEEPL_KEY_PASSWORD: ${{ secrets.BGG_MEEPL_KEY_PASSWORD }}
