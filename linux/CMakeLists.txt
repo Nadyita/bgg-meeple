@@ -100,15 +100,24 @@ install(FILES "${FLUTTER_ICU_DATA_FILE}" DESTINATION "${INSTALL_BUNDLE_DATA_DIR}
 install(FILES "${FLUTTER_LIBRARY}" DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
   COMPONENT Runtime)
 
-# Install the application icon.
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/runner/resources/app_icon.png"
+# Install the application icon (SVG + sized PNGs).
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/runner/resources/com.bggmeeple.bgg_meeple.svg"
   DESTINATION "${INSTALL_BUNDLE_DATA_DIR}"
+  COMPONENT Runtime)
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/runner/resources/icons/"
+  DESTINATION "${INSTALL_BUNDLE_DATA_DIR}/icons"
   COMPONENT Runtime)
 
 # Install the desktop entry file.
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/runner/resources/bgg_meeple.desktop"
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/runner/resources/com.bggmeeple.bgg_meeple.desktop"
   DESTINATION "${INSTALL_BUNDLE_DATA_DIR}/applications"
   COMPONENT Runtime)
+
+# Install the helper script to register the app with the desktop environment.
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/../scripts/install_linux_desktop_files.sh"
+  DESTINATION "${INSTALL_BUNDLE_DATA_DIR}"
+  COMPONENT Runtime
+  PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 
 foreach(bundled_library ${PLUGIN_BUNDLED_LIBRARIES})
   install(FILES "${bundled_library}"

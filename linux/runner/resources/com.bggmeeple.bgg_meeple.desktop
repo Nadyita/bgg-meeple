@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=BGG Meeple
+Comment=A BoardGameGeek collection app
+Exec=bgg_meeple
+Icon=com.bggmeeple.bgg_meeple
+StartupWMClass=com.bggmeeple.bgg_meeple
+Type=Application
+Categories=Game;
+Keywords=boardgame;board game;meeple;bgg;collection;

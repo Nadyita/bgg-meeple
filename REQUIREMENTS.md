@@ -65,7 +65,7 @@ Each capability links to its authoritative OpenSpec spec. Detailed acceptance cr
 | Card layout | [`openspec/specs/card-layout/spec.md`](openspec/specs/card-layout/spec.md) | F14, UX05–UX06 | implemented |
 | Settings and theme | [`openspec/specs/settings-and-theme/spec.md`](openspec/specs/settings-and-theme/spec.md) | UX01–UX02, UX05 | implemented |
 | CI/CD | [`openspec/specs/ci-cd/spec.md`](openspec/specs/ci-cd/spec.md) | NF10–NF12, T07–T08 | implemented |
-| App icon | [`openspec/specs/app-icon/spec.md`](openspec/specs/app-icon/spec.md) | NF01, NF04 | planned |
+| App icon | [`openspec/specs/app-icon/spec.md`](openspec/specs/app-icon/spec.md) | NF01, NF04 | implemented |
 
 ### Discarded requirements
 
