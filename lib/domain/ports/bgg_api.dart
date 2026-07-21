@@ -2,6 +2,7 @@ import '../entities/board_game.dart';
 import '../entities/bgg_credentials.dart';
 import '../entities/bgg_session.dart';
 import '../entities/collection_item.dart';
+import '../entities/play.dart';
 
 /// Port for fetching data from the BoardGameGeek XML API2.
 ///
@@ -22,4 +23,9 @@ abstract class BggApi {
   ///
   /// Throws [ArgumentError] if [ids] contains more than 20 items.
   Future<List<BoardGame>> fetchGames(List<int> ids);
+
+  /// Fetches all logged plays for the given [username].
+  ///
+  /// Pagination and retries are handled by the implementation.
+  Future<List<Play>> fetchPlays(String username);
 }

@@ -9,6 +9,8 @@ import '../../../domain/entities/board_game.dart';
 import '../../../domain/entities/bgg_credentials.dart';
 import '../../../domain/entities/bgg_session.dart';
 import '../../../domain/entities/collection_item.dart';
+import '../../../domain/entities/play.dart';
+import '../../../domain/entities/play_player.dart';
 import '../../../domain/ports/authentication_service.dart';
 import '../../../domain/ports/bgg_api.dart';
 import '../../../domain/ports/session_store.dart';
@@ -108,6 +110,98 @@ class BggApiClient implements BggApi, AuthenticationService {
     final items = root.getElement('items')?.findElements('item').toList() ?? [];
     return items.map(_parseCollectionItem).toList();
   }
+
+  static const _playsPath = '/xmlapi2/plays';
+
+  @override
+  Future<List<Play>> fetchPlays(String username) async {
+    await _ensureSessionLoaded();
+
+    final plays = <Play>[];
+    var page = 1;
+    var total = 0;
+
+    do {
+      final params = {
+        'username': username,
+        'subtype': 'boardgame',
+        'page': page.toString(),
+      };
+
+      final response = await _getWithRetry(
+        Uri.parse('$_baseUrl$_playsPath').replace(queryParameters: params),
+      );
+
+      final root = _parseXml(response.body);
+      final playsElement = root.getElement('plays');
+      final playElements = playsElement?.findElements('play').toList() ?? [];
+
+      if (total == 0) {
+        total = int.parse(playsElement?.getAttribute('total') ?? '0');
+      }
+
+      plays.addAll(playElements.map(_parsePlay));
+      page++;
+    } while (plays.length < total);
+
+    return plays;
+  }
+
+  Play _parsePlay(XmlElement play) {
+    final item = play.getElement('item');
+    final players = play.getElement('players');
+
+    return Play(
+      id: int.parse(play.getAttribute('id') ?? '0'),
+      thingId: int.parse(item?.getAttribute('objectid') ?? '0'),
+      gameName: item?.getAttribute('name') ?? '',
+      date: play.getAttribute('date') ?? '',
+      quantity: int.parse(play.getAttribute('quantity') ?? '1'),
+      length: int.parse(play.getAttribute('length') ?? '0'),
+      incomplete: _parseBoolAttribute(play.getAttribute('incomplete')),
+      noWinStats: _parseBoolAttribute(play.getAttribute('nowinstats')),
+      location: _nullIfEmpty(play.getAttribute('location')),
+      comments: _nullIfEmpty(_childText(play, 'comments')),
+      subtypes: _parseSubtypes(item?.getElement('subtypes')),
+      players:
+          players?.findElements('player').map(_parsePlayPlayer).toList() ?? [],
+    );
+  }
+
+  PlayPlayer _parsePlayPlayer(XmlElement player) {
+    return PlayPlayer(
+      username: _nullIfEmpty(player.getAttribute('username')),
+      userId: int.tryParse(player.getAttribute('userid') ?? '0'),
+      name: _nullIfEmpty(player.getAttribute('name')),
+      startPosition: _nullIfEmpty(player.getAttribute('startposition')),
+      color: _nullIfEmpty(player.getAttribute('color')),
+      score: _nullIfEmpty(player.getAttribute('score')),
+      newPlayer: _parseBoolAttribute(player.getAttribute('new')),
+      rating: _parseDouble(player.getAttribute('rating')),
+      win: _parseBoolAttribute(player.getAttribute('win')),
+    );
+  }
+
+  List<String> _parseSubtypes(XmlElement? subtypes) {
+    if (subtypes == null) return const [];
+    return subtypes
+        .findElements('subtype')
+        .map((e) => e.getAttribute('value'))
+        .whereType<String>()
+        .toList();
+  }
+
+  String? _nullIfEmpty(String? value) {
+    if (value == null || value.isEmpty) return null;
+    return value;
+  }
+
+  double? _parseDouble(String? value) {
+    if (value == null || value.isEmpty) return null;
+    return double.tryParse(value);
+  }
+
+  bool _parseBoolAttribute(String? value) => value == '1';
 
   @override
   Future<List<BoardGame>> fetchGames(List<int> ids) async {
