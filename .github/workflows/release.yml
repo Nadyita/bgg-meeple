@@ -66,6 +66,19 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
+      - name: Extract version from tag
+        id: version
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Compute version code
+        id: version_code
+        run: |
+          IFS=. read -r major minor patch <<< "${{ steps.version.outputs.version }}"
+          code=$((major * 1000000 + minor * 1000 + patch))
+          echo "version_code=$code" >> "$GITHUB_OUTPUT"
+
       - name: Build Linux release
         run: flutter build linux --release
 
@@ -89,7 +102,11 @@ jobs:
           BGG_MEEPL_KEYSTORE_PASSWORD: ${{ secrets.BGG_MEEPL_KEYSTORE_PASSWORD }}
           BGG_MEEPL_KEY_ALIAS: ${{ secrets.BGG_MEEPL_KEY_ALIAS }}
           BGG_MEEPL_KEY_PASSWORD: ${{ secrets.BGG_MEEPL_KEY_PASSWORD }}
-        run: flutter build apk --release
+        run: |
+          flutter build apk \
+            --release \
+            --build-name="${{ steps.version.outputs.version }}" \
+            --build-number="${{ steps.version_code.outputs.version_code }}"
 
       - name: Remove decoded keystore
         if: always()

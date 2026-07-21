@@ -1,0 +1,29 @@
+{
+  "changeId": "derive-release-version-from-git-tag",
+  "status": "in_progress",
+  "approvals": [
+    {
+      "approver": "user",
+      "approvedAt": "2026-07-21T14:52:39.184Z"
+    }
+  ],
+  "rejections": [],
+  "history": [
+    {
+      "action": "request_approval",
+      "by": "ai-assistant",
+      "at": "2026-07-21T14:50:53.541Z",
+      "details": "Reviewers: user"
+    },
+    {
+      "action": "approved",
+      "by": "user",
+      "at": "2026-07-21T14:52:39.184Z"
+    }
+  ],
+  "requestedAt": "2026-07-21T14:50:53.541Z",
+  "requestedBy": "ai-assistant",
+  "reviewers": [
+    "user"
+  ]
+}
