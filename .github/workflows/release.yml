@@ -74,7 +74,14 @@ jobs:
           BGG_MEEPL_KEYSTORE_BASE64: ${{ secrets.BGG_MEEPL_KEYSTORE_BASE64 }}
         run: |
           mkdir -p android/keystore
-          echo "$BGG_MEEPL_KEYSTORE_BASE64" | base64 -d > android/keystore/bgg_meeple_release.keystore
+          # Trim whitespace and newlines from the secret before decoding.
+          trimmed="$(printf '%s' "$BGG_MEEPL_KEYSTORE_BASE64" | tr -d '\n\r ' )"
+          printf '%s' "$trimmed" | base64 -d > android/keystore/bgg_meeple_release.keystore
+          # Sanity check: the decoded file should start with the JKS or PKCS12 magic bytes.
+          if ! file android/keystore/bgg_meeple_release.keystore | grep -qE 'Java KeyStore|PKCS|data'; then
+            echo "Decoded keystore does not look like a valid keystore file." >&2
+            exit 1
+          fi
 
       - name: Build Android release
         env:

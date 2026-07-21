@@ -125,6 +125,28 @@ void main() {
       );
     });
 
+    test('release workflow trims and validates the decoded keystore', () {
+      final workflow = File('.github/workflows/release.yml').readAsStringSync();
+
+      expect(
+        workflow.contains(r"tr -d '\n\r '"),
+        isTrue,
+        reason:
+            'release workflow must strip whitespace/newlines from base64 secret',
+      );
+      expect(
+        workflow.contains(r"| base64 -d"),
+        isTrue,
+        reason: 'release workflow must base64-decode the secret',
+      );
+      expect(
+        workflow.contains('file android/keystore/bgg_meeple_release.keystore'),
+        isTrue,
+        reason:
+            'release workflow should sanity-check the decoded keystore file',
+      );
+    });
+
     test('release workflow consumes the required secrets', () {
       final workflow = File('.github/workflows/release.yml').readAsStringSync();
 

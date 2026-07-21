@@ -69,14 +69,20 @@ keytool -genkey -v \
   -dname "CN=BGG Meeple, O=BGG Meeple, C=DE"
 ```
 
+#### Encode the keystore for GitHub Actions
+
+Use `base64` **without line wrapping** and avoid copying trailing newlines:
+
+```bash
+base64 -w 0 bgg_meeple_release.keystore
+```
+
+Copy the entire single-line output and paste it into the `BGG_MEEPL_KEYSTORE_BASE64` GitHub secret. Do not add spaces or line breaks. If the secret contains whitespace, the workflow strips it, but a clean secret prevents decoding errors.
+
 #### Configuring GitHub Actions
 
 1. Go to **Settings → Secrets and variables → Actions** in the GitHub repository.
 2. Add the four secrets listed above.
-3. Encode the keystore for the secret:
-   ```bash
-   base64 -w 0 bgg_meeple_release.keystore
-   ```
 
 The `release.yml` workflow decodes the keystore, builds a signed APK, and removes the decoded file after the build.
 
