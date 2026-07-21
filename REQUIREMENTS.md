@@ -67,6 +67,7 @@ Each capability links to its authoritative OpenSpec spec. Detailed acceptance cr
 | CI/CD | [`openspec/specs/ci-cd/spec.md`](openspec/specs/ci-cd/spec.md) | NF10–NF12, T07–T08 | implemented |
 | App icon | [`openspec/specs/app-icon/spec.md`](openspec/specs/app-icon/spec.md) | NF01, NF04 | implemented |
 | Android release signing | [`openspec/specs/android-release-signing/spec.md`](openspec/specs/android-release-signing/spec.md) | NF13 | planned |
+| Plays sync | [`openspec/specs/plays-sync/spec.md`](openspec/specs/plays-sync/spec.md) | — | planned |
 
 ### Discarded requirements
 
