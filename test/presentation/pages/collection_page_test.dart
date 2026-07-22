@@ -3,7 +3,8 @@ import 'package:bgg_meeple/application/use_cases/load_collection_use_case.dart';
 import 'package:bgg_meeple/application/use_cases/load_collection_view_use_case.dart';
 import 'package:bgg_meeple/application/use_cases/load_credentials_use_case.dart';
 import 'package:bgg_meeple/application/use_cases/load_game_details_use_case.dart';
-import 'package:bgg_meeple/application/use_cases/load_play_player_names_use_case.dart';
+import 'package:bgg_meeple/application/use_cases/load_plays_info_use_case.dart';
+import 'package:bgg_meeple/domain/value_objects/plays_info.dart';
 import 'package:bgg_meeple/application/use_cases/save_collection_view_use_case.dart';
 import 'package:bgg_meeple/application/use_cases/sync_collection_use_case.dart';
 import 'package:bgg_meeple/domain/entities/collection_item.dart';
@@ -38,8 +39,7 @@ class _MockSaveCollectionView extends Mock
 
 class _MockLoadCredentials extends Mock implements LoadCredentialsUseCase {}
 
-class _MockLoadPlayPlayerNames extends Mock
-    implements LoadPlayPlayerNamesUseCase {}
+class _MockLoadPlaysInfo extends Mock implements LoadPlaysInfoUseCase {}
 
 class _MockSyncCollection extends Mock implements SyncCollectionUseCase {}
 
@@ -86,7 +86,7 @@ void main() {
     late LoadGameDetailsUseCase loadGameDetails;
     late SaveCollectionViewUseCase saveCollectionView;
     late LoadCredentialsUseCase loadCredentials;
-    late LoadPlayPlayerNamesUseCase loadPlayPlayerNames;
+    late LoadPlaysInfoUseCase loadPlaysInfo;
     late SyncCollectionUseCase syncCollection;
 
     setUp(() {
@@ -96,7 +96,7 @@ void main() {
       loadGameDetails = _MockLoadGameDetails();
       saveCollectionView = _MockSaveCollectionView();
       loadCredentials = _MockLoadCredentials();
-      loadPlayPlayerNames = _MockLoadPlayPlayerNames();
+      loadPlaysInfo = _MockLoadPlaysInfo();
       syncCollection = _MockSyncCollection();
 
       when(loadCollection.call).thenAnswer(
@@ -130,9 +130,7 @@ void main() {
       ).thenAnswer((_) async => null);
       when(() => saveCollectionView.call(any())).thenAnswer((_) async {});
       when(loadCredentials.call).thenAnswer((_) async => null);
-      when(
-        loadPlayPlayerNames.call,
-      ).thenAnswer((_) async => const <int, List<String>>{});
+      when(loadPlaysInfo.call).thenAnswer((_) async => const PlaysInfo());
     });
 
     testWidgets('restores persisted search text into the search field', (
@@ -154,7 +152,7 @@ void main() {
             loadCollectionView: loadCollectionView,
             saveCollectionView: saveCollectionView,
             loadCredentials: loadCredentials,
-            loadPlayPlayerNames: loadPlayPlayerNames,
+            loadPlaysInfo: loadPlaysInfo,
             syncCollection: syncCollection,
           ),
         ),
@@ -171,11 +169,13 @@ void main() {
     });
 
     testWidgets('adds and toggles player filter chips', (tester) async {
-      when(loadPlayPlayerNames.call).thenAnswer(
-        (_) async => {
-          1: ['Markus'],
-          2: ['Anna'],
-        },
+      when(loadPlaysInfo.call).thenAnswer(
+        (_) async => const PlaysInfo(
+          playerNamesByGame: {
+            1: ['Markus'],
+            2: ['Anna'],
+          },
+        ),
       );
 
       await tester.pumpWidget(
@@ -187,7 +187,7 @@ void main() {
             loadCollectionView: loadCollectionView,
             saveCollectionView: saveCollectionView,
             loadCredentials: loadCredentials,
-            loadPlayPlayerNames: loadPlayPlayerNames,
+            loadPlaysInfo: loadPlaysInfo,
             syncCollection: syncCollection,
           ),
         ),
@@ -228,10 +228,12 @@ void main() {
     testWidgets('shows add-player dialog with available players', (
       tester,
     ) async {
-      when(loadPlayPlayerNames.call).thenAnswer(
-        (_) async => {
-          1: ['Markus', 'Anna'],
-        },
+      when(loadPlaysInfo.call).thenAnswer(
+        (_) async => const PlaysInfo(
+          playerNamesByGame: {
+            1: ['Markus', 'Anna'],
+          },
+        ),
       );
 
       await tester.pumpWidget(
@@ -243,7 +245,7 @@ void main() {
             loadCollectionView: loadCollectionView,
             saveCollectionView: saveCollectionView,
             loadCredentials: loadCredentials,
-            loadPlayPlayerNames: loadPlayPlayerNames,
+            loadPlaysInfo: loadPlaysInfo,
             syncCollection: syncCollection,
           ),
         ),
@@ -270,7 +272,7 @@ void main() {
             loadCollectionView: loadCollectionView,
             saveCollectionView: saveCollectionView,
             loadCredentials: loadCredentials,
-            loadPlayPlayerNames: loadPlayPlayerNames,
+            loadPlaysInfo: loadPlaysInfo,
             syncCollection: syncCollection,
           ),
         ),
@@ -291,6 +293,67 @@ void main() {
 
       expect(find.byType(CollectionCard), findsNWidgets(2));
       expect(find.byType(ListTile), findsNothing);
+    });
+
+    testWidgets('play count slider is shown below rating slider', (
+      tester,
+    ) async {
+      when(loadCollection.call).thenAnswer(
+        (_) async => const [
+          CollectionItem(thingId: 1, names: [], numPlays: 5),
+          CollectionItem(thingId: 2, names: [], numPlays: 12),
+        ],
+      );
+
+      await tester.pumpWidget(
+        _buildApp(
+          home: CollectionPage(
+            loadCollection: loadCollection,
+            loadGameDetails: loadGameDetails,
+            loadCardLayout: loadCardLayout,
+            loadCollectionView: loadCollectionView,
+            saveCollectionView: saveCollectionView,
+            loadCredentials: loadCredentials,
+            loadPlaysInfo: loadPlaysInfo,
+            syncCollection: syncCollection,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.filter_list));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Partien'), findsOneWidget);
+    });
+
+    testWidgets('play count slider is hidden when all numPlays are zero', (
+      tester,
+    ) async {
+      when(loadCollection.call).thenAnswer(
+        (_) async => const [CollectionItem(thingId: 1, names: [], numPlays: 0)],
+      );
+
+      await tester.pumpWidget(
+        _buildApp(
+          home: CollectionPage(
+            loadCollection: loadCollection,
+            loadGameDetails: loadGameDetails,
+            loadCardLayout: loadCardLayout,
+            loadCollectionView: loadCollectionView,
+            saveCollectionView: saveCollectionView,
+            loadCredentials: loadCredentials,
+            loadPlaysInfo: loadPlaysInfo,
+            syncCollection: syncCollection,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.filter_list));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Partien'), findsNothing);
     });
   });
 }

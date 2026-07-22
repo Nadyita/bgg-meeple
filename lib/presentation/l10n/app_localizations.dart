@@ -218,6 +218,12 @@ abstract class AppLocalizations {
   /// **'Rating'**
   String get ratingLabel;
 
+  /// No description provided for @playCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Plays'**
+  String get playCountLabel;
+
   /// No description provided for @clearFiltersLabel.
   ///
   /// In en, this message translates to:

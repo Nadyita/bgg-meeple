@@ -6,10 +6,11 @@ import '../../../application/use_cases/load_card_layout_use_case.dart';
 import '../../../application/use_cases/load_collection_use_case.dart';
 import '../../../application/use_cases/load_collection_view_use_case.dart';
 import '../../../application/use_cases/load_credentials_use_case.dart';
-import '../../../application/use_cases/load_play_player_names_use_case.dart';
+import '../../../application/use_cases/load_plays_info_use_case.dart';
 import '../../../application/use_cases/save_collection_view_use_case.dart';
 import '../../../application/use_cases/sync_collection_use_case.dart';
 import '../../../domain/entities/collection_item.dart';
+import '../../../domain/entities/play.dart';
 import '../../../domain/value_objects/collection_filter.dart';
 import '../../../domain/value_objects/collection_sort.dart';
 import '../../../domain/value_objects/collection_sub_type.dart';
@@ -46,7 +47,7 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
     required this.loadCollectionView,
     required this.saveCollectionView,
     required this.loadCredentials,
-    required this.loadPlayPlayerNames,
+    required this.loadPlaysInfo,
     this.syncCollection,
   }) : super(const CollectionState()) {
     on<CollectionEvent>(_onEvent, transformer: _sequential());
@@ -57,7 +58,7 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
   final LoadCollectionViewUseCase loadCollectionView;
   final SaveCollectionViewUseCase saveCollectionView;
   final LoadCredentialsUseCase loadCredentials;
-  final LoadPlayPlayerNamesUseCase loadPlayPlayerNames;
+  final LoadPlaysInfoUseCase loadPlaysInfo;
   final SyncCollectionUseCase? syncCollection;
 
   Future<void> _onEvent(
@@ -96,13 +97,13 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
       final cardLayout = await loadCardLayout();
       final view = await _loadViewOrDefault();
       final credentials = await loadCredentials();
-      final playerNamesByGame = await loadPlayPlayerNames();
+      final playsInfo = await loadPlaysInfo();
       emit(
         state.copyWith(
           isLoading: false,
           items: items,
           cardLayout: cardLayout,
-          playerNamesByGame: playerNamesByGame,
+          playsInfo: playsInfo,
           searchText: view.searchText,
           filter: view.filter,
           sort: view.sort,
@@ -251,12 +252,12 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
         },
       );
       final items = await loadCollection();
-      final playerNamesByGame = await loadPlayPlayerNames();
+      final playsInfo = await loadPlaysInfo();
       emit(
         state.copyWith(
           isSyncing: false,
           items: items,
-          playerNamesByGame: playerNamesByGame,
+          playsInfo: playsInfo,
           filteredItems: _apply(
             items,
             state.searchText,
@@ -415,10 +416,43 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
       return false;
     }
 
-    final itemPlayers = state.playerNamesByGame[item.thingId] ?? [];
-    final itemPlayerNames = itemPlayers.map((n) => n.toLowerCase()).toSet();
+    final effectivePlays = _effectivePlayCount(item, filter);
+    final hasPlayerFilter = filter.playerParticipation.values.any(
+      (v) => v != PlayerParticipationFilter.any,
+    );
+    if (hasPlayerFilter && effectivePlays == 0) {
+      return false;
+    }
+    if (filter.minPlays != null && effectivePlays < filter.minPlays!) {
+      return false;
+    }
+    if (filter.maxPlays != null && effectivePlays > filter.maxPlays!) {
+      return false;
+    }
+
+    return true;
+  }
+
+  int _effectivePlayCount(CollectionItem item, CollectionFilter filter) {
+    final activeFilters = filter.playerParticipation.entries.where(
+      (e) => e.value != PlayerParticipationFilter.any,
+    );
+    if (activeFilters.isEmpty) {
+      return item.numPlays ?? 0;
+    }
+
+    final plays = state.playsInfo.playsByGame[item.thingId] ?? [];
+    return plays.where((play) => _playMatchesPlayerFilter(play, filter)).length;
+  }
+
+  bool _playMatchesPlayerFilter(Play play, CollectionFilter filter) {
+    final playNames = play.players
+        .where((p) => p.name != null && p.name!.trim().isNotEmpty)
+        .map((p) => p.name!.trim().toLowerCase())
+        .toSet();
+
     for (final entry in filter.playerParticipation.entries) {
-      final matches = itemPlayerNames.contains(entry.key.toLowerCase());
+      final matches = playNames.contains(entry.key.toLowerCase());
       switch (entry.value) {
         case PlayerParticipationFilter.played:
           if (!matches) return false;
@@ -428,7 +462,6 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
           break;
       }
     }
-
     return true;
   }
 

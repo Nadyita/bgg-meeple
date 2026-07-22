@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Defines the live search and filter behavior on the main collection screen, including the expandable filter panel, combined AND filtering across search, sub-types, player count, play time, and rating ranges.
+Defines the live search and filter behavior on the main collection screen, including the expandable filter panel, combined AND filtering across search, sub-types, player count, play time, rating ranges, and play count.
 ## Requirements
 ### Requirement: Live search by game name
 A search field at the top of the main list SHALL filter the collection by game name as the user types. The search SHALL be case-insensitive and SHALL only match game names (custom name and BGG names), not version edition names.
@@ -19,7 +19,7 @@ The search field SHALL provide a clear-search button that appears when search te
 - **THEN** the search field is empty and the full collection list is shown
 
 ### Requirement: Expandable filter panel
-A filter icon next to the search field SHALL expand and collapse additional filter controls for player count, play time range, rating, and collection sub-types.
+A filter icon next to the search field SHALL expand and collapse additional filter controls for player count, play time range, rating, play count, and collection sub-types.
 
 #### Scenario: Filter icon toggles panel
 - **WHEN** the user taps the filter icon
@@ -48,6 +48,31 @@ The filter controls SHALL provide a two-handle range slider with discrete steps 
 
 ### Requirement: Filter by own or BGG rating range
 The filter controls SHALL provide a two-handle range slider from 0 to 10 in 0.5 steps. The effective rating SHALL be the user's own rating when set, otherwise `bayesaverage`. Only games whose effective rating falls within the selected range SHALL be shown, and the list SHALL update immediately.
+
+### Requirement: Filter by play count range
+The filter controls SHALL provide a two-handle range slider from 0 to the maximum `numplays` value among all loaded collection items. The effective play count SHALL be the collection item's `numplays` when no player participation filter is active. When player participation filters are active, the effective play count SHALL be the number of logged plays for the game whose player set satisfies the configured player participation rules. Only games whose effective play count falls within the selected range SHALL be shown, and the list SHALL update immediately.
+
+#### Scenario: Filter by total plays
+- **GIVEN** a game has `numplays` of 5 and no player participation filter is active
+- **WHEN** the user selects a play-count range of 1 to 10
+- **THEN** the game is shown
+
+#### Scenario: Filter by plays with specific players
+- **GIVEN** a game has three logged plays: Play 1 contains "Dine", Play 2 contains "Dine" and "Mark", Play 3 contains "Mark"
+- **AND** the user filters for "Dine" = played and "Mark" = not played
+- **WHEN** the user selects a play-count range of 1 to 1
+- **THEN** only Play 1 satisfies the player filter, so the game is shown
+
+#### Scenario: Player participation and play count filter combined
+- **GIVEN** the user adds player "Dine" with state played
+- **AND** the user selects a play-count range from 2 to its maximum
+- **WHEN** the collection is filtered
+- **THEN** only games where Dine appears in at least two logged plays are shown
+
+#### Scenario: Play count slider maximum uses all loaded items
+- **GIVEN** the loaded collection contains items with `numplays` of 0, 3, and 12
+- **WHEN** the filter panel is opened
+- **THEN** the play-count slider maximum is 12 and the minimum is 0
 
 #### Scenario: Rating filter prefers own rating
 - **WHEN** the user has rated a game and selects a rating range
@@ -120,7 +145,7 @@ When a player chip is removed from the filter panel, that player's entry SHALL b
 
 ### Requirement: Player filters combine with existing filters using AND logic
 
-Player participation filters SHALL be combined with search text, collection sub-types, player count, play time, and rating using AND logic.
+Player participation filters SHALL be combined with search text, collection sub-types, player count, play time, rating, and play count using AND logic.
 
 #### Scenario: Search and player filter together
 

@@ -69,6 +69,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get ratingLabel => 'Bewertung';
 
   @override
+  String get playCountLabel => 'Partien';
+
+  @override
   String get clearFiltersLabel => 'Zurücksetzen';
 
   @override

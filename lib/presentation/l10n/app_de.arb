@@ -19,6 +19,7 @@
   "playerCountLabel": "Spieler",
   "playTimeLabel": "Zeit (Min.)",
   "ratingLabel": "Bewertung",
+  "playCountLabel": "Partien",
   "clearFiltersLabel": "Zurücksetzen",
   "subTypeOwned": "owned",
   "subTypePreordered": "preordered",

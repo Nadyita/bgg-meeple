@@ -59,6 +59,8 @@ void main() {
       expect(const CollectionFilter(minPlayers: 1).isActive, isTrue);
       expect(const CollectionFilter(maxPlayTime: 120).isActive, isTrue);
       expect(const CollectionFilter(minRating: 7.0).isActive, isTrue);
+      expect(const CollectionFilter(minPlays: 1).isActive, isTrue);
+      expect(const CollectionFilter(maxPlays: 10).isActive, isTrue);
     });
 
     test('is true when a player filter is not any', () {
@@ -97,11 +99,18 @@ void main() {
 
   group('CollectionFilter JSON', () {
     test('serializes only non-default values', () {
-      const filter = CollectionFilter(minPlayers: 2, maxRating: 9.0);
+      const filter = CollectionFilter(
+        minPlayers: 2,
+        maxRating: 9.0,
+        minPlays: 1,
+        maxPlays: 5,
+      );
       final json = filter.toJson();
 
       expect(json, containsPair('minPlayers', 2));
       expect(json, containsPair('maxRating', 9.0));
+      expect(json, containsPair('minPlays', 1));
+      expect(json, containsPair('maxPlays', 5));
       expect(json, containsPair('selectedSubTypes', []));
       expect(json, isNot(contains('maxPlayers')));
       expect(json, isNot(contains('minPlayTime')));
@@ -129,10 +138,14 @@ void main() {
       final restored = CollectionFilter.fromJson({
         'minPlayers': 2.0,
         'maxPlayers': 4.0,
+        'minPlays': 1.0,
+        'maxPlays': 5.0,
       });
 
       expect(restored.minPlayers, 2);
       expect(restored.maxPlayers, 4);
+      expect(restored.minPlays, 1);
+      expect(restored.maxPlays, 5);
     });
 
     test('fromJson parses playerParticipation and ignores unknown values', () {
@@ -148,6 +161,22 @@ void main() {
         'Markus': PlayerParticipationFilter.played,
         'Tom': PlayerParticipationFilter.notPlayed,
       });
+    });
+  });
+
+  group('CollectionFilter.copyWith play count', () {
+    test('clears minPlays when requested', () {
+      const base = CollectionFilter(minPlays: 1, maxPlays: 5);
+      final updated = base.copyWith(clearMinPlays: true);
+      expect(updated.minPlays, isNull);
+      expect(updated.maxPlays, 5);
+    });
+
+    test('clears maxPlays when requested', () {
+      const base = CollectionFilter(minPlays: 1, maxPlays: 5);
+      final updated = base.copyWith(clearMaxPlays: true);
+      expect(updated.maxPlays, isNull);
+      expect(updated.minPlays, 1);
     });
   });
 }
