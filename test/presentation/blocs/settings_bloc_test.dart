@@ -247,6 +247,24 @@ void main() {
     );
 
     blocTest<SettingsBloc, SettingsState>(
+      'toggles player names on plays',
+      build: () => bloc,
+      seed: () => const SettingsState(),
+      act: (bloc) => bloc.add(
+        const SettingsCardLayoutToggled(
+          toggle: CardLayoutToggle.showPlayerNamesOnPlays,
+          value: true,
+        ),
+      ),
+      expect: () => [
+        predicate<SettingsState>((s) => s.cardLayout.showPlayerNamesOnPlays),
+      ],
+      verify: (_) {
+        verify(() => saveCardLayout.call(any())).called(1);
+      },
+    );
+
+    blocTest<SettingsBloc, SettingsState>(
       'toggles a card field',
       build: () => bloc,
       seed: () => const SettingsState(),

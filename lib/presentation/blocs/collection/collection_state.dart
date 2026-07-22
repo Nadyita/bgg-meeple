@@ -23,6 +23,7 @@ class CollectionState extends Equatable {
     this.filter = const CollectionFilter(),
     this.sort = const CollectionSort(),
     this.cardLayout = const CardLayoutConfig(),
+    this.playerNamesByGame = const {},
     this.hasCredentials = false,
     this.isCompactMode = false,
     this.syncProgress,
@@ -37,6 +38,7 @@ class CollectionState extends Equatable {
   final CollectionFilter filter;
   final CollectionSort sort;
   final CardLayoutConfig cardLayout;
+  final Map<int, List<String>> playerNamesByGame;
   final bool hasCredentials;
   final bool isCompactMode;
   final String? syncProgress;
@@ -55,6 +57,7 @@ class CollectionState extends Equatable {
     CollectionFilter? filter,
     CollectionSort? sort,
     CardLayoutConfig? cardLayout,
+    Map<int, List<String>>? playerNamesByGame,
     bool? hasCredentials,
     bool? isCompactMode,
     String? syncProgress,
@@ -71,6 +74,7 @@ class CollectionState extends Equatable {
       filter: filter ?? this.filter,
       sort: sort ?? this.sort,
       cardLayout: cardLayout ?? this.cardLayout,
+      playerNamesByGame: playerNamesByGame ?? this.playerNamesByGame,
       hasCredentials: hasCredentials ?? this.hasCredentials,
       isCompactMode: isCompactMode ?? this.isCompactMode,
       syncProgress: clearSyncProgress
@@ -90,6 +94,7 @@ class CollectionState extends Equatable {
     filter,
     sort,
     cardLayout,
+    playerNamesByGame,
     hasCredentials,
     isCompactMode,
     syncProgress,

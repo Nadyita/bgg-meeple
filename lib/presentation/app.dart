@@ -40,6 +40,8 @@ class BggMeepleApp extends StatelessWidget {
                 loadCollectionView: ServiceLocator.instance.loadCollectionView,
                 saveCollectionView: ServiceLocator.instance.saveCollectionView,
                 loadCredentials: ServiceLocator.instance.loadCredentials,
+                loadPlayPlayerNames:
+                    ServiceLocator.instance.loadPlayPlayerNames,
                 syncCollection: ServiceLocator.instance.syncCollection,
               ),
               routes: {

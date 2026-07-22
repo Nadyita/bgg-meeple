@@ -162,6 +162,9 @@ class AppLocalizationsDe extends AppLocalizations {
       'Anzahl Bewertungen für Geek-Rating anzeigen';
 
   @override
+  String get settingsShowPlayerNamesOnPlays => 'Spielernamen anzeigen';
+
+  @override
   String get settingsThemeModeTitle => 'Farbschema';
 
   @override
@@ -207,6 +210,9 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get cardFieldGeekRatingIncludesUserCount =>
       'Anzahl der Bewertungen einblenden';
+
+  @override
+  String get cardFieldPlaysPlayerNames => 'Spielernamen';
 
   @override
   String cardOwnRatingLabel(String rating) {

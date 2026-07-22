@@ -5,6 +5,7 @@ import '../../application/use_cases/load_card_layout_use_case.dart';
 import '../../application/use_cases/load_collection_use_case.dart';
 import '../../application/use_cases/load_collection_view_use_case.dart';
 import '../../application/use_cases/load_credentials_use_case.dart';
+import '../../application/use_cases/load_play_player_names_use_case.dart';
 import '../../application/use_cases/load_game_details_use_case.dart';
 import '../../application/use_cases/save_collection_view_use_case.dart';
 import '../../application/use_cases/sync_collection_use_case.dart';
@@ -34,6 +35,7 @@ class CollectionPage extends StatelessWidget {
     required this.loadCollectionView,
     required this.saveCollectionView,
     required this.loadCredentials,
+    required this.loadPlayPlayerNames,
     required this.syncCollection,
   });
 
@@ -43,6 +45,7 @@ class CollectionPage extends StatelessWidget {
   final LoadCollectionViewUseCase loadCollectionView;
   final SaveCollectionViewUseCase saveCollectionView;
   final LoadCredentialsUseCase loadCredentials;
+  final LoadPlayPlayerNamesUseCase loadPlayPlayerNames;
   final SyncCollectionUseCase syncCollection;
 
   @override
@@ -54,6 +57,7 @@ class CollectionPage extends StatelessWidget {
         loadCollectionView: loadCollectionView,
         saveCollectionView: saveCollectionView,
         loadCredentials: loadCredentials,
+        loadPlayPlayerNames: loadPlayPlayerNames,
         syncCollection: syncCollection,
       )..add(const CollectionLoaded()),
       child: _CollectionView(loadGameDetails: loadGameDetails),
@@ -244,6 +248,7 @@ class _CollectionViewState extends State<_CollectionView> {
                             return CollectionCard(
                               item: item,
                               config: state.cardLayout,
+                              playerNamesByGame: state.playerNamesByGame,
                               onTap: () => _openGameDetail(context, item),
                             );
                           },

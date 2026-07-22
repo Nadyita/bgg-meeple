@@ -398,6 +398,12 @@ abstract class AppLocalizations {
   /// **'Show number of ratings for geek rating'**
   String get settingsShowGeekRatingUserCount;
 
+  /// No description provided for @settingsShowPlayerNamesOnPlays.
+  ///
+  /// In en, this message translates to:
+  /// **'Show player names'**
+  String get settingsShowPlayerNamesOnPlays;
+
   /// No description provided for @settingsThemeModeTitle.
   ///
   /// In en, this message translates to:
@@ -487,6 +493,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Includes number of ratings'**
   String get cardFieldGeekRatingIncludesUserCount;
+
+  /// No description provided for @cardFieldPlaysPlayerNames.
+  ///
+  /// In en, this message translates to:
+  /// **'Player names'**
+  String get cardFieldPlaysPlayerNames;
 
   /// Own rating displayed on a collection card
   ///

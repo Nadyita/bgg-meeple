@@ -11,6 +11,7 @@ void main() {
       expect(config.showVersionSubtitle, isTrue);
       expect(config.hidePlaysOnZero, isTrue);
       expect(config.showGeekRatingUserCount, isFalse);
+      expect(config.showPlayerNamesOnPlays, isFalse);
       expect(config.enabledFields, [
         CardField.playerCount,
         CardField.playTime,
@@ -43,12 +44,14 @@ void main() {
         showThumbnail: false,
         hidePlaysOnZero: false,
         showGeekRatingUserCount: true,
+        showPlayerNamesOnPlays: true,
       );
 
       expect(updated.showThumbnail, isFalse);
       expect(updated.showVersionSubtitle, isTrue);
       expect(updated.hidePlaysOnZero, isFalse);
       expect(updated.showGeekRatingUserCount, isTrue);
+      expect(updated.showPlayerNamesOnPlays, isTrue);
     });
 
     test('copyWith preserves lists when not provided', () {

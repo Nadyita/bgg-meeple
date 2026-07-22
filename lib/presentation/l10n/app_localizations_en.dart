@@ -162,6 +162,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Show number of ratings for geek rating';
 
   @override
+  String get settingsShowPlayerNamesOnPlays => 'Show player names';
+
+  @override
   String get settingsThemeModeTitle => 'Theme';
 
   @override
@@ -206,6 +209,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get cardFieldGeekRatingIncludesUserCount =>
       'Includes number of ratings';
+
+  @override
+  String get cardFieldPlaysPlayerNames => 'Player names';
 
   @override
   String cardOwnRatingLabel(String rating) {

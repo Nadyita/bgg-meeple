@@ -44,6 +44,7 @@ class SharedPreferencesCardLayoutStore implements CardLayoutStore {
       'fieldOrder': config.fieldOrder.map((f) => f.index).toList(),
       'hidePlaysOnZero': config.hidePlaysOnZero,
       'showGeekRatingUserCount': config.showGeekRatingUserCount,
+      'showPlayerNamesOnPlays': config.showPlayerNamesOnPlays,
     };
   }
 
@@ -71,6 +72,7 @@ class SharedPreferencesCardLayoutStore implements CardLayoutStore {
       fieldOrder: fieldOrder.isNotEmpty ? fieldOrder : CardField.values,
       hidePlaysOnZero: map['hidePlaysOnZero'] as bool? ?? true,
       showGeekRatingUserCount: map['showGeekRatingUserCount'] as bool? ?? false,
+      showPlayerNamesOnPlays: map['showPlayerNamesOnPlays'] as bool? ?? false,
     );
   }
 }

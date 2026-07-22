@@ -220,6 +220,87 @@ void main() {
       expect(ownRatingIndex, lessThan(playerCountIndex));
     });
 
+    testWidgets('shows player names when showPlayerNamesOnPlays is enabled', (
+      tester,
+    ) async {
+      const item = CollectionItem(
+        thingId: 7,
+        names: [
+          LocalizedName(value: 'Played', language: null, isPrimary: true),
+        ],
+        numPlays: 2,
+      );
+
+      await tester.pumpWidget(
+        _localizedApp(
+          home: const CollectionCard(
+            item: item,
+            config: CardLayoutConfig(showPlayerNamesOnPlays: true),
+            playerNamesByGame: {
+              7: ['Dine', 'Eva', 'Mark'],
+            },
+          ),
+        ),
+      );
+
+      expect(find.text('Plays: 2 — Dine, Eva, Mark'), findsOneWidget);
+    });
+
+    testWidgets('hides player names suffix when no names available', (
+      tester,
+    ) async {
+      const item = CollectionItem(
+        thingId: 7,
+        names: [
+          LocalizedName(value: 'Played', language: null, isPrimary: true),
+        ],
+        numPlays: 2,
+      );
+
+      await tester.pumpWidget(
+        _localizedApp(
+          home: const CollectionCard(
+            item: item,
+            config: CardLayoutConfig(showPlayerNamesOnPlays: true),
+          ),
+        ),
+      );
+
+      expect(find.text('Plays: 2'), findsOneWidget);
+      expect(find.textContaining(' — '), findsNothing);
+    });
+
+    testWidgets(
+      'hides plays field including player names when zero and hideOnZero is true',
+      (tester) async {
+        const item = CollectionItem(
+          thingId: 7,
+          names: [
+            LocalizedName(value: 'Unplayed', language: null, isPrimary: true),
+          ],
+          numPlays: 0,
+        );
+
+        await tester.pumpWidget(
+          _localizedApp(
+            home: const CollectionCard(
+              item: item,
+              config: CardLayoutConfig(
+                hidePlaysOnZero: true,
+                showPlayerNamesOnPlays: true,
+              ),
+              playerNamesByGame: {
+                7: ['Dine'],
+              },
+            ),
+          ),
+        );
+
+        expect(find.textContaining('Plays:'), findsNothing);
+        expect(find.textContaining('Dine'), findsNothing);
+      },
+    );
+
     testWidgets('hides plays when zero and hidePlaysOnZero is true', (
       tester,
     ) async {

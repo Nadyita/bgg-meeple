@@ -3,6 +3,7 @@ import 'package:bgg_meeple/application/use_cases/load_collection_use_case.dart';
 import 'package:bgg_meeple/application/use_cases/load_collection_view_use_case.dart';
 import 'package:bgg_meeple/application/use_cases/load_credentials_use_case.dart';
 import 'package:bgg_meeple/application/use_cases/load_game_details_use_case.dart';
+import 'package:bgg_meeple/application/use_cases/load_play_player_names_use_case.dart';
 import 'package:bgg_meeple/application/use_cases/save_collection_view_use_case.dart';
 import 'package:bgg_meeple/application/use_cases/sync_collection_use_case.dart';
 import 'package:bgg_meeple/domain/entities/collection_item.dart';
@@ -32,6 +33,9 @@ class _MockSaveCollectionView extends Mock
 
 class _MockLoadCredentials extends Mock implements LoadCredentialsUseCase {}
 
+class _MockLoadPlayPlayerNames extends Mock
+    implements LoadPlayPlayerNamesUseCase {}
+
 class _MockSyncCollection extends Mock implements SyncCollectionUseCase {}
 
 class _CollectionViewFake extends Fake implements CollectionView {}
@@ -56,6 +60,7 @@ void main() {
     late LoadGameDetailsUseCase loadGameDetails;
     late SaveCollectionViewUseCase saveCollectionView;
     late LoadCredentialsUseCase loadCredentials;
+    late LoadPlayPlayerNamesUseCase loadPlayPlayerNames;
     late SyncCollectionUseCase syncCollection;
 
     setUp(() {
@@ -65,6 +70,7 @@ void main() {
       loadGameDetails = _MockLoadGameDetails();
       saveCollectionView = _MockSaveCollectionView();
       loadCredentials = _MockLoadCredentials();
+      loadPlayPlayerNames = _MockLoadPlayPlayerNames();
       syncCollection = _MockSyncCollection();
 
       when(loadCollection.call).thenAnswer(
@@ -98,6 +104,9 @@ void main() {
       ).thenAnswer((_) async => null);
       when(() => saveCollectionView.call(any())).thenAnswer((_) async {});
       when(loadCredentials.call).thenAnswer((_) async => null);
+      when(
+        loadPlayPlayerNames.call,
+      ).thenAnswer((_) async => const <int, List<String>>{});
     });
 
     testWidgets('restores persisted search text into the search field', (
@@ -119,6 +128,7 @@ void main() {
             loadCollectionView: loadCollectionView,
             saveCollectionView: saveCollectionView,
             loadCredentials: loadCredentials,
+            loadPlayPlayerNames: loadPlayPlayerNames,
             syncCollection: syncCollection,
           ),
         ),
@@ -144,6 +154,7 @@ void main() {
             loadCollectionView: loadCollectionView,
             saveCollectionView: saveCollectionView,
             loadCredentials: loadCredentials,
+            loadPlayPlayerNames: loadPlayPlayerNames,
             syncCollection: syncCollection,
           ),
         ),

@@ -14,11 +14,13 @@ class CollectionCard extends StatelessWidget {
     super.key,
     required this.item,
     this.config,
+    this.playerNamesByGame,
     this.onTap,
   });
 
   final CollectionItem item;
   final CardLayoutConfig? config;
+  final Map<int, List<String>>? playerNamesByGame;
   final VoidCallback? onTap;
 
   CardLayoutConfig get _config => config ?? const CardLayoutConfig();
@@ -130,10 +132,7 @@ class CollectionCard extends StatelessWidget {
         icon: Icons.schedule,
         text: _playTimeText(localizations),
       ),
-      CardField.plays => _playsLine(
-        effectiveConfig.hidePlaysOnZero,
-        localizations,
-      ),
+      CardField.plays => _playsLine(effectiveConfig, localizations),
       CardField.ownRating => _ownRatingLine(localizations),
       CardField.geekRating => _geekRatingLine(effectiveConfig, localizations),
       CardField.minAge => _minAgeLine(localizations),
@@ -189,13 +188,18 @@ class CollectionCard extends StatelessWidget {
     );
   }
 
-  Widget? _playsLine(bool hideOnZero, AppLocalizations localizations) {
+  Widget? _playsLine(CardLayoutConfig config, AppLocalizations localizations) {
     final plays = item.numPlays ?? 0;
-    if (hideOnZero && plays == 0) return null;
-    return _MetadataLine(
-      icon: Icons.casino,
-      text: localizations.cardPlaysLabel(plays),
-    );
+    if (config.hidePlaysOnZero && plays == 0) return null;
+
+    var text = localizations.cardPlaysLabel(plays);
+    if (config.showPlayerNamesOnPlays) {
+      final names = playerNamesByGame?[item.thingId];
+      if (names != null && names.isNotEmpty) {
+        text += ' — ${names.join(', ')}';
+      }
+    }
+    return _MetadataLine(icon: Icons.casino, text: text);
   }
 
   String get _displayName {

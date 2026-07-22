@@ -49,6 +49,7 @@
   "settingsShowVersionSubtitle": "Show version subtitle",
   "settingsHidePlaysWhenZero": "Hide plays when zero",
   "settingsShowGeekRatingUserCount": "Show number of ratings for geek rating",
+  "settingsShowPlayerNamesOnPlays": "Show player names",
   "settingsThemeModeTitle": "Theme",
   "settingsThemeModeSystem": "System",
   "settingsThemeModeLight": "Light",
@@ -64,6 +65,7 @@
   "cardFieldBggRank": "BGG rank",
   "cardFieldPlaysHiddenWhenZero": "Hidden when zero",
   "cardFieldGeekRatingIncludesUserCount": "Includes number of ratings",
+  "cardFieldPlaysPlayerNames": "Player names",
   "cardOwnRatingLabel": "Your rating: {rating}",
   "@cardOwnRatingLabel": {
     "description": "Own rating displayed on a collection card",

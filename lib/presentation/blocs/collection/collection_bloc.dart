@@ -6,6 +6,7 @@ import '../../../application/use_cases/load_card_layout_use_case.dart';
 import '../../../application/use_cases/load_collection_use_case.dart';
 import '../../../application/use_cases/load_collection_view_use_case.dart';
 import '../../../application/use_cases/load_credentials_use_case.dart';
+import '../../../application/use_cases/load_play_player_names_use_case.dart';
 import '../../../application/use_cases/save_collection_view_use_case.dart';
 import '../../../application/use_cases/sync_collection_use_case.dart';
 import '../../../domain/entities/collection_item.dart';
@@ -44,6 +45,7 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
     required this.loadCollectionView,
     required this.saveCollectionView,
     required this.loadCredentials,
+    required this.loadPlayPlayerNames,
     this.syncCollection,
   }) : super(const CollectionState()) {
     on<CollectionEvent>(_onEvent, transformer: _sequential());
@@ -54,6 +56,7 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
   final LoadCollectionViewUseCase loadCollectionView;
   final SaveCollectionViewUseCase saveCollectionView;
   final LoadCredentialsUseCase loadCredentials;
+  final LoadPlayPlayerNamesUseCase loadPlayPlayerNames;
   final SyncCollectionUseCase? syncCollection;
 
   Future<void> _onEvent(
@@ -92,11 +95,13 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
       final cardLayout = await loadCardLayout();
       final view = await _loadViewOrDefault();
       final credentials = await loadCredentials();
+      final playerNamesByGame = await loadPlayPlayerNames();
       emit(
         state.copyWith(
           isLoading: false,
           items: items,
           cardLayout: cardLayout,
+          playerNamesByGame: playerNamesByGame,
           searchText: view.searchText,
           filter: view.filter,
           sort: view.sort,
@@ -245,10 +250,12 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
         },
       );
       final items = await loadCollection();
+      final playerNamesByGame = await loadPlayPlayerNames();
       emit(
         state.copyWith(
           isSyncing: false,
           items: items,
+          playerNamesByGame: playerNamesByGame,
           filteredItems: _apply(
             items,
             state.searchText,

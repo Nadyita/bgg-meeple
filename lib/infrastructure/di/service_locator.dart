@@ -5,6 +5,7 @@ import '../../application/use_cases/load_collection_use_case.dart';
 import '../../application/use_cases/load_collection_view_use_case.dart';
 import '../../application/use_cases/load_credentials_use_case.dart';
 import '../../application/use_cases/load_game_details_use_case.dart';
+import '../../application/use_cases/load_play_player_names_use_case.dart';
 import '../../application/use_cases/load_theme_config_use_case.dart';
 import '../../application/use_cases/login_use_case.dart';
 import '../../application/use_cases/save_card_layout_use_case.dart';
@@ -65,6 +66,7 @@ class ServiceLocator {
   late final SaveThemeConfigUseCase saveThemeConfig;
   late final LoadCollectionUseCase loadCollection;
   late final LoadGameDetailsUseCase loadGameDetails;
+  late final LoadPlayPlayerNamesUseCase loadPlayPlayerNames;
   late final LoadCredentialsUseCase loadCredentials;
   late final SaveCredentialsUseCase saveCredentials;
   late final LoginUseCase login;
@@ -91,6 +93,7 @@ class ServiceLocator {
       gameStore,
       _thumbnailCache,
     );
+    loadPlayPlayerNames = LoadPlayPlayerNamesUseCase(_playStore);
     loadCardLayout = LoadCardLayoutUseCase(_cardLayoutStore);
     saveCardLayout = SaveCardLayoutUseCase(_cardLayoutStore);
     loadCollectionView = LoadCollectionViewUseCase(_collectionViewStore);

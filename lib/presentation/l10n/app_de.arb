@@ -49,6 +49,7 @@
   "settingsShowVersionSubtitle": "Version-Untertitel anzeigen",
   "settingsHidePlaysWhenZero": "Partien bei Null ausblenden",
   "settingsShowGeekRatingUserCount": "Anzahl Bewertungen für Geek-Rating anzeigen",
+  "settingsShowPlayerNamesOnPlays": "Spielernamen anzeigen",
   "settingsThemeModeTitle": "Farbschema",
   "settingsThemeModeSystem": "System",
   "settingsThemeModeLight": "Hell",
@@ -64,6 +65,7 @@
   "cardFieldBggRank": "BGG-Rang",
   "cardFieldPlaysHiddenWhenZero": "Bei Null ausgeblendet",
   "cardFieldGeekRatingIncludesUserCount": "Anzahl der Bewertungen einblenden",
+  "cardFieldPlaysPlayerNames": "Spielernamen",
   "cardOwnRatingLabel": "Eigene Bewertung: {rating}",
   "@cardOwnRatingLabel": {
     "description": "Eigene Bewertung auf einer Sammlungskarte",

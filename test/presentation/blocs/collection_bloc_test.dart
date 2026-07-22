@@ -3,6 +3,7 @@ import 'package:bgg_meeple/application/use_cases/load_card_layout_use_case.dart'
 import 'package:bgg_meeple/application/use_cases/load_collection_use_case.dart';
 import 'package:bgg_meeple/application/use_cases/load_collection_view_use_case.dart';
 import 'package:bgg_meeple/application/use_cases/load_credentials_use_case.dart';
+import 'package:bgg_meeple/application/use_cases/load_play_player_names_use_case.dart';
 import 'package:bgg_meeple/domain/entities/bgg_credentials.dart';
 import 'package:bgg_meeple/application/use_cases/save_collection_view_use_case.dart';
 import 'package:bgg_meeple/application/use_cases/sync_collection_use_case.dart';
@@ -38,6 +39,9 @@ class _MockSaveCollectionViewUseCase extends Mock
 class _MockSyncCollectionUseCase extends Mock
     implements SyncCollectionUseCase {}
 
+class _MockLoadPlayPlayerNamesUseCase extends Mock
+    implements LoadPlayPlayerNamesUseCase {}
+
 class _FakeLoadCredentialsUseCase extends Fake
     implements LoadCredentialsUseCase {
   @override
@@ -64,6 +68,7 @@ CollectionBloc _buildBloc({
   LoadCollectionViewUseCase? loadCollectionView,
   SaveCollectionViewUseCase? saveCollectionView,
   LoadCredentialsUseCase? loadCredentials,
+  LoadPlayPlayerNamesUseCase? loadPlayPlayerNames,
   SyncCollectionUseCase? syncCollection,
 }) {
   return CollectionBloc(
@@ -72,8 +77,16 @@ CollectionBloc _buildBloc({
     loadCollectionView: loadCollectionView ?? _FakeLoadCollectionViewUseCase(),
     saveCollectionView: saveCollectionView ?? _FakeSaveCollectionViewUseCase(),
     loadCredentials: loadCredentials ?? _FakeLoadCredentialsUseCase(),
+    loadPlayPlayerNames:
+        loadPlayPlayerNames ?? _FakeLoadPlayPlayerNamesUseCase(),
     syncCollection: syncCollection,
   );
+}
+
+class _FakeLoadPlayPlayerNamesUseCase extends Fake
+    implements LoadPlayPlayerNamesUseCase {
+  @override
+  Future<Map<int, List<String>>> call() async => {};
 }
 
 void main() {
@@ -86,12 +99,14 @@ void main() {
     late LoadCardLayoutUseCase loadCardLayout;
     late LoadCollectionViewUseCase loadCollectionView;
     late SaveCollectionViewUseCase saveCollectionView;
+    late LoadPlayPlayerNamesUseCase loadPlayPlayerNames;
 
     setUp(() {
       loadCollection = _MockLoadCollectionUseCase();
       loadCardLayout = _MockLoadCardLayoutUseCase();
       loadCollectionView = _MockLoadCollectionViewUseCase();
       saveCollectionView = _MockSaveCollectionViewUseCase();
+      loadPlayPlayerNames = _MockLoadPlayPlayerNamesUseCase();
       when(
         loadCardLayout.call,
       ).thenAnswer((_) async => const CardLayoutConfig());
@@ -99,7 +114,47 @@ void main() {
         loadCollectionView.call,
       ).thenAnswer((_) async => const CollectionView());
       when(() => saveCollectionView.call(any())).thenAnswer((_) async {});
+      when(
+        loadPlayPlayerNames.call,
+      ).thenAnswer((_) async => const <int, List<String>>{});
     });
+
+    blocTest<CollectionBloc, CollectionState>(
+      'loads player names with collection',
+      build: () {
+        when(loadCollection.call).thenAnswer(
+          (_) async => const [
+            CollectionItem(thingId: 1, names: []),
+            CollectionItem(thingId: 2, names: []),
+          ],
+        );
+        when(loadPlayPlayerNames.call).thenAnswer(
+          (_) async => {
+            1: ['Dine', 'Mark'],
+            2: ['Eva'],
+          },
+        );
+        return _buildBloc(
+          loadCollection: loadCollection,
+          loadCardLayout: loadCardLayout,
+          loadCollectionView: loadCollectionView,
+          saveCollectionView: saveCollectionView,
+          loadPlayPlayerNames: loadPlayPlayerNames,
+        );
+      },
+      act: (bloc) => bloc.add(const CollectionLoaded()),
+      skip: 1,
+      expect: () => [
+        predicate<CollectionState>(
+          (s) =>
+              s.playerNamesByGame[1]!.length == 2 &&
+              s.playerNamesByGame[1]![0] == 'Dine' &&
+              s.playerNamesByGame[1]![1] == 'Mark' &&
+              s.playerNamesByGame[2]!.length == 1 &&
+              s.playerNamesByGame[2]![0] == 'Eva',
+        ),
+      ],
+    );
 
     blocTest<CollectionBloc, CollectionState>(
       'emits loaded items on CollectionLoaded',
@@ -892,6 +947,50 @@ void main() {
       verify: (_) {
         verify(loadCardLayout.call).called(1);
       },
+    );
+
+    blocTest<CollectionBloc, CollectionState>(
+      'syncs, reloads collection, and refreshes player names on CollectionSyncRequested',
+      build: () {
+        final syncCollection = _MockSyncCollectionUseCase();
+        when(
+          () => syncCollection.call(onProgress: any(named: 'onProgress')),
+        ).thenAnswer(
+          (_) async =>
+              const SyncResult(items: [], duration: Duration(seconds: 1)),
+        );
+        when(loadCollection.call).thenAnswer(
+          (_) async => const [CollectionItem(thingId: 10, names: [])],
+        );
+        when(loadPlayPlayerNames.call).thenAnswer(
+          (_) async => {
+            10: ['Dine', 'Eva', 'Mark'],
+          },
+        );
+        return _buildBloc(
+          loadCollection: loadCollection,
+          loadCardLayout: loadCardLayout,
+          loadCollectionView: loadCollectionView,
+          saveCollectionView: saveCollectionView,
+          loadPlayPlayerNames: loadPlayPlayerNames,
+          syncCollection: syncCollection,
+        );
+      },
+      act: (bloc) => bloc.add(const CollectionSyncRequested()),
+      expect: () => [
+        predicate<CollectionState>((s) => s.isSyncing),
+        predicate<CollectionState>(
+          (s) =>
+              !s.isSyncing &&
+              s.items.length == 1 &&
+              s.items.first.thingId == 10 &&
+              s.playerNamesByGame[10]!.length == 3 &&
+              s.playerNamesByGame[10]![0] == 'Dine' &&
+              s.playerNamesByGame[10]![1] == 'Eva' &&
+              s.playerNamesByGame[10]![2] == 'Mark' &&
+              s.errorMessage(AppLocalizationsEn()) == null,
+        ),
+      ],
     );
 
     blocTest<CollectionBloc, CollectionState>(

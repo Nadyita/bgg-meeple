@@ -280,6 +280,16 @@ class _CardLayoutSectionState extends State<_CardLayoutSection> {
           ),
         ),
         SwitchListTile(
+          title: Text(localizations.settingsShowPlayerNamesOnPlays),
+          value: config.showPlayerNamesOnPlays,
+          onChanged: (value) => bloc.add(
+            SettingsCardLayoutToggled(
+              toggle: CardLayoutToggle.showPlayerNamesOnPlays,
+              value: value,
+            ),
+          ),
+        ),
+        SwitchListTile(
           title: Text(localizations.settingsShowGeekRatingUserCount),
           value: config.showGeekRatingUserCount,
           onChanged: (value) => bloc.add(
@@ -351,8 +361,12 @@ class _CardLayoutSectionState extends State<_CardLayoutSection> {
   ) {
     return switch (field) {
       CardField.plays =>
-        config.hidePlaysOnZero
+        config.hidePlaysOnZero && config.showPlayerNamesOnPlays
+            ? '${localizations.cardFieldPlaysHiddenWhenZero}, ${localizations.cardFieldPlaysPlayerNames}'
+            : config.hidePlaysOnZero
             ? localizations.cardFieldPlaysHiddenWhenZero
+            : config.showPlayerNamesOnPlays
+            ? localizations.cardFieldPlaysPlayerNames
             : '',
       CardField.geekRating =>
         config.showGeekRatingUserCount
