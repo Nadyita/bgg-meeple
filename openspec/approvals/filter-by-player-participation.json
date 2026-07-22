@@ -1,0 +1,15 @@
+{
+  "changeId": "filter-by-player-participation",
+  "status": "pending_approval",
+  "approvals": [],
+  "rejections": [],
+  "history": [
+    {
+      "action": "request_approval",
+      "by": "AI-Assistant",
+      "at": "2026-07-22T09:31:47.877Z"
+    }
+  ],
+  "requestedAt": "2026-07-22T09:31:47.877Z",
+  "requestedBy": "AI-Assistant"
+}

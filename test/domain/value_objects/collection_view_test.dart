@@ -2,6 +2,7 @@ import 'package:bgg_meeple/domain/value_objects/collection_filter.dart';
 import 'package:bgg_meeple/domain/value_objects/collection_sort.dart';
 import 'package:bgg_meeple/domain/value_objects/collection_sub_type.dart';
 import 'package:bgg_meeple/domain/value_objects/collection_view.dart';
+import 'package:bgg_meeple/domain/value_objects/player_participation_filter.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -26,6 +27,10 @@ void main() {
         maxPlayTime: 120,
         minRating: 7.0,
         maxRating: 9.5,
+        playerParticipation: {
+          'Markus': PlayerParticipationFilter.played,
+          'Anna': PlayerParticipationFilter.notPlayed,
+        },
       );
       final json = filter.toJson();
       final restored = CollectionFilter.fromJson(json);

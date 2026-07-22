@@ -1,5 +1,6 @@
 import 'package:bgg_meeple/domain/value_objects/collection_filter.dart';
 import 'package:bgg_meeple/domain/value_objects/collection_sub_type.dart';
+import 'package:bgg_meeple/domain/value_objects/player_participation_filter.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -31,6 +32,15 @@ void main() {
       expect(updated.maxPlayers, isNull);
       expect(updated.selectedSubTypes, [CollectionSubType.owned]);
     });
+
+    test('updates playerParticipation', () {
+      final updated = base.copyWith(
+        playerParticipation: const {'Markus': PlayerParticipationFilter.played},
+      );
+      expect(updated.playerParticipation, const {
+        'Markus': PlayerParticipationFilter.played,
+      });
+    });
   });
 
   group('CollectionFilter.isActive', () {
@@ -50,6 +60,39 @@ void main() {
       expect(const CollectionFilter(maxPlayTime: 120).isActive, isTrue);
       expect(const CollectionFilter(minRating: 7.0).isActive, isTrue);
     });
+
+    test('is true when a player filter is not any', () {
+      const filter = CollectionFilter(
+        playerParticipation: {'Markus': PlayerParticipationFilter.played},
+      );
+      expect(filter.isActive, isTrue);
+    });
+
+    test('is false when all player filters are any', () {
+      const filter = CollectionFilter(
+        playerParticipation: {'Markus': PlayerParticipationFilter.any},
+      );
+      expect(filter.isActive, isFalse);
+    });
+  });
+
+  group('CollectionFilter.clearPlayerFilters', () {
+    test('resets known players to any and removes unknown players', () {
+      const filter = CollectionFilter(
+        playerParticipation: {
+          'Markus': PlayerParticipationFilter.played,
+          'Anna': PlayerParticipationFilter.notPlayed,
+          'Obsolete': PlayerParticipationFilter.played,
+        },
+      );
+
+      final cleared = filter.clearPlayerFilters(const {'markus', 'anna'});
+
+      expect(cleared.playerParticipation, const {
+        'Markus': PlayerParticipationFilter.any,
+        'Anna': PlayerParticipationFilter.any,
+      });
+    });
   });
 
   group('CollectionFilter JSON', () {
@@ -62,6 +105,24 @@ void main() {
       expect(json, containsPair('selectedSubTypes', []));
       expect(json, isNot(contains('maxPlayers')));
       expect(json, isNot(contains('minPlayTime')));
+      expect(json, isNot(contains('playerParticipation')));
+    });
+
+    test('serializes playerParticipation including any entries', () {
+      const filter = CollectionFilter(
+        playerParticipation: {
+          'Markus': PlayerParticipationFilter.played,
+          'Anna': PlayerParticipationFilter.any,
+          'Tom': PlayerParticipationFilter.notPlayed,
+        },
+      );
+      final json = filter.toJson();
+
+      expect(json['playerParticipation'], {
+        'Markus': 'played',
+        'Anna': 'any',
+        'Tom': 'notPlayed',
+      });
     });
 
     test('fromJson tolerates int-like doubles for integer fields', () {
@@ -72,6 +133,21 @@ void main() {
 
       expect(restored.minPlayers, 2);
       expect(restored.maxPlayers, 4);
+    });
+
+    test('fromJson parses playerParticipation and ignores unknown values', () {
+      final restored = CollectionFilter.fromJson({
+        'playerParticipation': {
+          'Markus': 'played',
+          'Anna': 'unknown',
+          'Tom': 'notPlayed',
+        },
+      });
+
+      expect(restored.playerParticipation, {
+        'Markus': PlayerParticipationFilter.played,
+        'Tom': PlayerParticipationFilter.notPlayed,
+      });
     });
   });
 }

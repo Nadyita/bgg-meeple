@@ -41,6 +41,12 @@ class ThemeCubit extends Cubit<ThemeConfig> {
     _save(updated);
   }
 
+  void setShowPlayerFilterHint(bool value) {
+    final updated = state.copyWith(showPlayerFilterHint: value);
+    emit(updated);
+    _save(updated);
+  }
+
   void _save(ThemeConfig config) {
     unawaited(_saveAsync(config));
   }

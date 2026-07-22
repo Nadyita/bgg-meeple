@@ -77,6 +77,28 @@ void main() {
       ).called(1);
     });
 
+    test('updates player filter hint and persists', () async {
+      final cubit = ThemeCubit(
+        loadThemeConfig: loadThemeConfig,
+        saveThemeConfig: saveThemeConfig,
+      );
+      await Future.delayed(Duration.zero);
+
+      cubit.setShowPlayerFilterHint(false);
+      await Future.delayed(Duration.zero);
+
+      expect(cubit.state.showPlayerFilterHint, isFalse);
+      verify(
+        () => saveThemeConfig.call(
+          const ThemeConfig(
+            themeMode: ThemeMode.light,
+            fontSizeIndex: 2,
+            showPlayerFilterHint: false,
+          ),
+        ),
+      ).called(1);
+    });
+
     test('falls back to default config when loading fails', () async {
       when(loadThemeConfig.call).thenThrow(Exception('storage error'));
       final cubit = ThemeCubit(

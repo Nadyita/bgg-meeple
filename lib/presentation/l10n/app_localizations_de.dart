@@ -165,6 +165,26 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsShowPlayerNamesOnPlays => 'Spielernamen anzeigen';
 
   @override
+  String get settingsShowPlayerFilterHintTitle =>
+      'Hinweis zum Spielerfilter anzeigen';
+
+  @override
+  String get filterAddPlayerLabel => 'Spieler hinzufügen';
+
+  @override
+  String get filterPlayerSectionTitle => 'Spieler';
+
+  @override
+  String get filterPlayerPickerTitle => 'Spieler auswählen';
+
+  @override
+  String get filterPlayerHintTouch =>
+      'Zum Entfernen lange auf einen Spieler tippen';
+
+  @override
+  String get filterPlayerHintPointer => 'Zum Entfernen auf das X tippen';
+
+  @override
   String get settingsThemeModeTitle => 'Farbschema';
 
   @override

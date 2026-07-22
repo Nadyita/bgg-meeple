@@ -2,6 +2,7 @@ import 'package:bgg_meeple/domain/value_objects/collection_filter.dart';
 import 'package:bgg_meeple/domain/value_objects/collection_sort.dart';
 import 'package:bgg_meeple/domain/value_objects/collection_sub_type.dart';
 import 'package:bgg_meeple/domain/value_objects/collection_view.dart';
+import 'package:bgg_meeple/domain/value_objects/player_participation_filter.dart';
 import 'package:bgg_meeple/infrastructure/adapters/persistence/shared_preferences_collection_view_store.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
@@ -140,6 +141,26 @@ void main() {
       final loaded = await store.load();
 
       expect(loaded, view);
+    });
+
+    test('persists and restores player participation filters', () async {
+      const view = CollectionView(
+        filter: CollectionFilter(
+          playerParticipation: {
+            'Markus': PlayerParticipationFilter.played,
+            'Anna': PlayerParticipationFilter.notPlayed,
+          },
+        ),
+      );
+
+      await store.save(view);
+      final loaded = await store.load();
+
+      expect(loaded, view);
+      expect(loaded.filter.playerParticipation, {
+        'Markus': PlayerParticipationFilter.played,
+        'Anna': PlayerParticipationFilter.notPlayed,
+      });
     });
 
     test('returns default view when stored JSON is corrupt', () async {

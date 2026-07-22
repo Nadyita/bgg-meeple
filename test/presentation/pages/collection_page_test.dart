@@ -12,10 +12,15 @@ import 'package:bgg_meeple/domain/value_objects/collection_filter.dart';
 import 'package:bgg_meeple/domain/value_objects/collection_sort.dart';
 import 'package:bgg_meeple/domain/value_objects/collection_view.dart';
 import 'package:bgg_meeple/domain/value_objects/localized_name.dart';
+import 'package:bgg_meeple/application/use_cases/load_theme_config_use_case.dart';
+import 'package:bgg_meeple/application/use_cases/save_theme_config_use_case.dart';
+import 'package:bgg_meeple/domain/value_objects/theme_config.dart';
+import 'package:bgg_meeple/presentation/cubits/theme_cubit.dart';
 import 'package:bgg_meeple/presentation/l10n/app_localizations.dart';
 import 'package:bgg_meeple/presentation/pages/collection_page.dart';
 import 'package:bgg_meeple/presentation/widgets/collection_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -38,13 +43,34 @@ class _MockLoadPlayPlayerNames extends Mock
 
 class _MockSyncCollection extends Mock implements SyncCollectionUseCase {}
 
+class _FakeLoadThemeConfig extends Fake implements LoadThemeConfigUseCase {
+  @override
+  Future<ThemeConfig> call() async => const ThemeConfig();
+}
+
+class _FakeSaveThemeConfig extends Fake implements SaveThemeConfigUseCase {
+  @override
+  Future<void> call(ThemeConfig config) async {}
+}
+
 class _CollectionViewFake extends Fake implements CollectionView {}
 
-Widget _buildApp({required Widget home}) {
-  return MaterialApp(
-    localizationsDelegates: AppLocalizations.localizationsDelegates,
-    supportedLocales: AppLocalizations.supportedLocales,
-    home: home,
+Widget _buildApp({required Widget home, ThemeCubit? themeCubit}) {
+  return BlocProvider.value(
+    value: themeCubit ?? _createThemeCubit(),
+    child: MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      locale: const Locale('de'),
+      home: home,
+    ),
+  );
+}
+
+ThemeCubit _createThemeCubit() {
+  return ThemeCubit(
+    loadThemeConfig: _FakeLoadThemeConfig(),
+    saveThemeConfig: _FakeSaveThemeConfig(),
   );
 }
 
@@ -142,6 +168,96 @@ void main() {
 
       // Verify clear button is shown
       expect(find.byIcon(Icons.clear), findsOneWidget);
+    });
+
+    testWidgets('adds and toggles player filter chips', (tester) async {
+      when(loadPlayPlayerNames.call).thenAnswer(
+        (_) async => {
+          1: ['Markus'],
+          2: ['Anna'],
+        },
+      );
+
+      await tester.pumpWidget(
+        _buildApp(
+          home: CollectionPage(
+            loadCollection: loadCollection,
+            loadGameDetails: loadGameDetails,
+            loadCardLayout: loadCardLayout,
+            loadCollectionView: loadCollectionView,
+            saveCollectionView: saveCollectionView,
+            loadCredentials: loadCredentials,
+            loadPlayPlayerNames: loadPlayPlayerNames,
+            syncCollection: syncCollection,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.filter_list));
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.text('Spieler hinzufügen'));
+      await tester.tap(find.text('Spieler hinzufügen'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Markus'));
+      await tester.pumpAndSettle();
+
+      expect(find.widgetWithText(InputChip, 'Markus'), findsOneWidget);
+
+      await tester.tap(find.widgetWithText(InputChip, 'Markus'));
+      await tester.pumpAndSettle();
+
+      final chipAfterToggle = tester.widget<InputChip>(
+        find.widgetWithText(InputChip, 'Markus'),
+      );
+      expect(chipAfterToggle.backgroundColor, isNotNull);
+
+      await tester.tap(find.widgetWithText(InputChip, 'Markus'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(InputChip, 'Markus'));
+      await tester.pumpAndSettle();
+
+      final chipAfterCycle = tester.widget<InputChip>(
+        find.widgetWithText(InputChip, 'Markus'),
+      );
+      expect(chipAfterCycle.avatar, isNull);
+    });
+
+    testWidgets('shows add-player dialog with available players', (
+      tester,
+    ) async {
+      when(loadPlayPlayerNames.call).thenAnswer(
+        (_) async => {
+          1: ['Markus', 'Anna'],
+        },
+      );
+
+      await tester.pumpWidget(
+        _buildApp(
+          home: CollectionPage(
+            loadCollection: loadCollection,
+            loadGameDetails: loadGameDetails,
+            loadCardLayout: loadCardLayout,
+            loadCollectionView: loadCollectionView,
+            saveCollectionView: saveCollectionView,
+            loadCredentials: loadCredentials,
+            loadPlayPlayerNames: loadPlayPlayerNames,
+            syncCollection: syncCollection,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.filter_list));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Spieler hinzufügen'));
+      await tester.tap(find.text('Spieler hinzufügen'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Markus'), findsOneWidget);
+      expect(find.text('Anna'), findsOneWidget);
     });
 
     testWidgets('toggles between card list and compact list', (tester) async {
