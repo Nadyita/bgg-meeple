@@ -14,6 +14,7 @@ import '../../../domain/value_objects/collection_filter.dart';
 import '../../../domain/value_objects/collection_sort.dart';
 import '../../../domain/value_objects/collection_sub_type.dart';
 import '../../../domain/value_objects/collection_view.dart';
+import '../../../domain/value_objects/player_participation_filter.dart';
 import 'collection_event.dart';
 import 'collection_state.dart';
 
@@ -412,6 +413,20 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
     if (filter.maxRating != null &&
         (effectiveRating == null || effectiveRating > filter.maxRating!)) {
       return false;
+    }
+
+    final itemPlayers = state.playerNamesByGame[item.thingId] ?? [];
+    final itemPlayerNames = itemPlayers.map((n) => n.toLowerCase()).toSet();
+    for (final entry in filter.playerParticipation.entries) {
+      final matches = itemPlayerNames.contains(entry.key.toLowerCase());
+      switch (entry.value) {
+        case PlayerParticipationFilter.played:
+          if (!matches) return false;
+        case PlayerParticipationFilter.notPlayed:
+          if (matches) return false;
+        case PlayerParticipationFilter.any:
+          break;
+      }
     }
 
     return true;

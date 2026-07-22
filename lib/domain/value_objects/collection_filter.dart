@@ -1,12 +1,14 @@
 import 'package:equatable/equatable.dart';
 
 import 'collection_sub_type.dart';
+import 'player_participation_filter.dart';
 
 /// Filter criteria for the collection list.
 ///
 /// A `null` value means "no filter" for the corresponding criterion.
 /// Sub-type filters use OR logic within the list and AND logic with all
-/// other criteria.
+/// other criteria. Player participation filters use AND logic with each
+/// other and with all other criteria.
 class CollectionFilter extends Equatable {
   const CollectionFilter({
     this.selectedSubTypes = const [],
@@ -16,6 +18,7 @@ class CollectionFilter extends Equatable {
     this.maxPlayTime,
     this.minRating,
     this.maxRating,
+    this.playerParticipation = const {},
   });
 
   final List<CollectionSubType> selectedSubTypes;
@@ -26,6 +29,13 @@ class CollectionFilter extends Equatable {
   final double? minRating;
   final double? maxRating;
 
+  /// Per-player participation filter.
+  ///
+  /// The key is the player display name. A missing player means the player's
+  /// participation is irrelevant. Only non-[PlayerParticipationFilter.any]
+  /// entries affect filtering.
+  final Map<String, PlayerParticipationFilter> playerParticipation;
+
   bool get isActive {
     return selectedSubTypes.isNotEmpty ||
         minPlayers != null ||
@@ -33,7 +43,10 @@ class CollectionFilter extends Equatable {
         minPlayTime != null ||
         maxPlayTime != null ||
         minRating != null ||
-        maxRating != null;
+        maxRating != null ||
+        playerParticipation.values.any(
+          (v) => v != PlayerParticipationFilter.any,
+        );
   }
 
   CollectionFilter copyWith({
@@ -44,6 +57,7 @@ class CollectionFilter extends Equatable {
     int? maxPlayTime,
     double? minRating,
     double? maxRating,
+    Map<String, PlayerParticipationFilter>? playerParticipation,
     bool clearMinPlayers = false,
     bool clearMaxPlayers = false,
     bool clearMinPlayTime = false,
@@ -59,7 +73,20 @@ class CollectionFilter extends Equatable {
       maxPlayTime: clearMaxPlayTime ? null : (maxPlayTime ?? this.maxPlayTime),
       minRating: clearMinRating ? null : (minRating ?? this.minRating),
       maxRating: clearMaxRating ? null : (maxRating ?? this.maxRating),
+      playerParticipation: playerParticipation ?? this.playerParticipation,
     );
+  }
+
+  /// Returns a copy with every known player set to [PlayerParticipationFilter.any]
+  /// and every player not present in [availablePlayers] removed.
+  CollectionFilter clearPlayerFilters(Set<String> availablePlayers) {
+    final cleaned = <String, PlayerParticipationFilter>{};
+    for (final entry in playerParticipation.entries) {
+      if (availablePlayers.contains(entry.key.toLowerCase())) {
+        cleaned[entry.key] = PlayerParticipationFilter.any;
+      }
+    }
+    return copyWith(playerParticipation: cleaned);
   }
 
   /// Serializes the filter to a JSON-compatible map.
@@ -75,6 +102,11 @@ class CollectionFilter extends Equatable {
       if (maxPlayTime != null) 'maxPlayTime': maxPlayTime,
       if (minRating != null) 'minRating': minRating,
       if (maxRating != null) 'maxRating': maxRating,
+      if (playerParticipation.isNotEmpty)
+        'playerParticipation': {
+          for (final entry in playerParticipation.entries)
+            entry.key: entry.value.name,
+        },
     };
   }
 
@@ -104,6 +136,18 @@ class CollectionFilter extends Equatable {
       return null;
     }
 
+    final participationJson = json['playerParticipation'];
+    final Map<String, PlayerParticipationFilter> playerParticipation;
+    if (participationJson is Map<String, dynamic>) {
+      playerParticipation = {
+        for (final entry in participationJson.entries)
+          if (_parseParticipationFilter(entry.value) != null)
+            entry.key: _parseParticipationFilter(entry.value)!,
+      };
+    } else {
+      playerParticipation = const {};
+    }
+
     return CollectionFilter(
       selectedSubTypes: selectedSubTypes,
       minPlayers: jsonInt(json['minPlayers']),
@@ -112,7 +156,15 @@ class CollectionFilter extends Equatable {
       maxPlayTime: jsonInt(json['maxPlayTime']),
       minRating: jsonDouble(json['minRating']),
       maxRating: jsonDouble(json['maxRating']),
+      playerParticipation: playerParticipation,
     );
+  }
+
+  static PlayerParticipationFilter? _parseParticipationFilter(dynamic value) {
+    if (value is! String) return null;
+    return PlayerParticipationFilter.values
+        .where((e) => e.name == value)
+        .firstOrNull;
   }
 
   @override
@@ -124,5 +176,6 @@ class CollectionFilter extends Equatable {
     maxPlayTime,
     minRating,
     maxRating,
+    playerParticipation,
   ];
 }

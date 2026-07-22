@@ -104,5 +104,34 @@ void main() {
       expect(find.byType(SegmentedButton<ThemeMode>), findsOneWidget);
       expect(find.byType(Slider), findsOneWidget);
     });
+
+    testWidgets('renders player filter hint toggle', (tester) async {
+      await tester.pumpWidget(
+        _buildApp(
+          home: SettingsPage(
+            loadCredentials: loadCredentials,
+            saveCredentials: saveCredentials,
+            login: login,
+            syncCollection: syncCollection,
+            loadCardLayout: loadCardLayout,
+            saveCardLayout: saveCardLayout,
+          ),
+          themeCubit: themeCubit,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Show player filter hint'), findsOneWidget);
+
+      final switchFinder = find.descendant(
+        of: find.widgetWithText(Row, 'Show player filter hint'),
+        matching: find.byType(Switch),
+      );
+      await tester.ensureVisible(switchFinder);
+      await tester.tap(switchFinder);
+      await tester.pumpAndSettle();
+
+      expect(themeCubit.state.showPlayerFilterHint, isFalse);
+    });
   });
 }

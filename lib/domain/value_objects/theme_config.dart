@@ -6,10 +6,14 @@ class ThemeConfig extends Equatable {
   const ThemeConfig({
     this.themeMode = ThemeMode.system,
     this.fontSizeIndex = 2,
+    this.showPlayerFilterHint = true,
   });
 
   final ThemeMode themeMode;
   final int fontSizeIndex;
+
+  /// Whether the hint snackbar is shown after adding a player filter.
+  final bool showPlayerFilterHint;
 
   static const _minFontSizeIndex = 0;
   static const _maxFontSizeIndex = 4;
@@ -26,15 +30,24 @@ class ThemeConfig extends Equatable {
     return _fontScales[clamped];
   }
 
-  ThemeConfig copyWith({ThemeMode? themeMode, int? fontSizeIndex}) {
+  ThemeConfig copyWith({
+    ThemeMode? themeMode,
+    int? fontSizeIndex,
+    bool? showPlayerFilterHint,
+  }) {
     return ThemeConfig(
       themeMode: themeMode ?? this.themeMode,
       fontSizeIndex: fontSizeIndex ?? this.fontSizeIndex,
+      showPlayerFilterHint: showPlayerFilterHint ?? this.showPlayerFilterHint,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {'themeMode': themeMode.name, 'fontSizeIndex': fontSizeIndex};
+    return {
+      'themeMode': themeMode.name,
+      'fontSizeIndex': fontSizeIndex,
+      'showPlayerFilterHint': showPlayerFilterHint,
+    };
   }
 
   factory ThemeConfig.fromJson(Map<String, dynamic> json) {
@@ -48,9 +61,14 @@ class ThemeConfig extends Equatable {
           _minFontSizeIndex,
           _maxFontSizeIndex,
         );
-    return ThemeConfig(themeMode: themeMode, fontSizeIndex: fontSizeIndex);
+    final showPlayerFilterHint = json['showPlayerFilterHint'] as bool? ?? true;
+    return ThemeConfig(
+      themeMode: themeMode,
+      fontSizeIndex: fontSizeIndex,
+      showPlayerFilterHint: showPlayerFilterHint,
+    );
   }
 
   @override
-  List<Object?> get props => [themeMode, fontSizeIndex];
+  List<Object?> get props => [themeMode, fontSizeIndex, showPlayerFilterHint];
 }

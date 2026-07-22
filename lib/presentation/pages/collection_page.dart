@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -15,11 +17,13 @@ import '../../domain/value_objects/collection_sort.dart';
 import '../../domain/value_objects/collection_sub_type.dart';
 import '../../domain/value_objects/play_time_steps.dart';
 import '../../domain/value_objects/player_count_range.dart';
+import '../../domain/value_objects/player_participation_filter.dart';
 import '../../domain/value_objects/rating_steps.dart';
 import '../../infrastructure/di/service_locator.dart';
 import '../blocs/collection/collection_bloc.dart';
 import '../blocs/collection/collection_event.dart';
 import '../blocs/collection/collection_state.dart';
+import '../cubits/theme_cubit.dart';
 import '../l10n/app_localizations.dart';
 import '../widgets/collection_card.dart';
 import 'game_detail_page.dart';
@@ -190,15 +194,23 @@ class _CollectionViewState extends State<_CollectionView> {
           AnimatedSize(
             duration: const Duration(milliseconds: 200),
             child: _filterPanelOpen
-                ? BlocBuilder<CollectionBloc, CollectionState>(
-                    builder: (context, state) {
-                      return _FilterPanel(
-                        filter: state.filter,
-                        onFilterChanged: (filter) {
-                          bloc.add(CollectionFilterChanged(filter));
-                        },
-                      );
-                    },
+                ? ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height * 0.55,
+                    ),
+                    child: BlocBuilder<CollectionBloc, CollectionState>(
+                      builder: (context, state) {
+                        return SingleChildScrollView(
+                          child: _FilterPanel(
+                            filter: state.filter,
+                            playerNamesByGame: state.playerNamesByGame,
+                            onFilterChanged: (filter) {
+                              bloc.add(CollectionFilterChanged(filter));
+                            },
+                          ),
+                        );
+                      },
+                    ),
                   )
                 : const SizedBox.shrink(),
           ),
@@ -431,9 +443,14 @@ class _SyncProgress extends StatelessWidget {
 }
 
 class _FilterPanel extends StatelessWidget {
-  const _FilterPanel({required this.filter, required this.onFilterChanged});
+  const _FilterPanel({
+    required this.filter,
+    required this.playerNamesByGame,
+    required this.onFilterChanged,
+  });
 
   final CollectionFilter filter;
+  final Map<int, List<String>> playerNamesByGame;
   final ValueChanged<CollectionFilter> onFilterChanged;
 
   @override
@@ -500,11 +517,18 @@ class _FilterPanel extends StatelessWidget {
                 ),
               ),
             ),
+            _PlayerFilterSection(
+              filter: filter,
+              playerNamesByGame: playerNamesByGame,
+              onFilterChanged: onFilterChanged,
+            ),
             const SizedBox(height: 8),
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
-                onPressed: () => onFilterChanged(const CollectionFilter()),
+                onPressed: () => onFilterChanged(
+                  filter.clearPlayerFilters(_availablePlayerNamesLowerCase),
+                ),
                 child: Text(localizations.clearFiltersLabel),
               ),
             ),
@@ -512,6 +536,13 @@ class _FilterPanel extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Set<String> get _availablePlayerNamesLowerCase {
+    return playerNamesByGame.values
+        .expand((names) => names)
+        .map((name) => name.toLowerCase())
+        .toSet();
   }
 
   void _toggleSubType(CollectionSubType subType) {
@@ -541,6 +572,226 @@ class _FilterPanel extends StatelessWidget {
       CollectionSubType.wantInTrade => localizations.subTypeWantInTrade,
       CollectionSubType.hasComment => localizations.subTypeHasComment,
     };
+  }
+}
+
+class _PlayerFilterSection extends StatelessWidget {
+  const _PlayerFilterSection({
+    required this.filter,
+    required this.playerNamesByGame,
+    required this.onFilterChanged,
+  });
+
+  final CollectionFilter filter;
+  final Map<int, List<String>> playerNamesByGame;
+  final ValueChanged<CollectionFilter> onFilterChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+    final allPlayers = _allAvailablePlayers();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 12),
+        Text(
+          localizations.filterPlayerSectionTitle,
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            ...filter.playerParticipation.entries.map((entry) {
+              final isMissing = !_isPlayerAvailable(entry.key);
+              return _PlayerChip(
+                playerName: entry.key,
+                state: entry.value,
+                isMissing: isMissing,
+                onStateChanged: (newState) =>
+                    _updatePlayerState(entry.key, newState),
+                onRemoved: () => _removePlayer(entry.key),
+              );
+            }),
+            ActionChip(
+              avatar: const Icon(Icons.add),
+              label: Text(localizations.filterAddPlayerLabel),
+              onPressed: () => _openPlayerPicker(context, allPlayers),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  List<String> _allAvailablePlayers() {
+    final seen = <String>{};
+    final result = <String>[];
+    for (final names in playerNamesByGame.values) {
+      for (final name in names) {
+        final lower = name.toLowerCase();
+        if (seen.add(lower)) {
+          result.add(name);
+        }
+      }
+    }
+    result.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+    return result;
+  }
+
+  bool _isPlayerAvailable(String playerName) {
+    final lower = playerName.toLowerCase();
+    return playerNamesByGame.values
+        .expand((names) => names)
+        .any((name) => name.toLowerCase() == lower);
+  }
+
+  void _updatePlayerState(String playerName, PlayerParticipationFilter state) {
+    final updated = Map<String, PlayerParticipationFilter>.of(
+      filter.playerParticipation,
+    );
+    updated[playerName] = state;
+    onFilterChanged(filter.copyWith(playerParticipation: updated));
+  }
+
+  void _removePlayer(String playerName) {
+    final updated = Map<String, PlayerParticipationFilter>.of(
+      filter.playerParticipation,
+    );
+    updated.remove(playerName);
+    onFilterChanged(filter.copyWith(playerParticipation: updated));
+  }
+
+  Future<void> _openPlayerPicker(
+    BuildContext context,
+    List<String> allPlayers,
+  ) async {
+    final localizations = AppLocalizations.of(context)!;
+    final selected = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        final existingLowerCase = filter.playerParticipation.keys
+            .map((name) => name.toLowerCase())
+            .toSet();
+        final available = allPlayers
+            .where((name) => !existingLowerCase.contains(name.toLowerCase()))
+            .toList();
+        return SimpleDialog(
+          title: Text(localizations.filterPlayerPickerTitle),
+          children: available.isEmpty
+              ? [
+                  SimpleDialogOption(
+                    child: Text(localizations.noGamesMatchFilters),
+                  ),
+                ]
+              : available
+                    .map(
+                      (name) => SimpleDialogOption(
+                        onPressed: () => Navigator.of(context).pop(name),
+                        child: Text(name),
+                      ),
+                    )
+                    .toList(),
+        );
+      },
+    );
+    if (selected != null) {
+      _updatePlayerState(selected, PlayerParticipationFilter.any);
+      if (context.mounted) {
+        final showHint = context.read<ThemeCubit>().state.showPlayerFilterHint;
+        if (showHint) {
+          final isTouch = Platform.isAndroid || Platform.isIOS;
+          final message = isTouch
+              ? localizations.filterPlayerHintTouch
+              : localizations.filterPlayerHintPointer;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(message),
+              duration: const Duration(seconds: 3),
+            ),
+          );
+        }
+      }
+    }
+  }
+}
+
+class _PlayerChip extends StatelessWidget {
+  const _PlayerChip({
+    required this.playerName,
+    required this.state,
+    required this.isMissing,
+    required this.onStateChanged,
+    required this.onRemoved,
+  });
+
+  final String playerName;
+  final PlayerParticipationFilter state;
+  final bool isMissing;
+  final ValueChanged<PlayerParticipationFilter> onStateChanged;
+  final VoidCallback onRemoved;
+
+  @override
+  Widget build(BuildContext context) {
+    final isTouch = Platform.isAndroid || Platform.isIOS;
+
+    return GestureDetector(
+      onLongPress: isTouch ? onRemoved : null,
+      child: InputChip(
+        label: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(playerName),
+            if (isMissing) ...[
+              const SizedBox(width: 4),
+              const Icon(Icons.sentiment_dissatisfied, size: 16),
+            ],
+          ],
+        ),
+        avatar: _stateIcon(),
+        selected: state != PlayerParticipationFilter.any,
+        showCheckmark: false,
+        onSelected: (_) => _cycleState(),
+        onDeleted: isTouch ? null : onRemoved,
+        deleteIcon: isTouch ? null : const Icon(Icons.clear),
+        backgroundColor: _backgroundColor(context),
+        side: state == PlayerParticipationFilter.any
+            ? BorderSide(color: Theme.of(context).dividerColor)
+            : null,
+      ),
+    );
+  }
+
+  Widget? _stateIcon() {
+    return switch (state) {
+      PlayerParticipationFilter.any => null,
+      PlayerParticipationFilter.played => const Icon(Icons.thumb_up, size: 18),
+      PlayerParticipationFilter.notPlayed => const Icon(
+        Icons.thumb_down,
+        size: 18,
+      ),
+    };
+  }
+
+  Color? _backgroundColor(BuildContext context) {
+    return switch (state) {
+      PlayerParticipationFilter.any => Theme.of(
+        context,
+      ).colorScheme.surfaceContainerHighest.withAlpha(100),
+      PlayerParticipationFilter.played => Colors.green.withAlpha(40),
+      PlayerParticipationFilter.notPlayed => Colors.red.withAlpha(40),
+    };
+  }
+
+  void _cycleState() {
+    final next = switch (state) {
+      PlayerParticipationFilter.any => PlayerParticipationFilter.played,
+      PlayerParticipationFilter.played => PlayerParticipationFilter.notPlayed,
+      PlayerParticipationFilter.notPlayed => PlayerParticipationFilter.any,
+    };
+    onStateChanged(next);
   }
 }
 

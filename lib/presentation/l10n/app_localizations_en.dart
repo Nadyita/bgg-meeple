@@ -165,6 +165,25 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsShowPlayerNamesOnPlays => 'Show player names';
 
   @override
+  String get settingsShowPlayerFilterHintTitle => 'Show player filter hint';
+
+  @override
+  String get filterAddPlayerLabel => 'Add player';
+
+  @override
+  String get filterPlayerSectionTitle => 'Players';
+
+  @override
+  String get filterPlayerPickerTitle => 'Select a player';
+
+  @override
+  String get filterPlayerHintTouch => 'Long-press a player chip to remove it';
+
+  @override
+  String get filterPlayerHintPointer =>
+      'Tap the X on a player chip to remove it';
+
+  @override
   String get settingsThemeModeTitle => 'Theme';
 
   @override

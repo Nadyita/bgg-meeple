@@ -15,6 +15,7 @@ import 'package:bgg_meeple/domain/value_objects/collection_sort.dart';
 import 'package:bgg_meeple/domain/value_objects/collection_sub_type.dart';
 import 'package:bgg_meeple/domain/value_objects/collection_view.dart';
 import 'package:bgg_meeple/domain/value_objects/localized_name.dart';
+import 'package:bgg_meeple/domain/value_objects/player_participation_filter.dart';
 import 'package:bgg_meeple/domain/value_objects/version_info.dart';
 import 'package:bgg_meeple/presentation/blocs/collection/collection_bloc.dart';
 import 'package:bgg_meeple/presentation/blocs/collection/collection_event.dart';
@@ -646,6 +647,186 @@ void main() {
               s.searchText == 'car' &&
               s.filteredItems.length == 1 &&
               s.filteredItems.first.thingId == 2,
+        ),
+      ],
+    );
+
+    blocTest<CollectionBloc, CollectionState>(
+      'filters by player participation requiring played',
+      build: () {
+        when(loadCollection.call).thenAnswer(
+          (_) async => const [
+            CollectionItem(thingId: 1, names: []),
+            CollectionItem(thingId: 2, names: []),
+            CollectionItem(thingId: 3, names: []),
+          ],
+        );
+        when(loadPlayPlayerNames.call).thenAnswer(
+          (_) async => {
+            1: ['Markus'],
+            2: ['Markus', 'Anna'],
+          },
+        );
+        return _buildBloc(
+          loadCollection: loadCollection,
+          loadCardLayout: loadCardLayout,
+          loadCollectionView: loadCollectionView,
+          saveCollectionView: saveCollectionView,
+          loadPlayPlayerNames: loadPlayPlayerNames,
+        );
+      },
+      act: (bloc) => bloc
+        ..add(const CollectionLoaded())
+        ..add(
+          const CollectionFilterChanged(
+            CollectionFilter(
+              playerParticipation: {'Markus': PlayerParticipationFilter.played},
+            ),
+          ),
+        ),
+      skip: 2,
+      expect: () => [
+        predicate<CollectionState>(
+          (s) =>
+              s.filteredItems.length == 2 &&
+              s.filteredItems.every((i) => i.thingId == 1 || i.thingId == 2),
+        ),
+      ],
+    );
+
+    blocTest<CollectionBloc, CollectionState>(
+      'filters by player participation requiring notPlayed',
+      build: () {
+        when(loadCollection.call).thenAnswer(
+          (_) async => const [
+            CollectionItem(thingId: 1, names: []),
+            CollectionItem(thingId: 2, names: []),
+            CollectionItem(thingId: 3, names: []),
+          ],
+        );
+        when(loadPlayPlayerNames.call).thenAnswer(
+          (_) async => {
+            1: ['Markus'],
+            2: ['Markus', 'Anna'],
+          },
+        );
+        return _buildBloc(
+          loadCollection: loadCollection,
+          loadCardLayout: loadCardLayout,
+          loadCollectionView: loadCollectionView,
+          saveCollectionView: saveCollectionView,
+          loadPlayPlayerNames: loadPlayPlayerNames,
+        );
+      },
+      act: (bloc) => bloc
+        ..add(const CollectionLoaded())
+        ..add(
+          const CollectionFilterChanged(
+            CollectionFilter(
+              playerParticipation: {
+                'Markus': PlayerParticipationFilter.notPlayed,
+              },
+            ),
+          ),
+        ),
+      skip: 2,
+      expect: () => [
+        predicate<CollectionState>(
+          (s) =>
+              s.filteredItems.length == 1 && s.filteredItems.first.thingId == 3,
+        ),
+      ],
+    );
+
+    blocTest<CollectionBloc, CollectionState>(
+      'matches player names case-insensitively',
+      build: () {
+        when(loadCollection.call).thenAnswer(
+          (_) async => const [CollectionItem(thingId: 1, names: [])],
+        );
+        when(loadPlayPlayerNames.call).thenAnswer(
+          (_) async => {
+            1: ['markus'],
+          },
+        );
+        return _buildBloc(
+          loadCollection: loadCollection,
+          loadCardLayout: loadCardLayout,
+          loadCollectionView: loadCollectionView,
+          saveCollectionView: saveCollectionView,
+          loadPlayPlayerNames: loadPlayPlayerNames,
+        );
+      },
+      act: (bloc) => bloc
+        ..add(const CollectionLoaded())
+        ..add(
+          const CollectionFilterChanged(
+            CollectionFilter(
+              playerParticipation: {'Markus': PlayerParticipationFilter.played},
+            ),
+          ),
+        ),
+      skip: 2,
+      expect: () => [
+        predicate<CollectionState>(
+          (s) =>
+              s.filteredItems.length == 1 && s.filteredItems.first.thingId == 1,
+        ),
+      ],
+    );
+
+    blocTest<CollectionBloc, CollectionState>(
+      'combines search and player filters with AND logic',
+      build: () {
+        when(loadCollection.call).thenAnswer(
+          (_) async => const [
+            CollectionItem(
+              thingId: 1,
+              names: [
+                LocalizedName(value: 'Catan', language: null, isPrimary: true),
+              ],
+            ),
+            CollectionItem(
+              thingId: 2,
+              names: [
+                LocalizedName(
+                  value: 'Carcassonne',
+                  language: null,
+                  isPrimary: true,
+                ),
+              ],
+            ),
+          ],
+        );
+        when(loadPlayPlayerNames.call).thenAnswer(
+          (_) async => {
+            1: ['Markus'],
+            2: ['Markus'],
+          },
+        );
+        return _buildBloc(
+          loadCollection: loadCollection,
+          loadCardLayout: loadCardLayout,
+          loadCollectionView: loadCollectionView,
+          saveCollectionView: saveCollectionView,
+          loadPlayPlayerNames: loadPlayPlayerNames,
+        );
+      },
+      act: (bloc) => bloc
+        ..add(const CollectionLoaded())
+        ..add(const CollectionSearchTextChanged('car'))
+        ..add(
+          const CollectionFilterChanged(
+            CollectionFilter(
+              playerParticipation: {'Markus': PlayerParticipationFilter.played},
+            ),
+          ),
+        ),
+      skip: 3,
+      expect: () => [
+        predicate<CollectionState>(
+          (s) =>
+              s.filteredItems.length == 1 && s.filteredItems.first.thingId == 2,
         ),
       ],
     );

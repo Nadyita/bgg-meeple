@@ -404,6 +404,42 @@ abstract class AppLocalizations {
   /// **'Show player names'**
   String get settingsShowPlayerNamesOnPlays;
 
+  /// No description provided for @settingsShowPlayerFilterHintTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Show player filter hint'**
+  String get settingsShowPlayerFilterHintTitle;
+
+  /// No description provided for @filterAddPlayerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Add player'**
+  String get filterAddPlayerLabel;
+
+  /// No description provided for @filterPlayerSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Players'**
+  String get filterPlayerSectionTitle;
+
+  /// No description provided for @filterPlayerPickerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a player'**
+  String get filterPlayerPickerTitle;
+
+  /// No description provided for @filterPlayerHintTouch.
+  ///
+  /// In en, this message translates to:
+  /// **'Long-press a player chip to remove it'**
+  String get filterPlayerHintTouch;
+
+  /// No description provided for @filterPlayerHintPointer.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the X on a player chip to remove it'**
+  String get filterPlayerHintPointer;
+
   /// No description provided for @settingsThemeModeTitle.
   ///
   /// In en, this message translates to:

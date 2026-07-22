@@ -9,6 +9,7 @@ void main() {
       expect(config.themeMode, ThemeMode.system);
       expect(config.fontSizeIndex, 2);
       expect(config.textScaleFactor, 1.0);
+      expect(config.showPlayerFilterHint, isTrue);
     });
 
     test('copyWith updates values', () {
@@ -16,14 +17,20 @@ void main() {
       final updated = config.copyWith(
         themeMode: ThemeMode.dark,
         fontSizeIndex: 4,
+        showPlayerFilterHint: false,
       );
       expect(updated.themeMode, ThemeMode.dark);
       expect(updated.fontSizeIndex, 4);
       expect(updated.textScaleFactor, 1.125);
+      expect(updated.showPlayerFilterHint, isFalse);
     });
 
     test('JSON round-trips', () {
-      const config = ThemeConfig(themeMode: ThemeMode.light, fontSizeIndex: 1);
+      const config = ThemeConfig(
+        themeMode: ThemeMode.light,
+        fontSizeIndex: 1,
+        showPlayerFilterHint: false,
+      );
       final json = config.toJson();
       final restored = ThemeConfig.fromJson(json);
       expect(restored, config);
@@ -36,6 +43,7 @@ void main() {
       });
       expect(restored.themeMode, ThemeMode.system);
       expect(restored.fontSizeIndex, 4);
+      expect(restored.showPlayerFilterHint, isTrue);
     });
 
     test('clamps font size index to valid range', () {

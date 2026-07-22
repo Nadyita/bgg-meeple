@@ -434,6 +434,23 @@ class _ThemeSection extends StatelessWidget {
                 themeCubit.setFontSizeIndex(value.round());
               },
             ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    localizations.settingsShowPlayerFilterHintTitle,
+                    style: theme.textTheme.titleMedium,
+                  ),
+                ),
+                Switch(
+                  value: config.showPlayerFilterHint,
+                  onChanged: (value) {
+                    themeCubit.setShowPlayerFilterHint(value);
+                  },
+                ),
+              ],
+            ),
           ],
         );
       },
