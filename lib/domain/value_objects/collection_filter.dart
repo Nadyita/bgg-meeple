@@ -18,6 +18,8 @@ class CollectionFilter extends Equatable {
     this.maxPlayTime,
     this.minRating,
     this.maxRating,
+    this.minPlays,
+    this.maxPlays,
     this.playerParticipation = const {},
   });
 
@@ -28,6 +30,8 @@ class CollectionFilter extends Equatable {
   final int? maxPlayTime;
   final double? minRating;
   final double? maxRating;
+  final int? minPlays;
+  final int? maxPlays;
 
   /// Per-player participation filter.
   ///
@@ -44,6 +48,8 @@ class CollectionFilter extends Equatable {
         maxPlayTime != null ||
         minRating != null ||
         maxRating != null ||
+        minPlays != null ||
+        maxPlays != null ||
         playerParticipation.values.any(
           (v) => v != PlayerParticipationFilter.any,
         );
@@ -57,6 +63,8 @@ class CollectionFilter extends Equatable {
     int? maxPlayTime,
     double? minRating,
     double? maxRating,
+    int? minPlays,
+    int? maxPlays,
     Map<String, PlayerParticipationFilter>? playerParticipation,
     bool clearMinPlayers = false,
     bool clearMaxPlayers = false,
@@ -64,6 +72,8 @@ class CollectionFilter extends Equatable {
     bool clearMaxPlayTime = false,
     bool clearMinRating = false,
     bool clearMaxRating = false,
+    bool clearMinPlays = false,
+    bool clearMaxPlays = false,
   }) {
     return CollectionFilter(
       selectedSubTypes: selectedSubTypes ?? this.selectedSubTypes,
@@ -73,6 +83,8 @@ class CollectionFilter extends Equatable {
       maxPlayTime: clearMaxPlayTime ? null : (maxPlayTime ?? this.maxPlayTime),
       minRating: clearMinRating ? null : (minRating ?? this.minRating),
       maxRating: clearMaxRating ? null : (maxRating ?? this.maxRating),
+      minPlays: clearMinPlays ? null : (minPlays ?? this.minPlays),
+      maxPlays: clearMaxPlays ? null : (maxPlays ?? this.maxPlays),
       playerParticipation: playerParticipation ?? this.playerParticipation,
     );
   }
@@ -102,6 +114,8 @@ class CollectionFilter extends Equatable {
       if (maxPlayTime != null) 'maxPlayTime': maxPlayTime,
       if (minRating != null) 'minRating': minRating,
       if (maxRating != null) 'maxRating': maxRating,
+      if (minPlays != null) 'minPlays': minPlays,
+      if (maxPlays != null) 'maxPlays': maxPlays,
       if (playerParticipation.isNotEmpty)
         'playerParticipation': {
           for (final entry in playerParticipation.entries)
@@ -156,6 +170,8 @@ class CollectionFilter extends Equatable {
       maxPlayTime: jsonInt(json['maxPlayTime']),
       minRating: jsonDouble(json['minRating']),
       maxRating: jsonDouble(json['maxRating']),
+      minPlays: jsonInt(json['minPlays']),
+      maxPlays: jsonInt(json['maxPlays']),
       playerParticipation: playerParticipation,
     );
   }
@@ -176,6 +192,8 @@ class CollectionFilter extends Equatable {
     maxPlayTime,
     minRating,
     maxRating,
+    minPlays,
+    maxPlays,
     playerParticipation,
   ];
 }

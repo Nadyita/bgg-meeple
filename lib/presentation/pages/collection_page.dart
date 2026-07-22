@@ -7,7 +7,8 @@ import '../../application/use_cases/load_card_layout_use_case.dart';
 import '../../application/use_cases/load_collection_use_case.dart';
 import '../../application/use_cases/load_collection_view_use_case.dart';
 import '../../application/use_cases/load_credentials_use_case.dart';
-import '../../application/use_cases/load_play_player_names_use_case.dart';
+import '../../application/use_cases/load_plays_info_use_case.dart';
+import '../../domain/value_objects/plays_info.dart';
 import '../../application/use_cases/load_game_details_use_case.dart';
 import '../../application/use_cases/save_collection_view_use_case.dart';
 import '../../application/use_cases/sync_collection_use_case.dart';
@@ -39,7 +40,7 @@ class CollectionPage extends StatelessWidget {
     required this.loadCollectionView,
     required this.saveCollectionView,
     required this.loadCredentials,
-    required this.loadPlayPlayerNames,
+    required this.loadPlaysInfo,
     required this.syncCollection,
   });
 
@@ -49,7 +50,7 @@ class CollectionPage extends StatelessWidget {
   final LoadCollectionViewUseCase loadCollectionView;
   final SaveCollectionViewUseCase saveCollectionView;
   final LoadCredentialsUseCase loadCredentials;
-  final LoadPlayPlayerNamesUseCase loadPlayPlayerNames;
+  final LoadPlaysInfoUseCase loadPlaysInfo;
   final SyncCollectionUseCase syncCollection;
 
   @override
@@ -61,7 +62,7 @@ class CollectionPage extends StatelessWidget {
         loadCollectionView: loadCollectionView,
         saveCollectionView: saveCollectionView,
         loadCredentials: loadCredentials,
-        loadPlayPlayerNames: loadPlayPlayerNames,
+        loadPlaysInfo: loadPlaysInfo,
         syncCollection: syncCollection,
       )..add(const CollectionLoaded()),
       child: _CollectionView(loadGameDetails: loadGameDetails),
@@ -203,7 +204,10 @@ class _CollectionViewState extends State<_CollectionView> {
                         return SingleChildScrollView(
                           child: _FilterPanel(
                             filter: state.filter,
-                            playerNamesByGame: state.playerNamesByGame,
+                            maxPlays: state.items
+                                .map((i) => i.numPlays ?? 0)
+                                .fold(0, (a, b) => a > b ? a : b),
+                            playsInfo: state.playsInfo,
                             onFilterChanged: (filter) {
                               bloc.add(CollectionFilterChanged(filter));
                             },
@@ -260,7 +264,8 @@ class _CollectionViewState extends State<_CollectionView> {
                             return CollectionCard(
                               item: item,
                               config: state.cardLayout,
-                              playerNamesByGame: state.playerNamesByGame,
+                              playerNamesByGame:
+                                  state.playsInfo.playerNamesByGame,
                               onTap: () => _openGameDetail(context, item),
                             );
                           },
@@ -445,12 +450,14 @@ class _SyncProgress extends StatelessWidget {
 class _FilterPanel extends StatelessWidget {
   const _FilterPanel({
     required this.filter,
-    required this.playerNamesByGame,
+    required this.maxPlays,
+    required this.playsInfo,
     required this.onFilterChanged,
   });
 
   final CollectionFilter filter;
-  final Map<int, List<String>> playerNamesByGame;
+  final int maxPlays;
+  final PlaysInfo playsInfo;
   final ValueChanged<CollectionFilter> onFilterChanged;
 
   @override
@@ -517,9 +524,23 @@ class _FilterPanel extends StatelessWidget {
                 ),
               ),
             ),
+            _PlayCountRangeSlider(
+              label: localizations.playCountLabel,
+              maxPlays: maxPlays,
+              minPlays: filter.minPlays,
+              maxPlaysFilter: filter.maxPlays,
+              onChanged: (min, max) => onFilterChanged(
+                filter.copyWith(
+                  minPlays: min,
+                  maxPlays: max,
+                  clearMinPlays: min == null,
+                  clearMaxPlays: max == null,
+                ),
+              ),
+            ),
             _PlayerFilterSection(
               filter: filter,
-              playerNamesByGame: playerNamesByGame,
+              playsInfo: playsInfo,
               onFilterChanged: onFilterChanged,
             ),
             const SizedBox(height: 8),
@@ -539,7 +560,7 @@ class _FilterPanel extends StatelessWidget {
   }
 
   Set<String> get _availablePlayerNamesLowerCase {
-    return playerNamesByGame.values
+    return playsInfo.playerNamesByGame.values
         .expand((names) => names)
         .map((name) => name.toLowerCase())
         .toSet();
@@ -578,12 +599,12 @@ class _FilterPanel extends StatelessWidget {
 class _PlayerFilterSection extends StatelessWidget {
   const _PlayerFilterSection({
     required this.filter,
-    required this.playerNamesByGame,
+    required this.playsInfo,
     required this.onFilterChanged,
   });
 
   final CollectionFilter filter;
-  final Map<int, List<String>> playerNamesByGame;
+  final PlaysInfo playsInfo;
   final ValueChanged<CollectionFilter> onFilterChanged;
 
   @override
@@ -629,7 +650,7 @@ class _PlayerFilterSection extends StatelessWidget {
   List<String> _allAvailablePlayers() {
     final seen = <String>{};
     final result = <String>[];
-    for (final names in playerNamesByGame.values) {
+    for (final names in playsInfo.playerNamesByGame.values) {
       for (final name in names) {
         final lower = name.toLowerCase();
         if (seen.add(lower)) {
@@ -643,7 +664,7 @@ class _PlayerFilterSection extends StatelessWidget {
 
   bool _isPlayerAvailable(String playerName) {
     final lower = playerName.toLowerCase();
-    return playerNamesByGame.values
+    return playsInfo.playerNamesByGame.values
         .expand((names) => names)
         .any((name) => name.toLowerCase() == lower);
   }
@@ -897,6 +918,61 @@ class _RatingRangeSlider extends StatelessWidget {
               Text(start.toStringAsFixed(1)),
               Text(end.toStringAsFixed(1)),
             ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PlayCountRangeSlider extends StatelessWidget {
+  const _PlayCountRangeSlider({
+    required this.label,
+    required this.maxPlays,
+    required this.minPlays,
+    required this.maxPlaysFilter,
+    required this.onChanged,
+  });
+
+  final String label;
+  final int maxPlays;
+  final int? minPlays;
+  final int? maxPlaysFilter;
+  final void Function(int? min, int? max) onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    if (maxPlays <= 0) {
+      return const SizedBox.shrink();
+    }
+
+    final start = (minPlays ?? 0).toDouble();
+    final end = (maxPlaysFilter ?? maxPlays).toDouble();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label),
+        RangeSlider(
+          values: RangeValues(start, end),
+          min: 0,
+          max: maxPlays.toDouble(),
+          divisions: maxPlays,
+          labels: RangeLabels('${start.toInt()}', '${end.toInt()}'),
+          onChanged: (values) {
+            final newMin = values.start.round();
+            final newMax = values.end.round();
+            onChanged(
+              newMin == 0 ? null : newMin,
+              newMax == maxPlays ? null : newMax,
+            );
+          },
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [Text('${start.toInt()}'), Text('${end.toInt()}')],
           ),
         ),
       ],

@@ -3,8 +3,11 @@ import 'package:bgg_meeple/application/use_cases/load_card_layout_use_case.dart'
 import 'package:bgg_meeple/application/use_cases/load_collection_use_case.dart';
 import 'package:bgg_meeple/application/use_cases/load_collection_view_use_case.dart';
 import 'package:bgg_meeple/application/use_cases/load_credentials_use_case.dart';
-import 'package:bgg_meeple/application/use_cases/load_play_player_names_use_case.dart';
+import 'package:bgg_meeple/application/use_cases/load_plays_info_use_case.dart';
 import 'package:bgg_meeple/domain/entities/bgg_credentials.dart';
+import 'package:bgg_meeple/domain/entities/play.dart';
+import 'package:bgg_meeple/domain/entities/play_player.dart';
+import 'package:bgg_meeple/domain/value_objects/plays_info.dart';
 import 'package:bgg_meeple/application/use_cases/save_collection_view_use_case.dart';
 import 'package:bgg_meeple/application/use_cases/sync_collection_use_case.dart';
 import 'package:bgg_meeple/domain/entities/collection_item.dart';
@@ -40,8 +43,7 @@ class _MockSaveCollectionViewUseCase extends Mock
 class _MockSyncCollectionUseCase extends Mock
     implements SyncCollectionUseCase {}
 
-class _MockLoadPlayPlayerNamesUseCase extends Mock
-    implements LoadPlayPlayerNamesUseCase {}
+class _MockLoadPlaysInfoUseCase extends Mock implements LoadPlaysInfoUseCase {}
 
 class _FakeLoadCredentialsUseCase extends Fake
     implements LoadCredentialsUseCase {
@@ -69,7 +71,7 @@ CollectionBloc _buildBloc({
   LoadCollectionViewUseCase? loadCollectionView,
   SaveCollectionViewUseCase? saveCollectionView,
   LoadCredentialsUseCase? loadCredentials,
-  LoadPlayPlayerNamesUseCase? loadPlayPlayerNames,
+  LoadPlaysInfoUseCase? loadPlaysInfo,
   SyncCollectionUseCase? syncCollection,
 }) {
   return CollectionBloc(
@@ -78,16 +80,14 @@ CollectionBloc _buildBloc({
     loadCollectionView: loadCollectionView ?? _FakeLoadCollectionViewUseCase(),
     saveCollectionView: saveCollectionView ?? _FakeSaveCollectionViewUseCase(),
     loadCredentials: loadCredentials ?? _FakeLoadCredentialsUseCase(),
-    loadPlayPlayerNames:
-        loadPlayPlayerNames ?? _FakeLoadPlayPlayerNamesUseCase(),
+    loadPlaysInfo: loadPlaysInfo ?? _FakeLoadPlaysInfoUseCase(),
     syncCollection: syncCollection,
   );
 }
 
-class _FakeLoadPlayPlayerNamesUseCase extends Fake
-    implements LoadPlayPlayerNamesUseCase {
+class _FakeLoadPlaysInfoUseCase extends Fake implements LoadPlaysInfoUseCase {
   @override
-  Future<Map<int, List<String>>> call() async => {};
+  Future<PlaysInfo> call() async => const PlaysInfo();
 }
 
 void main() {
@@ -100,14 +100,14 @@ void main() {
     late LoadCardLayoutUseCase loadCardLayout;
     late LoadCollectionViewUseCase loadCollectionView;
     late SaveCollectionViewUseCase saveCollectionView;
-    late LoadPlayPlayerNamesUseCase loadPlayPlayerNames;
+    late LoadPlaysInfoUseCase loadPlaysInfo;
 
     setUp(() {
       loadCollection = _MockLoadCollectionUseCase();
       loadCardLayout = _MockLoadCardLayoutUseCase();
       loadCollectionView = _MockLoadCollectionViewUseCase();
       saveCollectionView = _MockSaveCollectionViewUseCase();
-      loadPlayPlayerNames = _MockLoadPlayPlayerNamesUseCase();
+      loadPlaysInfo = _MockLoadPlaysInfoUseCase();
       when(
         loadCardLayout.call,
       ).thenAnswer((_) async => const CardLayoutConfig());
@@ -115,13 +115,11 @@ void main() {
         loadCollectionView.call,
       ).thenAnswer((_) async => const CollectionView());
       when(() => saveCollectionView.call(any())).thenAnswer((_) async {});
-      when(
-        loadPlayPlayerNames.call,
-      ).thenAnswer((_) async => const <int, List<String>>{});
+      when(loadPlaysInfo.call).thenAnswer((_) async => const PlaysInfo());
     });
 
     blocTest<CollectionBloc, CollectionState>(
-      'loads player names with collection',
+      'loads plays info with collection',
       build: () {
         when(loadCollection.call).thenAnswer(
           (_) async => const [
@@ -129,18 +127,36 @@ void main() {
             CollectionItem(thingId: 2, names: []),
           ],
         );
-        when(loadPlayPlayerNames.call).thenAnswer(
-          (_) async => {
-            1: ['Dine', 'Mark'],
-            2: ['Eva'],
-          },
+        final play1 = _play(
+          thingId: 1,
+          players: [const PlayPlayer(name: 'Dine')],
+        );
+        final play2 = _play(
+          thingId: 1,
+          players: [const PlayPlayer(name: 'Mark')],
+        );
+        final play3 = _play(
+          thingId: 2,
+          players: [const PlayPlayer(name: 'Eva')],
+        );
+        when(loadPlaysInfo.call).thenAnswer(
+          (_) async => PlaysInfo(
+            playerNamesByGame: const {
+              1: ['Dine', 'Mark'],
+              2: ['Eva'],
+            },
+            playsByGame: {
+              1: [play1, play2],
+              2: [play3],
+            },
+          ),
         );
         return _buildBloc(
           loadCollection: loadCollection,
           loadCardLayout: loadCardLayout,
           loadCollectionView: loadCollectionView,
           saveCollectionView: saveCollectionView,
-          loadPlayPlayerNames: loadPlayPlayerNames,
+          loadPlaysInfo: loadPlaysInfo,
         );
       },
       act: (bloc) => bloc.add(const CollectionLoaded()),
@@ -148,11 +164,13 @@ void main() {
       expect: () => [
         predicate<CollectionState>(
           (s) =>
-              s.playerNamesByGame[1]!.length == 2 &&
-              s.playerNamesByGame[1]![0] == 'Dine' &&
-              s.playerNamesByGame[1]![1] == 'Mark' &&
-              s.playerNamesByGame[2]!.length == 1 &&
-              s.playerNamesByGame[2]![0] == 'Eva',
+              s.playsInfo.playerNamesByGame[1]!.length == 2 &&
+              s.playsInfo.playerNamesByGame[1]![0] == 'Dine' &&
+              s.playsInfo.playerNamesByGame[1]![1] == 'Mark' &&
+              s.playsInfo.playerNamesByGame[2]!.length == 1 &&
+              s.playsInfo.playerNamesByGame[2]![0] == 'Eva' &&
+              s.playsInfo.playsByGame[1]!.length == 2 &&
+              s.playsInfo.playsByGame[2]!.length == 1,
         ),
       ],
     );
@@ -661,18 +679,39 @@ void main() {
             CollectionItem(thingId: 3, names: []),
           ],
         );
-        when(loadPlayPlayerNames.call).thenAnswer(
-          (_) async => {
-            1: ['Markus'],
-            2: ['Markus', 'Anna'],
-          },
+        when(loadPlaysInfo.call).thenAnswer(
+          (_) async => PlaysInfo(
+            playerNamesByGame: const {
+              1: ['Markus'],
+              2: ['Markus', 'Anna'],
+            },
+            playsByGame: {
+              1: [
+                _play(
+                  id: 1,
+                  thingId: 1,
+                  players: [const PlayPlayer(name: 'Markus')],
+                ),
+              ],
+              2: [
+                _play(
+                  id: 2,
+                  thingId: 2,
+                  players: [
+                    const PlayPlayer(name: 'Markus'),
+                    const PlayPlayer(name: 'Anna'),
+                  ],
+                ),
+              ],
+            },
+          ),
         );
         return _buildBloc(
           loadCollection: loadCollection,
           loadCardLayout: loadCardLayout,
           loadCollectionView: loadCollectionView,
           saveCollectionView: saveCollectionView,
-          loadPlayPlayerNames: loadPlayPlayerNames,
+          loadPlaysInfo: loadPlaysInfo,
         );
       },
       act: (bloc) => bloc
@@ -695,7 +734,7 @@ void main() {
     );
 
     blocTest<CollectionBloc, CollectionState>(
-      'filters by player participation requiring notPlayed',
+      'filters by player participation requiring notPlayed for a combination',
       build: () {
         when(loadCollection.call).thenAnswer(
           (_) async => const [
@@ -704,18 +743,44 @@ void main() {
             CollectionItem(thingId: 3, names: []),
           ],
         );
-        when(loadPlayPlayerNames.call).thenAnswer(
-          (_) async => {
-            1: ['Markus'],
-            2: ['Markus', 'Anna'],
-          },
+        when(loadPlaysInfo.call).thenAnswer(
+          (_) async => PlaysInfo(
+            playerNamesByGame: const {
+              1: ['Markus', 'Dine'],
+              2: ['Markus', 'Dine'],
+            },
+            playsByGame: {
+              1: [
+                _play(
+                  id: 11,
+                  thingId: 1,
+                  players: [
+                    const PlayPlayer(name: 'Markus'),
+                    const PlayPlayer(name: 'Dine'),
+                  ],
+                ),
+              ],
+              2: [
+                _play(
+                  id: 21,
+                  thingId: 2,
+                  players: [const PlayPlayer(name: 'Dine')],
+                ),
+                _play(
+                  id: 22,
+                  thingId: 2,
+                  players: [const PlayPlayer(name: 'Markus')],
+                ),
+              ],
+            },
+          ),
         );
         return _buildBloc(
           loadCollection: loadCollection,
           loadCardLayout: loadCardLayout,
           loadCollectionView: loadCollectionView,
           saveCollectionView: saveCollectionView,
-          loadPlayPlayerNames: loadPlayPlayerNames,
+          loadPlaysInfo: loadPlaysInfo,
         );
       },
       act: (bloc) => bloc
@@ -725,6 +790,7 @@ void main() {
             CollectionFilter(
               playerParticipation: {
                 'Markus': PlayerParticipationFilter.notPlayed,
+                'Dine': PlayerParticipationFilter.played,
               },
             ),
           ),
@@ -733,7 +799,7 @@ void main() {
       expect: () => [
         predicate<CollectionState>(
           (s) =>
-              s.filteredItems.length == 1 && s.filteredItems.first.thingId == 3,
+              s.filteredItems.length == 1 && s.filteredItems.first.thingId == 2,
         ),
       ],
     );
@@ -744,17 +810,24 @@ void main() {
         when(loadCollection.call).thenAnswer(
           (_) async => const [CollectionItem(thingId: 1, names: [])],
         );
-        when(loadPlayPlayerNames.call).thenAnswer(
-          (_) async => {
-            1: ['markus'],
-          },
+        when(loadPlaysInfo.call).thenAnswer(
+          (_) async => PlaysInfo(
+            playerNamesByGame: const {
+              1: ['markus'],
+            },
+            playsByGame: {
+              1: [
+                _play(thingId: 1, players: [const PlayPlayer(name: 'markus')]),
+              ],
+            },
+          ),
         );
         return _buildBloc(
           loadCollection: loadCollection,
           loadCardLayout: loadCardLayout,
           loadCollectionView: loadCollectionView,
           saveCollectionView: saveCollectionView,
-          loadPlayPlayerNames: loadPlayPlayerNames,
+          loadPlaysInfo: loadPlaysInfo,
         );
       },
       act: (bloc) => bloc
@@ -798,18 +871,28 @@ void main() {
             ),
           ],
         );
-        when(loadPlayPlayerNames.call).thenAnswer(
-          (_) async => {
-            1: ['Markus'],
-            2: ['Markus'],
-          },
+        when(loadPlaysInfo.call).thenAnswer(
+          (_) async => PlaysInfo(
+            playerNamesByGame: const {
+              1: ['Markus'],
+              2: ['Markus'],
+            },
+            playsByGame: {
+              1: [
+                _play(thingId: 1, players: [const PlayPlayer(name: 'Markus')]),
+              ],
+              2: [
+                _play(thingId: 2, players: [const PlayPlayer(name: 'Markus')]),
+              ],
+            },
+          ),
         );
         return _buildBloc(
           loadCollection: loadCollection,
           loadCardLayout: loadCardLayout,
           loadCollectionView: loadCollectionView,
           saveCollectionView: saveCollectionView,
-          loadPlayPlayerNames: loadPlayPlayerNames,
+          loadPlaysInfo: loadPlaysInfo,
         );
       },
       act: (bloc) => bloc
@@ -827,6 +910,124 @@ void main() {
         predicate<CollectionState>(
           (s) =>
               s.filteredItems.length == 1 && s.filteredItems.first.thingId == 2,
+        ),
+      ],
+    );
+
+    blocTest<CollectionBloc, CollectionState>(
+      'filters by play count range using numPlays when no player filter is active',
+      build: () {
+        when(loadCollection.call).thenAnswer(
+          (_) async => const [
+            CollectionItem(thingId: 1, names: [], numPlays: 5),
+            CollectionItem(thingId: 2, names: [], numPlays: 0),
+            CollectionItem(thingId: 3, names: [], numPlays: 12),
+          ],
+        );
+        return _buildBloc(
+          loadCollection: loadCollection,
+          loadCardLayout: loadCardLayout,
+          loadCollectionView: loadCollectionView,
+          saveCollectionView: saveCollectionView,
+        );
+      },
+      act: (bloc) => bloc
+        ..add(const CollectionLoaded())
+        ..add(
+          const CollectionFilterChanged(
+            CollectionFilter(minPlays: 1, maxPlays: 10),
+          ),
+        ),
+      skip: 2,
+      expect: () => [
+        predicate<CollectionState>(
+          (s) =>
+              s.filteredItems.length == 1 && s.filteredItems.first.thingId == 1,
+        ),
+      ],
+    );
+
+    blocTest<CollectionBloc, CollectionState>(
+      'filters by play count range using matching plays when player filter is active',
+      build: () {
+        when(loadCollection.call).thenAnswer(
+          (_) async => const [
+            CollectionItem(thingId: 1, names: [], numPlays: 5),
+            CollectionItem(thingId: 2, names: [], numPlays: 5),
+          ],
+        );
+        when(loadPlaysInfo.call).thenAnswer(
+          (_) async => PlaysInfo(
+            playerNamesByGame: const {
+              1: ['Dine', 'Mark'],
+              2: ['Dine', 'Mark'],
+            },
+            playsByGame: {
+              1: [
+                _play(
+                  id: 101,
+                  thingId: 1,
+                  players: [const PlayPlayer(name: 'Dine')],
+                ),
+                _play(
+                  id: 102,
+                  thingId: 1,
+                  players: [
+                    const PlayPlayer(name: 'Dine'),
+                    const PlayPlayer(name: 'Mark'),
+                  ],
+                ),
+                _play(
+                  id: 103,
+                  thingId: 1,
+                  players: [const PlayPlayer(name: 'Mark')],
+                ),
+              ],
+              2: [
+                _play(
+                  id: 201,
+                  thingId: 2,
+                  players: [
+                    const PlayPlayer(name: 'Dine'),
+                    const PlayPlayer(name: 'Mark'),
+                  ],
+                ),
+                _play(
+                  id: 202,
+                  thingId: 2,
+                  players: [const PlayPlayer(name: 'Mark')],
+                ),
+              ],
+            },
+          ),
+        );
+        return _buildBloc(
+          loadCollection: loadCollection,
+          loadCardLayout: loadCardLayout,
+          loadCollectionView: loadCollectionView,
+          saveCollectionView: saveCollectionView,
+          loadPlaysInfo: loadPlaysInfo,
+        );
+      },
+      act: (bloc) => bloc
+        ..add(const CollectionLoaded())
+        ..add(
+          const CollectionFilterChanged(
+            CollectionFilter(
+              minPlays: 1,
+              maxPlays: 1,
+              playerParticipation: {
+                'Dine': PlayerParticipationFilter.played,
+                'Mark': PlayerParticipationFilter.notPlayed,
+              },
+            ),
+          ),
+        ),
+      skip: 2,
+      expect: () => [
+        predicate<CollectionState>(
+          (s) =>
+              s.filteredItems.length == 1 && s.filteredItems.first.thingId == 1,
         ),
       ],
     );
@@ -1131,7 +1332,7 @@ void main() {
     );
 
     blocTest<CollectionBloc, CollectionState>(
-      'syncs, reloads collection, and refreshes player names on CollectionSyncRequested',
+      'syncs, reloads collection, and refreshes plays info on CollectionSyncRequested',
       build: () {
         final syncCollection = _MockSyncCollectionUseCase();
         when(
@@ -1143,17 +1344,19 @@ void main() {
         when(loadCollection.call).thenAnswer(
           (_) async => const [CollectionItem(thingId: 10, names: [])],
         );
-        when(loadPlayPlayerNames.call).thenAnswer(
-          (_) async => {
-            10: ['Dine', 'Eva', 'Mark'],
-          },
+        when(loadPlaysInfo.call).thenAnswer(
+          (_) async => const PlaysInfo(
+            playerNamesByGame: {
+              10: ['Dine', 'Eva', 'Mark'],
+            },
+          ),
         );
         return _buildBloc(
           loadCollection: loadCollection,
           loadCardLayout: loadCardLayout,
           loadCollectionView: loadCollectionView,
           saveCollectionView: saveCollectionView,
-          loadPlayPlayerNames: loadPlayPlayerNames,
+          loadPlaysInfo: loadPlaysInfo,
           syncCollection: syncCollection,
         );
       },
@@ -1165,10 +1368,10 @@ void main() {
               !s.isSyncing &&
               s.items.length == 1 &&
               s.items.first.thingId == 10 &&
-              s.playerNamesByGame[10]!.length == 3 &&
-              s.playerNamesByGame[10]![0] == 'Dine' &&
-              s.playerNamesByGame[10]![1] == 'Eva' &&
-              s.playerNamesByGame[10]![2] == 'Mark' &&
+              s.playsInfo.playerNamesByGame[10]!.length == 3 &&
+              s.playsInfo.playerNamesByGame[10]![0] == 'Dine' &&
+              s.playsInfo.playerNamesByGame[10]![1] == 'Eva' &&
+              s.playsInfo.playerNamesByGame[10]![2] == 'Mark' &&
               s.errorMessage(AppLocalizationsEn()) == null,
         ),
       ],
@@ -1254,4 +1457,14 @@ void main() {
       ],
     );
   });
+}
+
+Play _play({int? id, required int thingId, required List<PlayPlayer> players}) {
+  return Play(
+    id: id ?? thingId,
+    thingId: thingId,
+    gameName: 'Game $thingId',
+    date: '2026-01-01',
+    players: players,
+  );
 }

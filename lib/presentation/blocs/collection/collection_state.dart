@@ -6,6 +6,8 @@ import '../../../domain/value_objects/collection_filter.dart';
 import '../../../domain/value_objects/collection_sort.dart';
 import '../../l10n/app_localizations.dart';
 
+import '../../../domain/value_objects/plays_info.dart';
+
 /// Description of an error that should be localized before it is shown to the
 /// user. Storing a builder instead of a pre-formatted string keeps the BLoC
 /// free of [AppLocalizations], which is an InheritedWidget and cannot be
@@ -23,7 +25,7 @@ class CollectionState extends Equatable {
     this.filter = const CollectionFilter(),
     this.sort = const CollectionSort(),
     this.cardLayout = const CardLayoutConfig(),
-    this.playerNamesByGame = const {},
+    this.playsInfo = const PlaysInfo(),
     this.hasCredentials = false,
     this.isCompactMode = false,
     this.syncProgress,
@@ -38,7 +40,7 @@ class CollectionState extends Equatable {
   final CollectionFilter filter;
   final CollectionSort sort;
   final CardLayoutConfig cardLayout;
-  final Map<int, List<String>> playerNamesByGame;
+  final PlaysInfo playsInfo;
   final bool hasCredentials;
   final bool isCompactMode;
   final String? syncProgress;
@@ -57,7 +59,7 @@ class CollectionState extends Equatable {
     CollectionFilter? filter,
     CollectionSort? sort,
     CardLayoutConfig? cardLayout,
-    Map<int, List<String>>? playerNamesByGame,
+    PlaysInfo? playsInfo,
     bool? hasCredentials,
     bool? isCompactMode,
     String? syncProgress,
@@ -74,7 +76,7 @@ class CollectionState extends Equatable {
       filter: filter ?? this.filter,
       sort: sort ?? this.sort,
       cardLayout: cardLayout ?? this.cardLayout,
-      playerNamesByGame: playerNamesByGame ?? this.playerNamesByGame,
+      playsInfo: playsInfo ?? this.playsInfo,
       hasCredentials: hasCredentials ?? this.hasCredentials,
       isCompactMode: isCompactMode ?? this.isCompactMode,
       syncProgress: clearSyncProgress
@@ -94,7 +96,7 @@ class CollectionState extends Equatable {
     filter,
     sort,
     cardLayout,
-    playerNamesByGame,
+    playsInfo,
     hasCredentials,
     isCompactMode,
     syncProgress,

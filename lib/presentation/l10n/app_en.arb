@@ -19,6 +19,7 @@
   "playerCountLabel": "Players",
   "playTimeLabel": "Time (min)",
   "ratingLabel": "Rating",
+  "playCountLabel": "Plays",
   "clearFiltersLabel": "Clear",
   "subTypeOwned": "owned",
   "subTypePreordered": "preordered",

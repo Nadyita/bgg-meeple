@@ -69,6 +69,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ratingLabel => 'Rating';
 
   @override
+  String get playCountLabel => 'Plays';
+
+  @override
   String get clearFiltersLabel => 'Clear';
 
   @override
