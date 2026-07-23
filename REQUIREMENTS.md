@@ -100,6 +100,7 @@ There are currently no open questions. All previously discussed questions have b
 
 | Date | Change |
 |------|--------|
+| 2026-07-23 | Fixed bug: persisted player participation filters now evaluate against the cached plays loaded during startup, so the collection list shows matching games instead of "No games match your filters." after an app restart. Delta spec: [`openspec/changes/fix-player-filter-after-restart/specs/search-and-filter/spec.md`](openspec/changes/fix-player-filter-after-restart/specs/search-and-filter/spec.md) |
 | 2026-07-14 | Migrated monolithic `REQUIREMENTS.md` to OpenSpec capability specs under `openspec/specs/`; updated `AGENT.md` with concrete OpenSpec workflow and commands. |
 | 2026-06-29 | Implemented F27 (game detail page): added `GameDetailPage` with full image, external BGG link, alternate names, and all known game fields; tapping a collection card navigates to the detail page; back arrow, Escape key, and system back gesture/button all close the page |
 | 2026-06-29 | Enabled BGG XML API2 `/thing` in `BggApiClient` with API-bearer-token authentication and 20-id batching; extended `BoardGame`, `GameStore`, and Drift schema (v7) to persist description, categories, mechanics, designers, artists, publishers, families, weight, language dependence, and player-count polls |

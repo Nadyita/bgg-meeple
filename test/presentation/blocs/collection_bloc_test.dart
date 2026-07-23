@@ -1412,6 +1412,58 @@ void main() {
     );
 
     blocTest<CollectionBloc, CollectionState>(
+      'restores player filter after restart without showing no-matches',
+      build: () {
+        when(loadCollection.call).thenAnswer(
+          (_) async => const [
+            CollectionItem(thingId: 1, names: []),
+            CollectionItem(thingId: 2, names: []),
+          ],
+        );
+        when(loadCollectionView.call).thenAnswer(
+          (_) async => const CollectionView(
+            filter: CollectionFilter(
+              playerParticipation: {'Markus': PlayerParticipationFilter.played},
+            ),
+          ),
+        );
+        when(loadPlaysInfo.call).thenAnswer(
+          (_) async => PlaysInfo(
+            playerNamesByGame: const {
+              1: ['Markus'],
+              2: ['Eva'],
+            },
+            playsByGame: {
+              1: [
+                _play(thingId: 1, players: [const PlayPlayer(name: 'Markus')]),
+              ],
+              2: [
+                _play(thingId: 2, players: [const PlayPlayer(name: 'Eva')]),
+              ],
+            },
+          ),
+        );
+        return _buildBloc(
+          loadCollection: loadCollection,
+          loadCardLayout: loadCardLayout,
+          loadCollectionView: loadCollectionView,
+          saveCollectionView: saveCollectionView,
+          loadPlaysInfo: loadPlaysInfo,
+        );
+      },
+      act: (bloc) => bloc.add(const CollectionLoaded()),
+      skip: 1,
+      expect: () => [
+        predicate<CollectionState>(
+          (s) =>
+              s.filteredItems.length == 1 &&
+              s.filteredItems.first.thingId == 1 &&
+              s.filter.playerParticipation.isNotEmpty,
+        ),
+      ],
+    );
+
+    blocTest<CollectionBloc, CollectionState>(
       'emits error when sync fails',
       build: () {
         final syncCollection = _MockSyncCollectionUseCase();
