@@ -47,7 +47,19 @@ The filter controls SHALL provide a two-handle range slider with discrete steps 
 - **THEN** the list shows only games whose effective play time falls within the selected range
 
 ### Requirement: Filter by own or BGG rating range
+
 The filter controls SHALL provide a two-handle range slider from 0 to 10 in 0.5 steps. The effective rating SHALL be the user's own rating when set, otherwise `bayesaverage`. Only games whose effective rating falls within the selected range SHALL be shown, and the list SHALL update immediately.
+
+#### Scenario: Rating range filter
+
+- **WHEN** the user selects a rating range of 7.0 to 10.0
+- **THEN** only games whose effective rating falls within 7.0 to 10.0 are shown
+
+#### Scenario: Rating filter prefers own rating
+
+- **GIVEN** a game has an own rating of 6.0 and a `bayesaverage` of 8.0
+- **WHEN** the user selects a rating range of 7.0 to 10.0
+- **THEN** the game is not shown because its effective rating is the own rating
 
 ### Requirement: Filter by play count range
 The filter controls SHALL provide a two-handle range slider from 0 to the maximum `numplays` value among all loaded collection items. The effective play count SHALL be the collection item's `numplays` when no player participation filter is active. When player participation filters are active, the effective play count SHALL be the number of logged plays for the game whose player set satisfies the configured player participation rules. Only games whose effective play count falls within the selected range SHALL be shown, and the list SHALL update immediately.

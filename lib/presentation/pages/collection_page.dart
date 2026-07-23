@@ -164,7 +164,7 @@ class _CollectionViewState extends State<_CollectionView> {
                             tooltip: localizations.clearSearchLabel,
                             onPressed: () {
                               _searchController.clear();
-                              bloc.add(const CollectionViewCleared());
+                              bloc.add(const CollectionSearchCleared());
                             },
                           ),
                         IconButton(
@@ -210,6 +210,9 @@ class _CollectionViewState extends State<_CollectionView> {
                             playsInfo: state.playsInfo,
                             onFilterChanged: (filter) {
                               bloc.add(CollectionFilterChanged(filter));
+                            },
+                            onClearFilters: () {
+                              bloc.add(const CollectionFilterCleared());
                             },
                           ),
                         );
@@ -453,12 +456,14 @@ class _FilterPanel extends StatelessWidget {
     required this.maxPlays,
     required this.playsInfo,
     required this.onFilterChanged,
+    required this.onClearFilters,
   });
 
   final CollectionFilter filter;
   final int maxPlays;
   final PlaysInfo playsInfo;
   final ValueChanged<CollectionFilter> onFilterChanged;
+  final VoidCallback onClearFilters;
 
   @override
   Widget build(BuildContext context) {
@@ -547,9 +552,7 @@ class _FilterPanel extends StatelessWidget {
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
-                onPressed: () => onFilterChanged(
-                  filter.clearPlayerFilters(_availablePlayerNamesLowerCase),
-                ),
+                onPressed: onClearFilters,
                 child: Text(localizations.clearFiltersLabel),
               ),
             ),
@@ -557,13 +560,6 @@ class _FilterPanel extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Set<String> get _availablePlayerNamesLowerCase {
-    return playsInfo.playerNamesByGame.values
-        .expand((names) => names)
-        .map((name) => name.toLowerCase())
-        .toSet();
   }
 
   void _toggleSubType(CollectionSubType subType) {

@@ -83,6 +83,10 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
         await _onSyncRequested(event, emit);
       case CollectionCompactModeToggled():
         _onCompactModeToggled(event, emit);
+      case CollectionSearchCleared():
+        _onSearchCleared(event, emit);
+      case CollectionFilterCleared():
+        _onFilterCleared(event, emit);
       case CollectionViewCleared():
         _onViewCleared(event, emit);
     }
@@ -301,6 +305,45 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
       clearError: true,
     );
     emit(newState);
+  }
+
+  void _onSearchCleared(
+    CollectionSearchCleared event,
+    Emitter<CollectionState> emit,
+  ) {
+    final newState = state.copyWith(
+      searchText: '',
+      filteredItems: _apply(
+        state.items,
+        '',
+        state.filter,
+        state.sort,
+        state.playsInfo,
+      ),
+      clearError: true,
+    );
+    emit(newState);
+    _persistViewState(newState);
+  }
+
+  void _onFilterCleared(
+    CollectionFilterCleared event,
+    Emitter<CollectionState> emit,
+  ) {
+    const clearedFilter = CollectionFilter();
+    final newState = state.copyWith(
+      filter: clearedFilter,
+      filteredItems: _apply(
+        state.items,
+        state.searchText,
+        clearedFilter,
+        state.sort,
+        state.playsInfo,
+      ),
+      clearError: true,
+    );
+    emit(newState);
+    _persistViewState(newState);
   }
 
   void _onViewCleared(

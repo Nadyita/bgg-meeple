@@ -55,6 +55,16 @@ class CollectionCompactModeToggled extends CollectionEvent {
   const CollectionCompactModeToggled();
 }
 
+/// Clears the search query without touching filters or sort order.
+class CollectionSearchCleared extends CollectionEvent {
+  const CollectionSearchCleared();
+}
+
+/// Resets all filter criteria to their defaults without touching search or sort.
+class CollectionFilterCleared extends CollectionEvent {
+  const CollectionFilterCleared();
+}
+
 /// Clears search text, filters, and sort order back to their defaults.
 class CollectionViewCleared extends CollectionEvent {
   const CollectionViewCleared();

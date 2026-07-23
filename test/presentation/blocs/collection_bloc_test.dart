@@ -327,6 +327,155 @@ void main() {
     );
 
     blocTest<CollectionBloc, CollectionState>(
+      'clears only search on CollectionSearchCleared',
+      build: () {
+        when(loadCollection.call).thenAnswer(
+          (_) async => const [
+            CollectionItem(
+              thingId: 1,
+              names: [
+                LocalizedName(value: 'Catan', language: null, isPrimary: true),
+              ],
+            ),
+            CollectionItem(
+              thingId: 2,
+              names: [
+                LocalizedName(
+                  value: 'Carcassonne',
+                  language: null,
+                  isPrimary: true,
+                ),
+              ],
+            ),
+          ],
+        );
+        return _buildBloc(
+          loadCollection: loadCollection,
+          loadCardLayout: loadCardLayout,
+          loadCollectionView: loadCollectionView,
+          saveCollectionView: saveCollectionView,
+        );
+      },
+      act: (bloc) => bloc
+        ..add(const CollectionLoaded())
+        ..add(const CollectionSearchTextChanged('car'))
+        ..add(
+          const CollectionFilterChanged(
+            CollectionFilter(selectedSubTypes: [CollectionSubType.owned]),
+          ),
+        )
+        ..add(
+          const CollectionSortChanged(
+            CollectionSort(sortBy: SortBy.playTime, ascending: false),
+          ),
+        )
+        ..add(const CollectionSearchCleared()),
+      skip: 5,
+      expect: () => [
+        predicate<CollectionState>(
+          (s) =>
+              s.searchText.isEmpty &&
+              s.filter ==
+                  const CollectionFilter(
+                    selectedSubTypes: [CollectionSubType.owned],
+                  ) &&
+              s.sort ==
+                  const CollectionSort(
+                    sortBy: SortBy.playTime,
+                    ascending: false,
+                  ) &&
+              s.filteredItems.isEmpty,
+        ),
+      ],
+      verify: (_) {
+        verify(
+          () => saveCollectionView.call(
+            const CollectionView(
+              searchText: '',
+              filter: CollectionFilter(
+                selectedSubTypes: [CollectionSubType.owned],
+              ),
+              sort: CollectionSort(sortBy: SortBy.playTime, ascending: false),
+            ),
+          ),
+        ).called(1);
+      },
+    );
+
+    blocTest<CollectionBloc, CollectionState>(
+      'clears only filters on CollectionFilterCleared',
+      build: () {
+        when(loadCollection.call).thenAnswer(
+          (_) async => const [
+            CollectionItem(
+              thingId: 1,
+              names: [
+                LocalizedName(value: 'Catan', language: null, isPrimary: true),
+              ],
+            ),
+            CollectionItem(
+              thingId: 2,
+              names: [
+                LocalizedName(
+                  value: 'Carcassonne',
+                  language: null,
+                  isPrimary: true,
+                ),
+              ],
+            ),
+          ],
+        );
+        return _buildBloc(
+          loadCollection: loadCollection,
+          loadCardLayout: loadCardLayout,
+          loadCollectionView: loadCollectionView,
+          saveCollectionView: saveCollectionView,
+        );
+      },
+      act: (bloc) => bloc
+        ..add(const CollectionLoaded())
+        ..add(const CollectionSearchTextChanged('car'))
+        ..add(
+          const CollectionFilterChanged(
+            CollectionFilter(selectedSubTypes: [CollectionSubType.owned]),
+          ),
+        )
+        ..add(
+          const CollectionSortChanged(
+            CollectionSort(sortBy: SortBy.playTime, ascending: false),
+          ),
+        )
+        ..add(const CollectionFilterCleared()),
+      skip: 5,
+      expect: () => [
+        predicate<CollectionState>(
+          (s) =>
+              s.searchText == 'car' &&
+              s.filter == const CollectionFilter() &&
+              s.sort ==
+                  const CollectionSort(
+                    sortBy: SortBy.playTime,
+                    ascending: false,
+                  ) &&
+              s.filteredItems.length == 1 &&
+              s.filteredItems.first.displayName(preferredLanguage: 'de') ==
+                  'Carcassonne',
+        ),
+      ],
+      verify: (_) {
+        verify(
+          () => saveCollectionView.call(
+            const CollectionView(
+              searchText: 'car',
+              filter: CollectionFilter(),
+              sort: CollectionSort(sortBy: SortBy.playTime, ascending: false),
+            ),
+          ),
+        ).called(1);
+      },
+    );
+
+    blocTest<CollectionBloc, CollectionState>(
       'clears search, filters, and sort on CollectionViewCleared',
       build: () {
         when(loadCollection.call).thenAnswer(
