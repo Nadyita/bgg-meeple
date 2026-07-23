@@ -22,6 +22,6 @@
 
 ### 4. Review
 
-- [ ] **4.1** Validate OpenSpec change after implementation
+- [x] **4.1** Validate OpenSpec change after implementation
 - [x] **4.2** Validate OpenSpec change after implementation (validation passed)
-- [ ] **4.3** Request approval and archive change
+- [x] **4.3** Request approval and archive change

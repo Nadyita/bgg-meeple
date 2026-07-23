@@ -1,0 +1,31 @@
+{
+  "changeId": "split-android-apk-by-abi",
+  "status": "in_progress",
+  "approvals": [
+    {
+      "approver": "mark",
+      "approvedAt": "2026-07-23T13:36:52.575Z",
+      "comment": "Implemented, tested locally, merged to main."
+    }
+  ],
+  "rejections": [],
+  "history": [
+    {
+      "action": "request_approval",
+      "by": "mark",
+      "at": "2026-07-23T13:36:50.530Z",
+      "details": "Reviewers: mark"
+    },
+    {
+      "action": "approved",
+      "by": "mark",
+      "at": "2026-07-23T13:36:52.575Z",
+      "details": "Implemented, tested locally, merged to main."
+    }
+  ],
+  "requestedAt": "2026-07-23T13:36:50.530Z",
+  "requestedBy": "mark",
+  "reviewers": [
+    "mark"
+  ]
+}
