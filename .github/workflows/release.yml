@@ -105,6 +105,7 @@ jobs:
         run: |
           flutter build apk \
             --release \
+            --split-per-abi \
             --build-name="${{ steps.version.outputs.version }}" \
             --build-number="${{ steps.version_code.outputs.version_code }}"
 
@@ -112,8 +113,15 @@ jobs:
         if: always()
         run: rm -f android/keystore/bgg_meeple_release.keystore
 
-      - name: Rename Android APK
-        run: mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/bgg-meeple-android.apk
+      - name: Rename Android APKs
+        run: |
+          mkdir -p build/app/outputs/flutter-apk/renamed
+          cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk \
+            build/app/outputs/flutter-apk/renamed/bgg-meeple-android-armeabi-v7a.apk
+          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk \
+            build/app/outputs/flutter-apk/renamed/bgg-meeple-android-arm64-v8a.apk
+          cp build/app/outputs/flutter-apk/app-x86_64-release.apk \
+            build/app/outputs/flutter-apk/renamed/bgg-meeple-android-x86_64.apk
 
       - name: Package Linux release
         run: |
@@ -125,6 +133,6 @@ jobs:
         with:
           files: |
             build/linux/x64/release/bgg-meeple-linux-*.tar.gz
-            build/app/outputs/flutter-apk/bgg-meeple-android.apk
+            build/app/outputs/flutter-apk/renamed/bgg-meeple-android-*.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

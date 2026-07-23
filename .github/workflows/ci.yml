@@ -91,10 +91,10 @@ jobs:
         run: flutter pub get
 
       - name: Build Android release
-        run: flutter build apk --release
+        run: flutter build apk --release --split-per-abi
 
-      - name: Upload Android artifact
+      - name: Upload Android artifacts
         uses: actions/upload-artifact@v4
         with:
           name: bgg-meeple-android
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: build/app/outputs/flutter-apk/app-*-release.apk

@@ -35,10 +35,16 @@ flutter run -d linux
 ### Build for Android
 
 ```bash
-flutter build apk --release
+flutter build apk --release --split-per-abi
 ```
 
-The release APK is written to `build/app/outputs/flutter-apk/app-release.apk`.
+This produces one APK per supported ABI in `build/app/outputs/flutter-apk/`:
+
+- `app-armeabi-v7a-release.apk`
+- `app-arm64-v8a-release.apk`
+- `app-x86_64-release.apk`
+
+Use the APK matching the device architecture. For GitHub releases, the workflow renames these to `bgg-meeple-android-<abi>.apk` and attaches them to the release so Obtanium can pick the correct one.
 
 When no release signing credentials are configured, the build falls back to the debug signing key. This is fine for local testing, but release artifacts that are distributed to users must be signed with the project's release keystore.
 
