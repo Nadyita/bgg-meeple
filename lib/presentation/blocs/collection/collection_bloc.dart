@@ -16,6 +16,7 @@ import '../../../domain/value_objects/collection_sort.dart';
 import '../../../domain/value_objects/collection_sub_type.dart';
 import '../../../domain/value_objects/collection_view.dart';
 import '../../../domain/value_objects/player_participation_filter.dart';
+import '../../../domain/value_objects/plays_info.dart';
 import 'collection_event.dart';
 import 'collection_state.dart';
 
@@ -108,7 +109,13 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
           filter: view.filter,
           sort: view.sort,
           hasCredentials: credentials?.isValid ?? false,
-          filteredItems: _apply(items, view.searchText, view.filter, view.sort),
+          filteredItems: _apply(
+            items,
+            view.searchText,
+            view.filter,
+            view.sort,
+            playsInfo,
+          ),
         ),
       );
     } on Exception catch (e) {
@@ -133,6 +140,7 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
         event.searchText,
         state.filter,
         state.sort,
+        state.playsInfo,
       ),
       clearError: true,
     );
@@ -151,6 +159,7 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
         state.searchText,
         event.filter,
         state.sort,
+        state.playsInfo,
       ),
       clearError: true,
     );
@@ -169,6 +178,7 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
         state.searchText,
         state.filter,
         event.sort,
+        state.playsInfo,
       ),
       clearError: true,
     );
@@ -185,6 +195,7 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
           state.searchText,
           state.filter,
           state.sort,
+          state.playsInfo,
         ),
         clearError: true,
       ),
@@ -263,6 +274,7 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
             state.searchText,
             state.filter,
             state.sort,
+            playsInfo,
           ),
           clearSyncProgress: true,
           clearError: true,
@@ -304,6 +316,7 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
         '',
         const CollectionFilter(),
         const CollectionSort(),
+        state.playsInfo,
       ),
       clearError: true,
     );
@@ -341,9 +354,11 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
     String searchText,
     CollectionFilter filter,
     CollectionSort sort,
+    PlaysInfo playsInfo,
   ) {
     var result = items.where((item) {
-      return _matchesSearch(item, searchText) && _matchesFilter(item, filter);
+      return _matchesSearch(item, searchText) &&
+          _matchesFilter(item, filter, playsInfo);
     }).toList();
 
     result = _sort(result, sort);
@@ -373,7 +388,11 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
     return buffer.toString().trim();
   }
 
-  bool _matchesFilter(CollectionItem item, CollectionFilter filter) {
+  bool _matchesFilter(
+    CollectionItem item,
+    CollectionFilter filter,
+    PlaysInfo playsInfo,
+  ) {
     if (filter.selectedSubTypes.isNotEmpty) {
       final matchesAnySubType = filter.selectedSubTypes.any(
         (subType) => _matchesSubType(item, subType),
@@ -416,7 +435,7 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
       return false;
     }
 
-    final effectivePlays = _effectivePlayCount(item, filter);
+    final effectivePlays = _effectivePlayCount(item, filter, playsInfo);
     final hasPlayerFilter = filter.playerParticipation.values.any(
       (v) => v != PlayerParticipationFilter.any,
     );
@@ -433,7 +452,11 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
     return true;
   }
 
-  int _effectivePlayCount(CollectionItem item, CollectionFilter filter) {
+  int _effectivePlayCount(
+    CollectionItem item,
+    CollectionFilter filter,
+    PlaysInfo playsInfo,
+  ) {
     final activeFilters = filter.playerParticipation.entries.where(
       (e) => e.value != PlayerParticipationFilter.any,
     );
@@ -441,7 +464,7 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
       return item.numPlays ?? 0;
     }
 
-    final plays = state.playsInfo.playsByGame[item.thingId] ?? [];
+    final plays = playsInfo.playsByGame[item.thingId] ?? [];
     return plays.where((play) => _playMatchesPlayerFilter(play, filter)).length;
   }
 
