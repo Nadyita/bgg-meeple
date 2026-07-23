@@ -105,101 +105,103 @@ class _SettingsFormState extends State<_SettingsForm> {
       child: BlocBuilder<SettingsBloc, SettingsState>(
         builder: (context, state) {
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                TextField(
-                  key: const Key('settingsUsernameField'),
-                  decoration: InputDecoration(
-                    labelText: localizations.settingsBggUsernameLabel,
-                    hintText: localizations.searchHint,
-                  ),
-                  controller: TextEditingController(text: state.username)
-                    ..selection = TextSelection.collapsed(
-                      offset: state.username.length,
+            child: SafeArea(
+              minimum: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  TextField(
+                    key: const Key('settingsUsernameField'),
+                    decoration: InputDecoration(
+                      labelText: localizations.settingsBggUsernameLabel,
+                      hintText: localizations.searchHint,
                     ),
-                  onChanged: (value) => context.read<SettingsBloc>().add(
-                    SettingsUsernameChanged(value),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  key: const Key('settingsPasswordField'),
-                  decoration: InputDecoration(
-                    labelText: localizations.settingsBggPasswordLabel,
-                  ),
-                  controller: TextEditingController(text: state.password)
-                    ..selection = TextSelection.collapsed(
-                      offset: state.password.length,
+                    controller: TextEditingController(text: state.username)
+                      ..selection = TextSelection.collapsed(
+                        offset: state.username.length,
+                      ),
+                    onChanged: (value) => context.read<SettingsBloc>().add(
+                      SettingsUsernameChanged(value),
                     ),
-                  obscureText: true,
-                  onChanged: (value) => context.read<SettingsBloc>().add(
-                    SettingsPasswordChanged(value),
                   ),
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  key: const Key('settingsApiTokenField'),
-                  decoration: InputDecoration(
-                    labelText: localizations.settingsBggApiTokenLabel,
-                    hintText: localizations.settingsBggApiTokenHint,
-                  ),
-                  controller: TextEditingController(text: state.apiToken)
-                    ..selection = TextSelection.collapsed(
-                      offset: state.apiToken.length,
-                    ),
-                  obscureText: true,
-                  onChanged: (value) => context.read<SettingsBloc>().add(
-                    SettingsApiTokenChanged(value),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                ElevatedButton.icon(
-                  key: const Key('settingsSaveButton'),
-                  onPressed: state.isLoading || !state.canSave
-                      ? null
-                      : () => context.read<SettingsBloc>().add(
-                          const SettingsCredentialsSaved(),
-                        ),
-                  icon: const Icon(Icons.save),
-                  label: Text(localizations.settingsSaveCredentialsButton),
-                ),
-                const SizedBox(height: 8),
-                OutlinedButton.icon(
-                  key: const Key('settingsLoginButton'),
-                  onPressed: state.isLoading || !state.canSave
-                      ? null
-                      : () => context.read<SettingsBloc>().add(
-                          const SettingsLoginRequested(),
-                        ),
-                  icon: const Icon(Icons.login),
-                  label: Text(localizations.settingsTestLoginButton),
-                ),
-                const SizedBox(height: 8),
-                OutlinedButton.icon(
-                  key: const Key('settingsSyncButton'),
-                  onPressed: state.isLoading || !state.canSave
-                      ? null
-                      : () => context.read<SettingsBloc>().add(
-                          const SettingsSyncRequested(),
-                        ),
-                  icon: const Icon(Icons.sync),
-                  label: Text(localizations.settingsSyncCollectionButton),
-                ),
-                if (state.syncProgress != null) ...[
                   const SizedBox(height: 16),
-                  Text(state.syncProgress!),
-                ],
-                if (state.isLoading) ...[
+                  TextField(
+                    key: const Key('settingsPasswordField'),
+                    decoration: InputDecoration(
+                      labelText: localizations.settingsBggPasswordLabel,
+                    ),
+                    controller: TextEditingController(text: state.password)
+                      ..selection = TextSelection.collapsed(
+                        offset: state.password.length,
+                      ),
+                    obscureText: true,
+                    onChanged: (value) => context.read<SettingsBloc>().add(
+                      SettingsPasswordChanged(value),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextField(
+                    key: const Key('settingsApiTokenField'),
+                    decoration: InputDecoration(
+                      labelText: localizations.settingsBggApiTokenLabel,
+                      hintText: localizations.settingsBggApiTokenHint,
+                    ),
+                    controller: TextEditingController(text: state.apiToken)
+                      ..selection = TextSelection.collapsed(
+                        offset: state.apiToken.length,
+                      ),
+                    obscureText: true,
+                    onChanged: (value) => context.read<SettingsBloc>().add(
+                      SettingsApiTokenChanged(value),
+                    ),
+                  ),
                   const SizedBox(height: 24),
-                  const LinearProgressIndicator(),
+                  ElevatedButton.icon(
+                    key: const Key('settingsSaveButton'),
+                    onPressed: state.isLoading || !state.canSave
+                        ? null
+                        : () => context.read<SettingsBloc>().add(
+                            const SettingsCredentialsSaved(),
+                          ),
+                    icon: const Icon(Icons.save),
+                    label: Text(localizations.settingsSaveCredentialsButton),
+                  ),
+                  const SizedBox(height: 8),
+                  OutlinedButton.icon(
+                    key: const Key('settingsLoginButton'),
+                    onPressed: state.isLoading || !state.canSave
+                        ? null
+                        : () => context.read<SettingsBloc>().add(
+                            const SettingsLoginRequested(),
+                          ),
+                    icon: const Icon(Icons.login),
+                    label: Text(localizations.settingsTestLoginButton),
+                  ),
+                  const SizedBox(height: 8),
+                  OutlinedButton.icon(
+                    key: const Key('settingsSyncButton'),
+                    onPressed: state.isLoading || !state.canSave
+                        ? null
+                        : () => context.read<SettingsBloc>().add(
+                            const SettingsSyncRequested(),
+                          ),
+                    icon: const Icon(Icons.sync),
+                    label: Text(localizations.settingsSyncCollectionButton),
+                  ),
+                  if (state.syncProgress != null) ...[
+                    const SizedBox(height: 16),
+                    Text(state.syncProgress!),
+                  ],
+                  if (state.isLoading) ...[
+                    const SizedBox(height: 24),
+                    const LinearProgressIndicator(),
+                  ],
+                  const Divider(height: 48),
+                  const _ThemeSection(),
+                  const Divider(height: 48),
+                  _CardLayoutSection(config: state.cardLayout),
                 ],
-                const Divider(height: 48),
-                const _ThemeSection(),
-                const Divider(height: 48),
-                _CardLayoutSection(config: state.cardLayout),
-              ],
+              ),
             ),
           );
         },
