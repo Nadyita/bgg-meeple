@@ -512,6 +512,18 @@ class $CollectionItemsTable extends CollectionItems
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _inventoryLocationMeta = const VerificationMeta(
+    'inventoryLocation',
+  );
+  @override
+  late final GeneratedColumn<String> inventoryLocation =
+      GeneratedColumn<String>(
+        'inventory_location',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
   static const VerificationMeta _isOwnedMeta = const VerificationMeta(
     'isOwned',
   );
@@ -710,6 +722,7 @@ class $CollectionItemsTable extends CollectionItems
     numPlays,
     bggRank,
     geekRatingUserCount,
+    inventoryLocation,
     isOwned,
     isPreordered,
     isWishlisted,
@@ -877,6 +890,15 @@ class $CollectionItemsTable extends CollectionItems
         geekRatingUserCount.isAcceptableOrUnknown(
           data['geek_rating_user_count']!,
           _geekRatingUserCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('inventory_location')) {
+      context.handle(
+        _inventoryLocationMeta,
+        inventoryLocation.isAcceptableOrUnknown(
+          data['inventory_location']!,
+          _inventoryLocationMeta,
         ),
       );
     }
@@ -1058,6 +1080,10 @@ class $CollectionItemsTable extends CollectionItems
         DriftSqlType.int,
         data['${effectivePrefix}geek_rating_user_count'],
       ),
+      inventoryLocation: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}inventory_location'],
+      ),
       isOwned: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
         data['${effectivePrefix}is_owned'],
@@ -1135,6 +1161,7 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
   final int? numPlays;
   final int? bggRank;
   final int? geekRatingUserCount;
+  final String? inventoryLocation;
   final bool isOwned;
   final bool isPreordered;
   final bool isWishlisted;
@@ -1167,6 +1194,7 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
     this.numPlays,
     this.bggRank,
     this.geekRatingUserCount,
+    this.inventoryLocation,
     required this.isOwned,
     required this.isPreordered,
     required this.isWishlisted,
@@ -1235,6 +1263,9 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
     }
     if (!nullToAbsent || geekRatingUserCount != null) {
       map['geek_rating_user_count'] = Variable<int>(geekRatingUserCount);
+    }
+    if (!nullToAbsent || inventoryLocation != null) {
+      map['inventory_location'] = Variable<String>(inventoryLocation);
     }
     map['is_owned'] = Variable<bool>(isOwned);
     map['is_preordered'] = Variable<bool>(isPreordered);
@@ -1308,6 +1339,9 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
       geekRatingUserCount: geekRatingUserCount == null && nullToAbsent
           ? const Value.absent()
           : Value(geekRatingUserCount),
+      inventoryLocation: inventoryLocation == null && nullToAbsent
+          ? const Value.absent()
+          : Value(inventoryLocation),
       isOwned: Value(isOwned),
       isPreordered: Value(isPreordered),
       isWishlisted: Value(isWishlisted),
@@ -1354,6 +1388,9 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
       geekRatingUserCount: serializer.fromJson<int?>(
         json['geekRatingUserCount'],
       ),
+      inventoryLocation: serializer.fromJson<String?>(
+        json['inventoryLocation'],
+      ),
       isOwned: serializer.fromJson<bool>(json['isOwned']),
       isPreordered: serializer.fromJson<bool>(json['isPreordered']),
       isWishlisted: serializer.fromJson<bool>(json['isWishlisted']),
@@ -1391,6 +1428,7 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
       'numPlays': serializer.toJson<int?>(numPlays),
       'bggRank': serializer.toJson<int?>(bggRank),
       'geekRatingUserCount': serializer.toJson<int?>(geekRatingUserCount),
+      'inventoryLocation': serializer.toJson<String?>(inventoryLocation),
       'isOwned': serializer.toJson<bool>(isOwned),
       'isPreordered': serializer.toJson<bool>(isPreordered),
       'isWishlisted': serializer.toJson<bool>(isWishlisted),
@@ -1426,6 +1464,7 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
     Value<int?> numPlays = const Value.absent(),
     Value<int?> bggRank = const Value.absent(),
     Value<int?> geekRatingUserCount = const Value.absent(),
+    Value<String?> inventoryLocation = const Value.absent(),
     bool? isOwned,
     bool? isPreordered,
     bool? isWishlisted,
@@ -1466,6 +1505,9 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
     geekRatingUserCount: geekRatingUserCount.present
         ? geekRatingUserCount.value
         : this.geekRatingUserCount,
+    inventoryLocation: inventoryLocation.present
+        ? inventoryLocation.value
+        : this.inventoryLocation,
     isOwned: isOwned ?? this.isOwned,
     isPreordered: isPreordered ?? this.isPreordered,
     isWishlisted: isWishlisted ?? this.isWishlisted,
@@ -1524,6 +1566,9 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
       geekRatingUserCount: data.geekRatingUserCount.present
           ? data.geekRatingUserCount.value
           : this.geekRatingUserCount,
+      inventoryLocation: data.inventoryLocation.present
+          ? data.inventoryLocation.value
+          : this.inventoryLocation,
       isOwned: data.isOwned.present ? data.isOwned.value : this.isOwned,
       isPreordered: data.isPreordered.present
           ? data.isPreordered.value
@@ -1577,6 +1622,7 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
           ..write('numPlays: $numPlays, ')
           ..write('bggRank: $bggRank, ')
           ..write('geekRatingUserCount: $geekRatingUserCount, ')
+          ..write('inventoryLocation: $inventoryLocation, ')
           ..write('isOwned: $isOwned, ')
           ..write('isPreordered: $isPreordered, ')
           ..write('isWishlisted: $isWishlisted, ')
@@ -1614,6 +1660,7 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
     numPlays,
     bggRank,
     geekRatingUserCount,
+    inventoryLocation,
     isOwned,
     isPreordered,
     isWishlisted,
@@ -1650,6 +1697,7 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
           other.numPlays == this.numPlays &&
           other.bggRank == this.bggRank &&
           other.geekRatingUserCount == this.geekRatingUserCount &&
+          other.inventoryLocation == this.inventoryLocation &&
           other.isOwned == this.isOwned &&
           other.isPreordered == this.isPreordered &&
           other.isWishlisted == this.isWishlisted &&
@@ -1684,6 +1732,7 @@ class CollectionItemsCompanion extends UpdateCompanion<CollectionItem> {
   final Value<int?> numPlays;
   final Value<int?> bggRank;
   final Value<int?> geekRatingUserCount;
+  final Value<String?> inventoryLocation;
   final Value<bool> isOwned;
   final Value<bool> isPreordered;
   final Value<bool> isWishlisted;
@@ -1717,6 +1766,7 @@ class CollectionItemsCompanion extends UpdateCompanion<CollectionItem> {
     this.numPlays = const Value.absent(),
     this.bggRank = const Value.absent(),
     this.geekRatingUserCount = const Value.absent(),
+    this.inventoryLocation = const Value.absent(),
     this.isOwned = const Value.absent(),
     this.isPreordered = const Value.absent(),
     this.isWishlisted = const Value.absent(),
@@ -1751,6 +1801,7 @@ class CollectionItemsCompanion extends UpdateCompanion<CollectionItem> {
     this.numPlays = const Value.absent(),
     this.bggRank = const Value.absent(),
     this.geekRatingUserCount = const Value.absent(),
+    this.inventoryLocation = const Value.absent(),
     this.isOwned = const Value.absent(),
     this.isPreordered = const Value.absent(),
     this.isWishlisted = const Value.absent(),
@@ -1786,6 +1837,7 @@ class CollectionItemsCompanion extends UpdateCompanion<CollectionItem> {
     Expression<int>? numPlays,
     Expression<int>? bggRank,
     Expression<int>? geekRatingUserCount,
+    Expression<String>? inventoryLocation,
     Expression<bool>? isOwned,
     Expression<bool>? isPreordered,
     Expression<bool>? isWishlisted,
@@ -1822,6 +1874,7 @@ class CollectionItemsCompanion extends UpdateCompanion<CollectionItem> {
       if (bggRank != null) 'bgg_rank': bggRank,
       if (geekRatingUserCount != null)
         'geek_rating_user_count': geekRatingUserCount,
+      if (inventoryLocation != null) 'inventory_location': inventoryLocation,
       if (isOwned != null) 'is_owned': isOwned,
       if (isPreordered != null) 'is_preordered': isPreordered,
       if (isWishlisted != null) 'is_wishlisted': isWishlisted,
@@ -1858,6 +1911,7 @@ class CollectionItemsCompanion extends UpdateCompanion<CollectionItem> {
     Value<int?>? numPlays,
     Value<int?>? bggRank,
     Value<int?>? geekRatingUserCount,
+    Value<String?>? inventoryLocation,
     Value<bool>? isOwned,
     Value<bool>? isPreordered,
     Value<bool>? isWishlisted,
@@ -1892,6 +1946,7 @@ class CollectionItemsCompanion extends UpdateCompanion<CollectionItem> {
       numPlays: numPlays ?? this.numPlays,
       bggRank: bggRank ?? this.bggRank,
       geekRatingUserCount: geekRatingUserCount ?? this.geekRatingUserCount,
+      inventoryLocation: inventoryLocation ?? this.inventoryLocation,
       isOwned: isOwned ?? this.isOwned,
       isPreordered: isPreordered ?? this.isPreordered,
       isWishlisted: isWishlisted ?? this.isWishlisted,
@@ -1968,6 +2023,9 @@ class CollectionItemsCompanion extends UpdateCompanion<CollectionItem> {
     if (geekRatingUserCount.present) {
       map['geek_rating_user_count'] = Variable<int>(geekRatingUserCount.value);
     }
+    if (inventoryLocation.present) {
+      map['inventory_location'] = Variable<String>(inventoryLocation.value);
+    }
     if (isOwned.present) {
       map['is_owned'] = Variable<bool>(isOwned.value);
     }
@@ -2032,6 +2090,7 @@ class CollectionItemsCompanion extends UpdateCompanion<CollectionItem> {
           ..write('numPlays: $numPlays, ')
           ..write('bggRank: $bggRank, ')
           ..write('geekRatingUserCount: $geekRatingUserCount, ')
+          ..write('inventoryLocation: $inventoryLocation, ')
           ..write('isOwned: $isOwned, ')
           ..write('isPreordered: $isPreordered, ')
           ..write('isWishlisted: $isWishlisted, ')
@@ -5767,6 +5826,7 @@ typedef $$CollectionItemsTableCreateCompanionBuilder =
       Value<int?> numPlays,
       Value<int?> bggRank,
       Value<int?> geekRatingUserCount,
+      Value<String?> inventoryLocation,
       Value<bool> isOwned,
       Value<bool> isPreordered,
       Value<bool> isWishlisted,
@@ -5802,6 +5862,7 @@ typedef $$CollectionItemsTableUpdateCompanionBuilder =
       Value<int?> numPlays,
       Value<int?> bggRank,
       Value<int?> geekRatingUserCount,
+      Value<String?> inventoryLocation,
       Value<bool> isOwned,
       Value<bool> isPreordered,
       Value<bool> isWishlisted,
@@ -5947,6 +6008,11 @@ class $$CollectionItemsTableFilterComposer
 
   ColumnFilters<int> get geekRatingUserCount => $composableBuilder(
     column: $table.geekRatingUserCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get inventoryLocation => $composableBuilder(
+    column: $table.inventoryLocation,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -6133,6 +6199,11 @@ class $$CollectionItemsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get inventoryLocation => $composableBuilder(
+    column: $table.inventoryLocation,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<bool> get isOwned => $composableBuilder(
     column: $table.isOwned,
     builder: (column) => ColumnOrderings(column),
@@ -6302,6 +6373,11 @@ class $$CollectionItemsTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<String> get inventoryLocation => $composableBuilder(
+    column: $table.inventoryLocation,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<bool> get isOwned =>
       $composableBuilder(column: $table.isOwned, builder: (column) => column);
 
@@ -6424,6 +6500,7 @@ class $$CollectionItemsTableTableManager
                 Value<int?> numPlays = const Value.absent(),
                 Value<int?> bggRank = const Value.absent(),
                 Value<int?> geekRatingUserCount = const Value.absent(),
+                Value<String?> inventoryLocation = const Value.absent(),
                 Value<bool> isOwned = const Value.absent(),
                 Value<bool> isPreordered = const Value.absent(),
                 Value<bool> isWishlisted = const Value.absent(),
@@ -6457,6 +6534,7 @@ class $$CollectionItemsTableTableManager
                 numPlays: numPlays,
                 bggRank: bggRank,
                 geekRatingUserCount: geekRatingUserCount,
+                inventoryLocation: inventoryLocation,
                 isOwned: isOwned,
                 isPreordered: isPreordered,
                 isWishlisted: isWishlisted,
@@ -6492,6 +6570,7 @@ class $$CollectionItemsTableTableManager
                 Value<int?> numPlays = const Value.absent(),
                 Value<int?> bggRank = const Value.absent(),
                 Value<int?> geekRatingUserCount = const Value.absent(),
+                Value<String?> inventoryLocation = const Value.absent(),
                 Value<bool> isOwned = const Value.absent(),
                 Value<bool> isPreordered = const Value.absent(),
                 Value<bool> isWishlisted = const Value.absent(),
@@ -6525,6 +6604,7 @@ class $$CollectionItemsTableTableManager
                 numPlays: numPlays,
                 bggRank: bggRank,
                 geekRatingUserCount: geekRatingUserCount,
+                inventoryLocation: inventoryLocation,
                 isOwned: isOwned,
                 isPreordered: isPreordered,
                 isWishlisted: isWishlisted,

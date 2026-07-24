@@ -19,7 +19,7 @@ void main() {
       when(
         () => client.get(
           Uri.parse(
-            'https://boardgamegeek.com/xmlapi2/collection?username=real&version=1&stats=1',
+            'https://boardgamegeek.com/xmlapi2/collection?username=real&version=1&stats=1&showprivate=1',
           ),
           headers: any(named: 'headers'),
         ),
@@ -47,6 +47,9 @@ void main() {
               </stats>
               <status own="1" prevowned="0" fortrade="0" want="0" wanttoplay="0" wanttobuy="0" wishlist="0" preordered="0" lastmodified="2026-06-24 09:12:37"/>
               <numplays>0</numplays>
+              <privateinfo pp_currency="" pricepaid="" cv_currency="" currvalue="" quantity="" acquisitiondate="" acquiredfrom="" inventorylocation="Eva ">
+                <privatecomment/>
+              </privateinfo>
               <version>
                 <item type="boardgameversion" id="288960">
                   <thumbnail>https://cf.geekdo-images.com/CSopwI-WJ1SfOzHbe4Bb5Q__small/img/I40pQrdvrrIppQVCO6IQn7UtqY0=/fit-in/200x150/filters:strip_icc()/pic2718569.png</thumbnail>
@@ -119,6 +122,7 @@ void main() {
       expect(gewinnt.version?.name, 'Schmidt multilingual edition 2008');
       expect(gewinnt.version?.year, 2008);
       expect(gewinnt.isOwned, isTrue);
+      expect(gewinnt.inventoryLocation, 'Eva');
 
       expect(items.last.collId, 146735594);
 
@@ -143,7 +147,7 @@ void main() {
       when(
         () => client.get(
           Uri.parse(
-            'https://boardgamegeek.com/xmlapi2/collection?username=empty&version=1&stats=1',
+            'https://boardgamegeek.com/xmlapi2/collection?username=empty&version=1&stats=1&showprivate=1',
           ),
           headers: any(named: 'headers'),
         ),
@@ -157,5 +161,48 @@ void main() {
       final items = await apiClient.fetchCollection('empty');
       expect(items, isEmpty);
     });
+
+    test(
+      'parses inventory location trimmed and null when missing or empty',
+      () async {
+        when(
+          () => client.get(
+            Uri.parse(
+              'https://boardgamegeek.com/xmlapi2/collection?username=private&version=1&stats=1&showprivate=1',
+            ),
+            headers: any(named: 'headers'),
+          ),
+        ).thenAnswer(
+          (_) async => http.Response('''
+          <?xml version="1.0"?\u003e
+          <items totalitems="3">
+            <item objecttype="thing" objectid="1" subtype="boardgame" collid="10">
+              <name>A</name>
+              <stats minplayers="1" maxplayers="1" minplaytime="1" maxplaytime="1"/>
+              <numplays>0</numplays>
+              <privateinfo inventorylocation="Shelf "></privateinfo>
+            </item>
+            <item objecttype="thing" objectid="2" subtype="boardgame" collid="20">
+              <name>B</name>
+              <stats minplayers="1" maxplayers="1" minplaytime="1" maxplaytime="1"/>
+              <numplays>0</numplays>
+              <privateinfo inventorylocation=""></privateinfo>
+            </item>
+            <item objecttype="thing" objectid="3" subtype="boardgame" collid="30">
+              <name>C</name>
+              <stats minplayers="1" maxplayers="1" minplaytime="1" maxplaytime="1"/>
+              <numplays>0</numplays>
+            </item>
+          </items>
+          ''', 200),
+        );
+
+        final items = await apiClient.fetchCollection('private');
+        expect(items.length, 3);
+        expect(items[0].inventoryLocation, 'Shelf');
+        expect(items[1].inventoryLocation, isNull);
+        expect(items[2].inventoryLocation, isNull);
+      },
+    );
   });
 }

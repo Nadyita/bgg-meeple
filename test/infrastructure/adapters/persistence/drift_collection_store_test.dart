@@ -36,6 +36,7 @@ void main() {
           bayesAverage: 5.05634,
           geekRatingUserCount: 10552,
           bggRank: 30795,
+          inventoryLocation: 'Keller',
         ),
       ];
 
@@ -51,6 +52,7 @@ void main() {
       expect(item.bayesAverage, 5.05634);
       expect(item.geekRatingUserCount, 10552);
       expect(item.bggRank, 30795);
+      expect(item.inventoryLocation, 'Keller');
     });
   });
 }

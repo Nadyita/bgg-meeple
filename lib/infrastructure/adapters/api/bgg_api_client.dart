@@ -100,7 +100,12 @@ class BggApiClient implements BggApi, AuthenticationService {
   Future<List<CollectionItem>> fetchCollection(String username) async {
     await _ensureSessionLoaded();
 
-    final params = {'username': username, 'version': '1', 'stats': '1'};
+    final params = {
+      'username': username,
+      'version': '1',
+      'stats': '1',
+      'showprivate': '1',
+    };
 
     final response = await _getWithRetry(
       Uri.parse('$_baseUrl$_collectionPath').replace(queryParameters: params),
@@ -435,6 +440,7 @@ class BggApiClient implements BggApi, AuthenticationService {
 
     final status = item.findElements('status').firstOrNull;
     final versionElement = item.findElements('version').firstOrNull;
+    final inventoryLocation = _inventoryLocation(item);
 
     return CollectionItem(
       thingId: thingId,
@@ -456,6 +462,7 @@ class BggApiClient implements BggApi, AuthenticationService {
       ownRating: ownRating,
       numPlays: numPlays,
       bggRank: bggRank,
+      inventoryLocation: inventoryLocation,
       isOwned: _parseBool(status, 'own'),
       isPreordered: _parseBool(status, 'preordered'),
       isWishlisted: _parseBool(status, 'wishlist'),
@@ -468,6 +475,14 @@ class BggApiClient implements BggApi, AuthenticationService {
       isWantInTrade: _parseBool(status, 'want'),
       hasComment: _childText(item, 'comment')?.trim().isNotEmpty ?? false,
     );
+  }
+
+  String? _inventoryLocation(XmlElement item) {
+    final privateInfo = item.findElements('privateinfo').firstOrNull;
+    final value = privateInfo?.getAttribute('inventorylocation');
+    if (value == null) return null;
+    final trimmed = value.trim();
+    return trimmed.isEmpty ? null : trimmed;
   }
 
   VersionInfo? _parseVersion(XmlElement version) {

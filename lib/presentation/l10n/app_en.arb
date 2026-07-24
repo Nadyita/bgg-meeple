@@ -70,6 +70,7 @@
   "cardFieldGeekRating": "Geek rating",
   "cardFieldMinAge": "Min age",
   "cardFieldBggRank": "BGG rank",
+  "cardFieldInventoryLocation": "Location",
   "cardFieldPlaysHiddenWhenZero": "Hidden when zero",
   "cardFieldGeekRatingIncludesUserCount": "Includes number of ratings",
   "cardFieldPlaysPlayerNames": "Player names",
@@ -107,6 +108,15 @@
     "placeholders": {
       "rank": {
         "type": "int"
+      }
+    }
+  },
+  "cardInventoryLocationLabel": "Location: {location}",
+  "@cardInventoryLocationLabel": {
+    "description": "Inventory location displayed on a collection card",
+    "placeholders": {
+      "location": {
+        "type": "String"
       }
     }
   },

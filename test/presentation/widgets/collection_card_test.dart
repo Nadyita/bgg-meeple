@@ -387,6 +387,89 @@ void main() {
 
       expect(find.text('Geek rating: 7.12 (98765)'), findsOneWidget);
     });
+
+    testWidgets('shows inventory location when enabled and present', (
+      tester,
+    ) async {
+      const item = CollectionItem(
+        thingId: 8,
+        names: [
+          LocalizedName(value: 'Located', language: null, isPrimary: true),
+        ],
+        inventoryLocation: 'Keller',
+      );
+
+      await tester.pumpWidget(
+        _localizedApp(
+          home: const CollectionCard(
+            item: item,
+            config: CardLayoutConfig(
+              enabledFields: [CardField.inventoryLocation],
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Location: Keller'), findsOneWidget);
+    });
+
+    testWidgets('hides inventory location when enabled but empty', (
+      tester,
+    ) async {
+      const item = CollectionItem(
+        thingId: 9,
+        names: [
+          LocalizedName(value: 'Unlocated', language: null, isPrimary: true),
+        ],
+        inventoryLocation: null,
+      );
+
+      await tester.pumpWidget(
+        _localizedApp(
+          home: const CollectionCard(
+            item: item,
+            config: CardLayoutConfig(
+              enabledFields: [CardField.inventoryLocation],
+            ),
+          ),
+        ),
+      );
+
+      expect(find.textContaining('Location'), findsNothing);
+    });
+
+    testWidgets(
+      'hides inventory location when explicitly disabled even if present',
+      (tester) async {
+        const item = CollectionItem(
+          thingId: 10,
+          names: [
+            LocalizedName(value: 'Located', language: null, isPrimary: true),
+          ],
+          inventoryLocation: 'Keller',
+        );
+
+        await tester.pumpWidget(
+          _localizedApp(
+            home: const CollectionCard(
+              item: item,
+              config: CardLayoutConfig(
+                enabledFields: [
+                  CardField.playerCount,
+                  CardField.playTime,
+                  CardField.plays,
+                  CardField.ownRating,
+                  CardField.geekRating,
+                  CardField.minAge,
+                ],
+              ),
+            ),
+          ),
+        );
+
+        expect(find.textContaining('Location'), findsNothing);
+      },
+    );
   });
 
   group('CollectionCard sub-type chips', () {

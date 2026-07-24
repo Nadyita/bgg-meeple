@@ -226,6 +226,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cardFieldBggRank => 'BGG rank';
 
   @override
+  String get cardFieldInventoryLocation => 'Location';
+
+  @override
   String get cardFieldPlaysHiddenWhenZero => 'Hidden when zero';
 
   @override
@@ -256,6 +259,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String cardBggRankLabel(int rank) {
     return 'BGG rank: $rank';
+  }
+
+  @override
+  String cardInventoryLocationLabel(String location) {
+    return 'Location: $location';
   }
 
   @override

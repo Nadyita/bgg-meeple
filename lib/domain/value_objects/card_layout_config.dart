@@ -17,6 +17,7 @@ class CardLayoutConfig extends Equatable {
       CardField.ownRating,
       CardField.geekRating,
       CardField.minAge,
+      CardField.inventoryLocation,
     ],
     this.fieldOrder = const [
       CardField.playerCount,
@@ -26,6 +27,7 @@ class CardLayoutConfig extends Equatable {
       CardField.geekRating,
       CardField.minAge,
       CardField.bggRank,
+      CardField.inventoryLocation,
     ],
     this.hidePlaysOnZero = true,
     this.showGeekRatingUserCount = false,

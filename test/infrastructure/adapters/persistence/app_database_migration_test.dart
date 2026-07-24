@@ -12,9 +12,9 @@ void main() {
       await db.close();
     });
 
-    test('schema version is 8', () {
+    test('schema version is 9', () {
       db = AppDatabase(NativeDatabase.memory());
-      expect(db.schemaVersion, 8);
+      expect(db.schemaVersion, 9);
     });
 
     test('migration strategy is configured', () {
@@ -41,6 +41,29 @@ void main() {
         ]),
       );
     });
+
+    test(
+      'upgrade from v8 to v9 recreates tables and includes inventory_location',
+      () async {
+        db = AppDatabase(NativeDatabase.memory());
+        final migrator = db.createMigrator();
+        await db.migration.onUpgrade(migrator, 8, 9);
+
+        await db
+            .into(db.collectionItems)
+            .insert(
+              CollectionItemsCompanion(
+                thingId: const Value(1),
+                collId: const Value(1),
+                inventoryLocation: const Value('Shelf'),
+              ),
+            );
+
+        final row = await db.select(db.collectionItems).getSingle();
+        expect(row.thingId, 1);
+        expect(row.inventoryLocation, 'Shelf');
+      },
+    );
 
     test(
       'upgrade from v7 to v8 recreates tables and includes play tables',
@@ -75,11 +98,11 @@ void main() {
     );
 
     test(
-      'upgrade from v6 to v8 recreates tables with new game detail columns',
+      'upgrade from v6 to v9 recreates tables with new game detail columns',
       () async {
         db = AppDatabase(NativeDatabase.memory());
         final migrator = db.createMigrator();
-        await db.migration.onUpgrade(migrator, 6, 8);
+        await db.migration.onUpgrade(migrator, 6, 9);
 
         await db
             .into(db.boardGames)

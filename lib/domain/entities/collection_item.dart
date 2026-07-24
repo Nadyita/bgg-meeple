@@ -24,6 +24,7 @@ class CollectionItem {
     this.ownRating,
     this.numPlays,
     this.bggRank,
+    this.inventoryLocation,
     this.isOwned = false,
     this.isPreordered = false,
     this.isWishlisted = false,
@@ -57,6 +58,7 @@ class CollectionItem {
   final double? ownRating;
   final int? numPlays;
   final int? bggRank;
+  final String? inventoryLocation;
   final bool isOwned;
   final bool isPreordered;
   final bool isWishlisted;
@@ -146,6 +148,7 @@ class CollectionItem {
     double? ownRating,
     int? numPlays,
     int? bggRank,
+    String? inventoryLocation,
     bool? isOwned,
     bool? isPreordered,
     bool? isWishlisted,
@@ -179,6 +182,7 @@ class CollectionItem {
       ownRating: ownRating ?? this.ownRating,
       numPlays: numPlays ?? this.numPlays,
       bggRank: bggRank ?? this.bggRank,
+      inventoryLocation: inventoryLocation ?? this.inventoryLocation,
       isOwned: isOwned ?? this.isOwned,
       isPreordered: isPreordered ?? this.isPreordered,
       isWishlisted: isWishlisted ?? this.isWishlisted,

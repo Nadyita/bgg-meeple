@@ -19,7 +19,7 @@ void main() {
       when(
         () => client.get(
           Uri.parse(
-            'https://boardgamegeek.com/xmlapi2/collection?username=multi&version=1&stats=1',
+            'https://boardgamegeek.com/xmlapi2/collection?username=multi&version=1&stats=1&showprivate=1',
           ),
           headers: any(named: 'headers'),
         ),
