@@ -60,10 +60,20 @@ class SharedPreferencesCardLayoutStore implements CardLayoutStore {
         .map((i) => CardField.values[i])
         .toList();
 
-    final fieldOrder = orderIndexes
+    var fieldOrder = orderIndexes
         .where((i) => i >= 0 && i < CardField.values.length)
         .map((i) => CardField.values[i])
         .toList();
+
+    // Ensure newly added CardField values still appear in the settings list,
+    // even if a saved config predates them. They are appended at the end and
+    // keep their saved enabled state; users can toggle them on as desired.
+    final savedFields = fieldOrder.toSet();
+    for (final field in CardField.values) {
+      if (!savedFields.contains(field)) {
+        fieldOrder.add(field);
+      }
+    }
 
     return CardLayoutConfig(
       showThumbnail: map['showThumbnail'] as bool? ?? true,

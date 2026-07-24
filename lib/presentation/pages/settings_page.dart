@@ -353,6 +353,7 @@ class _CardLayoutSectionState extends State<_CardLayoutSection> {
       CardField.geekRating => localizations.cardFieldGeekRating,
       CardField.minAge => localizations.cardFieldMinAge,
       CardField.bggRank => localizations.cardFieldBggRank,
+      CardField.inventoryLocation => localizations.cardFieldInventoryLocation,
     };
   }
 

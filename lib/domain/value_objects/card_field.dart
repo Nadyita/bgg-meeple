@@ -7,4 +7,5 @@ enum CardField {
   geekRating,
   minAge,
   bggRank,
+  inventoryLocation,
 }

@@ -24,7 +24,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration {
@@ -33,8 +33,8 @@ class AppDatabase extends _$AppDatabase {
         await m.createAll();
       },
       onUpgrade: (Migrator m, int from, int to) async {
-        if (from < 8) {
-          // Schema v8 adds play and play_player tables. Cache data is
+        if (from < 9) {
+          // Schema v9 adds inventory_location to collection_items. Cache data is
           // repopulated on next sync, so we recreate all tables rather than
           // migrating in place.
           for (final table in allTables) {
@@ -84,6 +84,7 @@ class CollectionItems extends Table {
   IntColumn get numPlays => integer().nullable()();
   IntColumn get bggRank => integer().nullable()();
   IntColumn get geekRatingUserCount => integer().nullable()();
+  TextColumn get inventoryLocation => text().nullable()();
   BoolColumn get isOwned => boolean().withDefault(const Constant(false))();
   BoolColumn get isPreordered => boolean().withDefault(const Constant(false))();
   BoolColumn get isWishlisted => boolean().withDefault(const Constant(false))();

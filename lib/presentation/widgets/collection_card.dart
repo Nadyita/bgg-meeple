@@ -137,6 +137,7 @@ class CollectionCard extends StatelessWidget {
       CardField.geekRating => _geekRatingLine(effectiveConfig, localizations),
       CardField.minAge => _minAgeLine(localizations),
       CardField.bggRank => _bggRankLine(localizations),
+      CardField.inventoryLocation => _inventoryLocationLine(localizations),
     };
   }
 
@@ -200,6 +201,15 @@ class CollectionCard extends StatelessWidget {
       }
     }
     return _MetadataLine(icon: Icons.casino, text: text);
+  }
+
+  Widget? _inventoryLocationLine(AppLocalizations localizations) {
+    final location = item.inventoryLocation;
+    if (location == null || location.isEmpty) return null;
+    return _MetadataLine(
+      icon: Icons.location_on,
+      text: localizations.cardInventoryLocationLabel(location),
+    );
   }
 
   String get _displayName {

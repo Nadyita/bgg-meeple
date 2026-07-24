@@ -70,6 +70,7 @@
   "cardFieldGeekRating": "Geek-Rating",
   "cardFieldMinAge": "Mindestalter",
   "cardFieldBggRank": "BGG-Rang",
+  "cardFieldInventoryLocation": "Ort",
   "cardFieldPlaysHiddenWhenZero": "Bei Null ausgeblendet",
   "cardFieldGeekRatingIncludesUserCount": "Anzahl der Bewertungen einblenden",
   "cardFieldPlaysPlayerNames": "Spielernamen",
@@ -107,6 +108,15 @@
     "placeholders": {
       "rank": {
         "type": "int"
+      }
+    }
+  },
+  "cardInventoryLocationLabel": "Ort: {location}",
+  "@cardInventoryLocationLabel": {
+    "description": "Lagerort auf einer Sammlungskarte",
+    "placeholders": {
+      "location": {
+        "type": "String"
       }
     }
   },

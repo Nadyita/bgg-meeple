@@ -119,21 +119,42 @@ void main() {
       expect(config, const CardLayoutConfig());
     });
 
-    test('persists and restores custom layout', () async {
-      const config = CardLayoutConfig(
-        showThumbnail: false,
-        showVersionSubtitle: false,
-        enabledFields: [CardField.playerCount, CardField.ownRating],
-        fieldOrder: [CardField.ownRating, CardField.playerCount],
-        hidePlaysOnZero: false,
-        showGeekRatingUserCount: true,
-      );
+    test(
+      'persists and restores custom layout, merging missing fields',
+      () async {
+        const config = CardLayoutConfig(
+          showThumbnail: false,
+          showVersionSubtitle: false,
+          enabledFields: [
+            CardField.playerCount,
+            CardField.ownRating,
+            CardField.inventoryLocation,
+          ],
+          fieldOrder: [
+            CardField.ownRating,
+            CardField.playerCount,
+            CardField.inventoryLocation,
+          ],
+          hidePlaysOnZero: false,
+          showGeekRatingUserCount: true,
+        );
 
-      await store.save(config);
-      final loaded = await store.load();
+        await store.save(config);
+        final loaded = await store.load();
 
-      expect(loaded, config);
-    });
+        expect(loaded.showThumbnail, config.showThumbnail);
+        expect(loaded.showVersionSubtitle, config.showVersionSubtitle);
+        expect(loaded.enabledFields, config.enabledFields);
+        expect(loaded.hidePlaysOnZero, config.hidePlaysOnZero);
+        expect(loaded.showGeekRatingUserCount, config.showGeekRatingUserCount);
+        expect(loaded.showPlayerNamesOnPlays, config.showPlayerNamesOnPlays);
+        expect(
+          loaded.fieldOrder.sublist(0, config.fieldOrder.length),
+          config.fieldOrder,
+        );
+        expect(loaded.fieldOrder.length, greaterThan(config.fieldOrder.length));
+      },
+    );
 
     test('returns default config when stored JSON is corrupt', () async {
       platform._storage['card_layout_config'] = 'not-json';
@@ -142,7 +163,7 @@ void main() {
       expect(config, const CardLayoutConfig());
     });
 
-    test('ignores unknown field indexes', () async {
+    test('ignores unknown field indexes and merges missing fields', () async {
       platform._storage['card_layout_config'] = '''
         {
           "enabledFields": [0, 1, 99],
@@ -151,8 +172,30 @@ void main() {
       ''';
 
       final config = await store.load();
-      expect(config.enabledFields, [CardField.playerCount, CardField.playTime]);
-      expect(config.fieldOrder, [CardField.playerCount, CardField.playTime]);
+      expect(config.enabledFields, contains(CardField.playerCount));
+      expect(config.enabledFields, contains(CardField.playTime));
+      expect(config.enabledFields, isNot(contains(99)));
+      expect(config.fieldOrder.sublist(0, 2), [
+        CardField.playerCount,
+        CardField.playTime,
+      ]);
+      expect(config.fieldOrder, contains(CardField.inventoryLocation));
     });
+
+    test(
+      'merges missing fields into saved field order without changing enabled state',
+      () async {
+        platform._storage['card_layout_config'] = '''
+        {
+          "enabledFields": [0, 1, 2],
+          "fieldOrder": [0, 1, 2]
+        }
+      ''';
+
+        final config = await store.load();
+        expect(config.fieldOrder, contains(CardField.inventoryLocation));
+        expect(config.isEnabled(CardField.inventoryLocation), isFalse);
+      },
+    );
   });
 }

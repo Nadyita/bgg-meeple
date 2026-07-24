@@ -524,6 +524,12 @@ abstract class AppLocalizations {
   /// **'BGG rank'**
   String get cardFieldBggRank;
 
+  /// No description provided for @cardFieldInventoryLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get cardFieldInventoryLocation;
+
   /// No description provided for @cardFieldPlaysHiddenWhenZero.
   ///
   /// In en, this message translates to:
@@ -571,6 +577,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'BGG rank: {rank}'**
   String cardBggRankLabel(int rank);
+
+  /// Inventory location displayed on a collection card
+  ///
+  /// In en, this message translates to:
+  /// **'Location: {location}'**
+  String cardInventoryLocationLabel(String location);
 
   /// Number of plays displayed on a collection card
   ///

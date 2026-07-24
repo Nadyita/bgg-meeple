@@ -19,6 +19,7 @@ void main() {
         CardField.ownRating,
         CardField.geekRating,
         CardField.minAge,
+        CardField.inventoryLocation,
       ]);
       expect(config.fieldOrder, [
         CardField.playerCount,
@@ -28,14 +29,16 @@ void main() {
         CardField.geekRating,
         CardField.minAge,
         CardField.bggRank,
+        CardField.inventoryLocation,
       ]);
     });
 
-    test('isEnabled returns true for enabled fields', () {
+    test('isEnabled returns true for enabled fields only', () {
       const config = CardLayoutConfig();
 
       expect(config.isEnabled(CardField.playerCount), isTrue);
       expect(config.isEnabled(CardField.bggRank), isFalse);
+      expect(config.isEnabled(CardField.inventoryLocation), isTrue);
     });
 
     test('copyWith replaces provided values', () {
