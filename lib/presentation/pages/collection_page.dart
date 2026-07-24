@@ -16,6 +16,7 @@ import '../../domain/entities/collection_item.dart';
 import '../../domain/value_objects/collection_filter.dart';
 import '../../domain/value_objects/collection_sort.dart';
 import '../../domain/value_objects/collection_sub_type.dart';
+import '../../domain/value_objects/inventory_location_filter.dart';
 import '../../domain/value_objects/play_time_steps.dart';
 import '../../domain/value_objects/player_count_range.dart';
 import '../../domain/value_objects/player_participation_filter.dart';
@@ -204,6 +205,7 @@ class _CollectionViewState extends State<_CollectionView> {
                         return SingleChildScrollView(
                           child: _FilterPanel(
                             filter: state.filter,
+                            items: state.items,
                             maxPlays: state.items
                                 .map((i) => i.numPlays ?? 0)
                                 .fold(0, (a, b) => a > b ? a : b),
@@ -453,6 +455,7 @@ class _SyncProgress extends StatelessWidget {
 class _FilterPanel extends StatelessWidget {
   const _FilterPanel({
     required this.filter,
+    required this.items,
     required this.maxPlays,
     required this.playsInfo,
     required this.onFilterChanged,
@@ -460,6 +463,7 @@ class _FilterPanel extends StatelessWidget {
   });
 
   final CollectionFilter filter;
+  final List<CollectionItem> items;
   final int maxPlays;
   final PlaysInfo playsInfo;
   final ValueChanged<CollectionFilter> onFilterChanged;
@@ -542,6 +546,11 @@ class _FilterPanel extends StatelessWidget {
                   clearMaxPlays: max == null,
                 ),
               ),
+            ),
+            _LocationFilterSection(
+              filter: filter,
+              items: items,
+              onFilterChanged: onFilterChanged,
             ),
             _PlayerFilterSection(
               filter: filter,
@@ -732,6 +741,178 @@ class _PlayerFilterSection extends StatelessWidget {
         }
       }
     }
+  }
+}
+
+class _LocationFilterSection extends StatelessWidget {
+  const _LocationFilterSection({
+    required this.filter,
+    required this.items,
+    required this.onFilterChanged,
+  });
+
+  final CollectionFilter filter;
+  final List<CollectionItem> items;
+  final ValueChanged<CollectionFilter> onFilterChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+    final allLocations = _allAvailableLocations();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 12),
+        Text(
+          localizations.filterLocationSectionTitle,
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            ...filter.inventoryLocationFilters.entries.map((entry) {
+              return _LocationChip(
+                location: entry.key,
+                state: entry.value,
+                onStateChanged: (newState) =>
+                    _updateLocationState(entry.key, newState),
+                onRemoved: () => _removeLocation(entry.key),
+              );
+            }),
+            ActionChip(
+              avatar: const Icon(Icons.add),
+              label: Text(localizations.filterAddLocationLabel),
+              onPressed: () => _openLocationPicker(context, allLocations),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  List<String> _allAvailableLocations() {
+    final seen = <String>{};
+    final result = <String>[];
+    for (final item in items) {
+      final location = item.inventoryLocation?.trim();
+      if (location == null || location.isEmpty) continue;
+      if (seen.add(location)) {
+        result.add(location);
+      }
+    }
+    result.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+    return result;
+  }
+
+  void _updateLocationState(String location, InventoryLocationFilter state) {
+    final updated = Map<String, InventoryLocationFilter>.of(
+      filter.inventoryLocationFilters,
+    );
+    updated[location] = state;
+    onFilterChanged(filter.copyWith(inventoryLocationFilters: updated));
+  }
+
+  void _removeLocation(String location) {
+    final updated = Map<String, InventoryLocationFilter>.of(
+      filter.inventoryLocationFilters,
+    );
+    updated.remove(location);
+    onFilterChanged(filter.copyWith(inventoryLocationFilters: updated));
+  }
+
+  Future<void> _openLocationPicker(
+    BuildContext context,
+    List<String> allLocations,
+  ) async {
+    final localizations = AppLocalizations.of(context)!;
+    final available = allLocations
+        .where((name) => !filter.inventoryLocationFilters.containsKey(name))
+        .toList();
+    final selected = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        return SimpleDialog(
+          title: Text(localizations.filterLocationPickerTitle),
+          children: available.isEmpty
+              ? [
+                  SimpleDialogOption(
+                    child: Text(localizations.noLocationsAvailable),
+                  ),
+                ]
+              : available
+                    .map(
+                      (name) => SimpleDialogOption(
+                        onPressed: () => Navigator.of(context).pop(name),
+                        child: Text(name),
+                      ),
+                    )
+                    .toList(),
+        );
+      },
+    );
+    if (selected != null) {
+      _updateLocationState(selected, InventoryLocationFilter.matches);
+    }
+  }
+}
+
+class _LocationChip extends StatelessWidget {
+  const _LocationChip({
+    required this.location,
+    required this.state,
+    required this.onStateChanged,
+    required this.onRemoved,
+  });
+
+  final String location;
+  final InventoryLocationFilter state;
+  final ValueChanged<InventoryLocationFilter> onStateChanged;
+  final VoidCallback onRemoved;
+
+  @override
+  Widget build(BuildContext context) {
+    final isTouch = Platform.isAndroid || Platform.isIOS;
+
+    return GestureDetector(
+      onLongPress: isTouch ? onRemoved : null,
+      child: InputChip(
+        label: Text(location),
+        avatar: _stateIcon(),
+        selected: state != InventoryLocationFilter.any,
+        showCheckmark: false,
+        onSelected: (_) => onStateChanged(state.cycle()),
+        onDeleted: isTouch ? null : onRemoved,
+        deleteIcon: isTouch ? null : const Icon(Icons.clear),
+        backgroundColor: _backgroundColor(context),
+        side: state == InventoryLocationFilter.any
+            ? BorderSide(color: Theme.of(context).dividerColor)
+            : null,
+      ),
+    );
+  }
+
+  Widget? _stateIcon() {
+    return switch (state) {
+      InventoryLocationFilter.any => null,
+      InventoryLocationFilter.matches => const Icon(Icons.thumb_up, size: 18),
+      InventoryLocationFilter.excludes => const Icon(
+        Icons.thumb_down,
+        size: 18,
+      ),
+    };
+  }
+
+  Color? _backgroundColor(BuildContext context) {
+    return switch (state) {
+      InventoryLocationFilter.any => Theme.of(
+        context,
+      ).colorScheme.surfaceContainerHighest.withAlpha(100),
+      InventoryLocationFilter.matches => Colors.green.withAlpha(40),
+      InventoryLocationFilter.excludes => Colors.red.withAlpha(40),
+    };
   }
 }
 
