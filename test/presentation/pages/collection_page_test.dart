@@ -12,6 +12,7 @@ import 'package:bgg_meeple/domain/value_objects/card_layout_config.dart';
 import 'package:bgg_meeple/domain/value_objects/collection_filter.dart';
 import 'package:bgg_meeple/domain/value_objects/collection_sort.dart';
 import 'package:bgg_meeple/domain/value_objects/collection_view.dart';
+import 'package:bgg_meeple/domain/value_objects/inventory_location_filter.dart';
 import 'package:bgg_meeple/domain/value_objects/localized_name.dart';
 import 'package:bgg_meeple/application/use_cases/load_theme_config_use_case.dart';
 import 'package:bgg_meeple/application/use_cases/save_theme_config_use_case.dart';
@@ -325,6 +326,268 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Partien'), findsOneWidget);
+    });
+
+    testWidgets('shows location filter section and adds a location chip', (
+      tester,
+    ) async {
+      when(loadCollection.call).thenAnswer(
+        (_) async => const [
+          CollectionItem(
+            thingId: 1,
+            names: [
+              LocalizedName(value: 'Catan', language: null, isPrimary: true),
+            ],
+            inventoryLocation: 'Keller',
+          ),
+          CollectionItem(
+            thingId: 2,
+            names: [
+              LocalizedName(
+                value: 'Carcassonne',
+                language: null,
+                isPrimary: true,
+              ),
+            ],
+            inventoryLocation: 'Wohnzimmer',
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        _buildApp(
+          home: CollectionPage(
+            loadCollection: loadCollection,
+            loadGameDetails: loadGameDetails,
+            loadCardLayout: loadCardLayout,
+            loadCollectionView: loadCollectionView,
+            saveCollectionView: saveCollectionView,
+            loadCredentials: loadCredentials,
+            loadPlaysInfo: loadPlaysInfo,
+            syncCollection: syncCollection,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.filter_list));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Ort'), findsOneWidget);
+
+      await tester.ensureVisible(find.text('Ort hinzufügen'));
+      await tester.tap(find.text('Ort hinzufügen'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Keller'), findsOneWidget);
+      expect(find.text('Wohnzimmer'), findsOneWidget);
+
+      await tester.tap(find.text('Keller'));
+      await tester.pumpAndSettle();
+
+      expect(find.widgetWithText(InputChip, 'Keller'), findsOneWidget);
+      expect(find.text('Catan'), findsOneWidget);
+      expect(find.text('Carcassonne'), findsNothing);
+    });
+
+    testWidgets('removes a location chip when its delete icon is tapped', (
+      tester,
+    ) async {
+      const persistedView = CollectionView(
+        filter: CollectionFilter(
+          inventoryLocationFilters: {'Keller': InventoryLocationFilter.matches},
+        ),
+      );
+      when(loadCollection.call).thenAnswer(
+        (_) async => const [
+          CollectionItem(
+            thingId: 1,
+            names: [
+              LocalizedName(value: 'Catan', language: null, isPrimary: true),
+            ],
+            inventoryLocation: 'Keller',
+          ),
+          CollectionItem(
+            thingId: 2,
+            names: [
+              LocalizedName(
+                value: 'Carcassonne',
+                language: null,
+                isPrimary: true,
+              ),
+            ],
+            inventoryLocation: 'Wohnzimmer',
+          ),
+        ],
+      );
+      when(loadCollectionView.call).thenAnswer((_) async => persistedView);
+
+      await tester.pumpWidget(
+        _buildApp(
+          home: CollectionPage(
+            loadCollection: loadCollection,
+            loadGameDetails: loadGameDetails,
+            loadCardLayout: loadCardLayout,
+            loadCollectionView: loadCollectionView,
+            saveCollectionView: saveCollectionView,
+            loadCredentials: loadCredentials,
+            loadPlaysInfo: loadPlaysInfo,
+            syncCollection: syncCollection,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Catan'), findsOneWidget);
+      expect(find.text('Carcassonne'), findsNothing);
+
+      await tester.tap(find.byIcon(Icons.filter_list));
+      await tester.pumpAndSettle();
+
+      final chip = find.widgetWithText(InputChip, 'Keller');
+      expect(chip, findsOneWidget);
+      await tester.ensureVisible(
+        find.descendant(of: chip, matching: find.byIcon(Icons.clear)),
+      );
+      await tester.tap(
+        find.descendant(of: chip, matching: find.byIcon(Icons.clear)),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.widgetWithText(InputChip, 'Keller'), findsNothing);
+      expect(find.text('Catan'), findsOneWidget);
+      expect(find.text('Carcassonne'), findsOneWidget);
+    });
+
+    testWidgets('cycles location chip through states', (tester) async {
+      when(loadCollection.call).thenAnswer(
+        (_) async => const [
+          CollectionItem(
+            thingId: 1,
+            names: [
+              LocalizedName(value: 'Catan', language: null, isPrimary: true),
+            ],
+            inventoryLocation: 'Keller',
+          ),
+          CollectionItem(
+            thingId: 2,
+            names: [
+              LocalizedName(
+                value: 'Carcassonne',
+                language: null,
+                isPrimary: true,
+              ),
+            ],
+            inventoryLocation: 'Wohnzimmer',
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        _buildApp(
+          home: CollectionPage(
+            loadCollection: loadCollection,
+            loadGameDetails: loadGameDetails,
+            loadCardLayout: loadCardLayout,
+            loadCollectionView: loadCollectionView,
+            saveCollectionView: saveCollectionView,
+            loadCredentials: loadCredentials,
+            loadPlaysInfo: loadPlaysInfo,
+            syncCollection: syncCollection,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.filter_list));
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.text('Ort hinzufügen'));
+      await tester.tap(find.text('Ort hinzufügen'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Keller'));
+      await tester.pumpAndSettle();
+
+      // matches: only Catan visible
+      expect(find.text('Catan'), findsOneWidget);
+      expect(find.text('Carcassonne'), findsNothing);
+
+      final chip = find.widgetWithText(InputChip, 'Keller');
+      await tester.tap(chip);
+      await tester.pumpAndSettle();
+
+      // excludes: only Carcassonne visible
+      expect(find.text('Catan'), findsNothing);
+      expect(find.text('Carcassonne'), findsOneWidget);
+
+      await tester.tap(chip);
+      await tester.pumpAndSettle();
+
+      // any: both visible again
+      expect(find.text('Catan'), findsOneWidget);
+      expect(find.text('Carcassonne'), findsOneWidget);
+    });
+
+    testWidgets('clear filters button resets location chips to any', (
+      tester,
+    ) async {
+      when(loadCollection.call).thenAnswer(
+        (_) async => const [
+          CollectionItem(
+            thingId: 1,
+            names: [
+              LocalizedName(value: 'Catan', language: null, isPrimary: true),
+            ],
+            inventoryLocation: 'Keller',
+          ),
+          CollectionItem(
+            thingId: 2,
+            names: [
+              LocalizedName(
+                value: 'Carcassonne',
+                language: null,
+                isPrimary: true,
+              ),
+            ],
+            inventoryLocation: 'Wohnzimmer',
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        _buildApp(
+          home: CollectionPage(
+            loadCollection: loadCollection,
+            loadGameDetails: loadGameDetails,
+            loadCardLayout: loadCardLayout,
+            loadCollectionView: loadCollectionView,
+            saveCollectionView: saveCollectionView,
+            loadCredentials: loadCredentials,
+            loadPlaysInfo: loadPlaysInfo,
+            syncCollection: syncCollection,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.filter_list));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Ort hinzufügen'));
+      await tester.tap(find.text('Ort hinzufügen'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Keller'));
+      await tester.pumpAndSettle();
+
+      expect(find.widgetWithText(InputChip, 'Keller'), findsOneWidget);
+      expect(find.text('Carcassonne'), findsNothing);
+
+      await tester.ensureVisible(find.text('Zurücksetzen'));
+      await tester.tap(find.text('Zurücksetzen'));
+      await tester.pumpAndSettle();
+
+      expect(find.widgetWithText(InputChip, 'Keller'), findsOneWidget);
+      expect(find.text('Catan'), findsOneWidget);
+      expect(find.text('Carcassonne'), findsOneWidget);
     });
 
     testWidgets('play count slider is hidden when all numPlays are zero', (

@@ -17,6 +17,7 @@ import 'package:bgg_meeple/domain/value_objects/collection_filter.dart';
 import 'package:bgg_meeple/domain/value_objects/collection_sort.dart';
 import 'package:bgg_meeple/domain/value_objects/collection_sub_type.dart';
 import 'package:bgg_meeple/domain/value_objects/collection_view.dart';
+import 'package:bgg_meeple/domain/value_objects/inventory_location_filter.dart';
 import 'package:bgg_meeple/domain/value_objects/localized_name.dart';
 import 'package:bgg_meeple/domain/value_objects/player_participation_filter.dart';
 import 'package:bgg_meeple/domain/value_objects/version_info.dart';
@@ -1182,6 +1183,328 @@ void main() {
     );
 
     blocTest<CollectionBloc, CollectionState>(
+      'clears inventory-location filter states to any without removing chips',
+      build: () {
+        when(loadCollection.call).thenAnswer(
+          (_) async => const [
+            CollectionItem(
+              thingId: 1,
+              names: [
+                LocalizedName(value: 'Catan', language: null, isPrimary: true),
+              ],
+              inventoryLocation: 'Keller',
+            ),
+          ],
+        );
+        return _buildBloc(
+          loadCollection: loadCollection,
+          loadCardLayout: loadCardLayout,
+          loadCollectionView: loadCollectionView,
+          saveCollectionView: saveCollectionView,
+        );
+      },
+      act: (bloc) => bloc
+        ..add(const CollectionLoaded())
+        ..add(
+          const CollectionFilterChanged(
+            CollectionFilter(
+              inventoryLocationFilters: {
+                'Keller': InventoryLocationFilter.matches,
+              },
+            ),
+          ),
+        )
+        ..add(const CollectionFilterCleared()),
+      skip: 3,
+      expect: () => [
+        predicate<CollectionState>((s) {
+          expect(s.filter.inventoryLocationFilters, {
+            'Keller': InventoryLocationFilter.any,
+          });
+          expect(s.filteredItems.length, 1);
+          return true;
+        }),
+      ],
+    );
+
+    blocTest<CollectionBloc, CollectionState>(
+      'removes obsolete inventory locations when loading collection',
+      build: () {
+        when(loadCollection.call).thenAnswer(
+          (_) async => const [
+            CollectionItem(
+              thingId: 1,
+              names: [
+                LocalizedName(value: 'Catan', language: null, isPrimary: true),
+              ],
+              inventoryLocation: 'Keller',
+            ),
+          ],
+        );
+        when(loadCollectionView.call).thenAnswer(
+          (_) async => const CollectionView(
+            filter: CollectionFilter(
+              inventoryLocationFilters: {
+                'Keller': InventoryLocationFilter.matches,
+                'Wohnzimmer': InventoryLocationFilter.excludes,
+              },
+            ),
+          ),
+        );
+        return _buildBloc(
+          loadCollection: loadCollection,
+          loadCardLayout: loadCardLayout,
+          loadCollectionView: loadCollectionView,
+          saveCollectionView: saveCollectionView,
+        );
+      },
+      act: (bloc) => bloc..add(const CollectionLoaded()),
+      skip: 1,
+      expect: () => [
+        predicate<CollectionState>((s) {
+          expect(s.filter.inventoryLocationFilters, {
+            'Keller': InventoryLocationFilter.matches,
+          });
+          expect(s.filteredItems.length, 1);
+          return true;
+        }),
+      ],
+    );
+
+    blocTest<CollectionBloc, CollectionState>(
+      'filters by inventory location',
+      build: () {
+        when(loadCollection.call).thenAnswer(
+          (_) async => const [
+            CollectionItem(
+              thingId: 1,
+              names: [
+                LocalizedName(value: 'Catan', language: null, isPrimary: true),
+              ],
+              inventoryLocation: 'Keller',
+            ),
+            CollectionItem(
+              thingId: 2,
+              names: [
+                LocalizedName(
+                  value: 'Carcassonne',
+                  language: null,
+                  isPrimary: true,
+                ),
+              ],
+              inventoryLocation: 'Wohnzimmer',
+            ),
+            CollectionItem(
+              thingId: 3,
+              names: [
+                LocalizedName(value: 'Azul', language: null, isPrimary: true),
+              ],
+              inventoryLocation: null,
+            ),
+          ],
+        );
+        return _buildBloc(
+          loadCollection: loadCollection,
+          loadCardLayout: loadCardLayout,
+          loadCollectionView: loadCollectionView,
+          saveCollectionView: saveCollectionView,
+        );
+      },
+      act: (bloc) => bloc
+        ..add(const CollectionLoaded())
+        ..add(
+          const CollectionFilterChanged(
+            CollectionFilter(
+              inventoryLocationFilters: {
+                'Keller': InventoryLocationFilter.matches,
+              },
+            ),
+          ),
+        ),
+      skip: 2,
+      expect: () => [
+        predicate<CollectionState>(
+          (s) =>
+              s.filteredItems.length == 1 && s.filteredItems.first.thingId == 1,
+        ),
+      ],
+    );
+
+    blocTest<CollectionBloc, CollectionState>(
+      'filters by multiple inventory locations using OR logic',
+      build: () {
+        when(loadCollection.call).thenAnswer(
+          (_) async => const [
+            CollectionItem(
+              thingId: 1,
+              names: [
+                LocalizedName(value: 'Catan', language: null, isPrimary: true),
+              ],
+              inventoryLocation: 'Keller',
+            ),
+            CollectionItem(
+              thingId: 2,
+              names: [
+                LocalizedName(
+                  value: 'Carcassonne',
+                  language: null,
+                  isPrimary: true,
+                ),
+              ],
+              inventoryLocation: 'Wohnzimmer',
+            ),
+            CollectionItem(
+              thingId: 3,
+              names: [
+                LocalizedName(value: 'Azul', language: null, isPrimary: true),
+              ],
+              inventoryLocation: 'Eva',
+            ),
+          ],
+        );
+        return _buildBloc(
+          loadCollection: loadCollection,
+          loadCardLayout: loadCardLayout,
+          loadCollectionView: loadCollectionView,
+          saveCollectionView: saveCollectionView,
+        );
+      },
+      act: (bloc) => bloc
+        ..add(const CollectionLoaded())
+        ..add(
+          const CollectionFilterChanged(
+            CollectionFilter(
+              inventoryLocationFilters: {
+                'Keller': InventoryLocationFilter.matches,
+                'Wohnzimmer': InventoryLocationFilter.matches,
+              },
+            ),
+          ),
+        ),
+      skip: 2,
+      expect: () => [
+        predicate<CollectionState>(
+          (s) =>
+              s.filteredItems.length == 2 &&
+              s.filteredItems.every((i) => i.thingId != 3),
+        ),
+      ],
+    );
+
+    blocTest<CollectionBloc, CollectionState>(
+      'excludes games by inventory location',
+      build: () {
+        when(loadCollection.call).thenAnswer(
+          (_) async => const [
+            CollectionItem(
+              thingId: 1,
+              names: [
+                LocalizedName(value: 'Catan', language: null, isPrimary: true),
+              ],
+              inventoryLocation: 'Keller',
+            ),
+            CollectionItem(
+              thingId: 2,
+              names: [
+                LocalizedName(
+                  value: 'Carcassonne',
+                  language: null,
+                  isPrimary: true,
+                ),
+              ],
+              inventoryLocation: 'Wohnzimmer',
+            ),
+            CollectionItem(
+              thingId: 3,
+              names: [
+                LocalizedName(value: 'Azul', language: null, isPrimary: true),
+              ],
+              inventoryLocation: 'Eva',
+            ),
+          ],
+        );
+        return _buildBloc(
+          loadCollection: loadCollection,
+          loadCardLayout: loadCardLayout,
+          loadCollectionView: loadCollectionView,
+          saveCollectionView: saveCollectionView,
+        );
+      },
+      act: (bloc) => bloc
+        ..add(const CollectionLoaded())
+        ..add(
+          const CollectionFilterChanged(
+            CollectionFilter(
+              inventoryLocationFilters: {
+                'Keller': InventoryLocationFilter.excludes,
+              },
+            ),
+          ),
+        ),
+      skip: 2,
+      expect: () => [
+        predicate<CollectionState>(
+          (s) =>
+              s.filteredItems.length == 2 &&
+              s.filteredItems.every((i) => i.thingId != 1),
+        ),
+      ],
+    );
+
+    blocTest<CollectionBloc, CollectionState>(
+      'combines search and inventory location filter with AND logic',
+      build: () {
+        when(loadCollection.call).thenAnswer(
+          (_) async => const [
+            CollectionItem(
+              thingId: 1,
+              names: [
+                LocalizedName(value: 'Catan', language: null, isPrimary: true),
+              ],
+              inventoryLocation: 'Keller',
+            ),
+            CollectionItem(
+              thingId: 2,
+              names: [
+                LocalizedName(
+                  value: 'Carcassonne',
+                  language: null,
+                  isPrimary: true,
+                ),
+              ],
+              inventoryLocation: 'Keller',
+            ),
+          ],
+        );
+        return _buildBloc(
+          loadCollection: loadCollection,
+          loadCardLayout: loadCardLayout,
+          loadCollectionView: loadCollectionView,
+          saveCollectionView: saveCollectionView,
+        );
+      },
+      act: (bloc) => bloc
+        ..add(const CollectionLoaded())
+        ..add(const CollectionSearchTextChanged('car'))
+        ..add(
+          const CollectionFilterChanged(
+            CollectionFilter(
+              inventoryLocationFilters: {
+                'Keller': InventoryLocationFilter.matches,
+              },
+            ),
+          ),
+        ),
+      skip: 3,
+      expect: () => [
+        predicate<CollectionState>(
+          (s) =>
+              s.filteredItems.length == 1 && s.filteredItems.first.thingId == 2,
+        ),
+      ],
+    );
+
+    blocTest<CollectionBloc, CollectionState>(
       'sorts by name ascending by default',
       build: () {
         when(loadCollection.call).thenAnswer(
@@ -1556,6 +1879,49 @@ void main() {
               s.items.length == 1 &&
               s.items.first.thingId == 10 &&
               s.errorMessage(AppLocalizationsEn()) == null,
+        ),
+      ],
+    );
+
+    blocTest<CollectionBloc, CollectionState>(
+      'removes obsolete inventory locations after sync',
+      build: () {
+        final syncCollection = _MockSyncCollectionUseCase();
+        when(
+          () => syncCollection.call(onProgress: any(named: 'onProgress')),
+        ).thenAnswer(
+          (_) async =>
+              const SyncResult(items: [], duration: Duration(seconds: 1)),
+        );
+        when(loadCollection.call).thenAnswer(
+          (_) async => const [CollectionItem(thingId: 10, names: [])],
+        );
+        return _buildBloc(
+          loadCollection: loadCollection,
+          loadCardLayout: loadCardLayout,
+          loadCollectionView: loadCollectionView,
+          saveCollectionView: saveCollectionView,
+          syncCollection: syncCollection,
+        );
+      },
+      act: (bloc) => bloc
+        ..add(const CollectionLoaded())
+        ..add(
+          const CollectionFilterChanged(
+            CollectionFilter(
+              inventoryLocationFilters: {
+                'Keller': InventoryLocationFilter.matches,
+                'Wohnzimmer': InventoryLocationFilter.excludes,
+              },
+            ),
+          ),
+        )
+        ..add(const CollectionSyncRequested()),
+      skip: 4,
+      expect: () => [
+        predicate<CollectionState>(
+          (s) =>
+              s.filter.inventoryLocationFilters.isEmpty && s.items.length == 1,
         ),
       ],
     );

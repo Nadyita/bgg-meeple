@@ -15,6 +15,7 @@ import '../../../domain/value_objects/collection_filter.dart';
 import '../../../domain/value_objects/collection_sort.dart';
 import '../../../domain/value_objects/collection_sub_type.dart';
 import '../../../domain/value_objects/collection_view.dart';
+import '../../../domain/value_objects/inventory_location_filter.dart';
 import '../../../domain/value_objects/player_participation_filter.dart';
 import '../../../domain/value_objects/plays_info.dart';
 import 'collection_event.dart';
@@ -103,6 +104,9 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
       final view = await _loadViewOrDefault();
       final credentials = await loadCredentials();
       final playsInfo = await loadPlaysInfo();
+      final cleanedFilter = view.filter.removeObsoleteInventoryLocationFilters(
+        _availableInventoryLocations(items),
+      );
       emit(
         state.copyWith(
           isLoading: false,
@@ -110,13 +114,13 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
           cardLayout: cardLayout,
           playsInfo: playsInfo,
           searchText: view.searchText,
-          filter: view.filter,
+          filter: cleanedFilter,
           sort: view.sort,
           hasCredentials: credentials?.isValid ?? false,
           filteredItems: _apply(
             items,
             view.searchText,
-            view.filter,
+            cleanedFilter,
             view.sort,
             playsInfo,
           ),
@@ -191,13 +195,17 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
   }
 
   void _onSynced(CollectionSynced event, Emitter<CollectionState> emit) {
+    final cleanedFilter = state.filter.removeObsoleteInventoryLocationFilters(
+      _availableInventoryLocations(event.items),
+    );
     emit(
       state.copyWith(
         items: event.items,
+        filter: cleanedFilter,
         filteredItems: _apply(
           event.items,
           state.searchText,
-          state.filter,
+          cleanedFilter,
           state.sort,
           state.playsInfo,
         ),
@@ -268,15 +276,19 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
       );
       final items = await loadCollection();
       final playsInfo = await loadPlaysInfo();
+      final cleanedFilter = state.filter.removeObsoleteInventoryLocationFilters(
+        _availableInventoryLocations(items),
+      );
       emit(
         state.copyWith(
           isSyncing: false,
           items: items,
+          filter: cleanedFilter,
           playsInfo: playsInfo,
           filteredItems: _apply(
             items,
             state.searchText,
-            state.filter,
+            cleanedFilter,
             state.sort,
             playsInfo,
           ),
@@ -330,7 +342,12 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
     CollectionFilterCleared event,
     Emitter<CollectionState> emit,
   ) {
-    const clearedFilter = CollectionFilter();
+    final clearedFilter = CollectionFilter(
+      inventoryLocationFilters: {
+        for (final key in state.filter.inventoryLocationFilters.keys)
+          key: InventoryLocationFilter.any,
+      },
+    );
     final newState = state.copyWith(
       filter: clearedFilter,
       filteredItems: _apply(
@@ -431,6 +448,14 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
     return buffer.toString().trim();
   }
 
+  Set<String> _availableInventoryLocations(List<CollectionItem> items) {
+    return items
+        .map((item) => item.inventoryLocation?.trim())
+        .where((location) => location != null && location.isNotEmpty)
+        .cast<String>()
+        .toSet();
+  }
+
   bool _matchesFilter(
     CollectionItem item,
     CollectionFilter filter,
@@ -490,6 +515,34 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
     }
     if (filter.maxPlays != null && effectivePlays > filter.maxPlays!) {
       return false;
+    }
+
+    if (filter.inventoryLocationFilters.values.any(
+      (v) => v != InventoryLocationFilter.any,
+    )) {
+      final itemLocation = item.inventoryLocation?.trim();
+      final matchesLocations = filter.inventoryLocationFilters.entries
+          .where((e) => e.value == InventoryLocationFilter.matches)
+          .map((e) => e.key)
+          .toSet();
+      final excludesLocations = filter.inventoryLocationFilters.entries
+          .where((e) => e.value == InventoryLocationFilter.excludes)
+          .map((e) => e.key)
+          .toSet();
+
+      if (matchesLocations.isNotEmpty &&
+          (itemLocation == null ||
+              itemLocation.isEmpty ||
+              !matchesLocations.contains(itemLocation))) {
+        return false;
+      }
+
+      if (excludesLocations.isNotEmpty &&
+          itemLocation != null &&
+          itemLocation.isNotEmpty &&
+          excludesLocations.contains(itemLocation)) {
+        return false;
+      }
     }
 
     return true;

@@ -177,6 +177,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get filterPlayerSectionTitle => 'Players';
 
   @override
+  String get filterLocationSectionTitle => 'Location';
+
+  @override
+  String get filterAddLocationLabel => 'Add location';
+
+  @override
+  String get filterLocationPickerTitle => 'Select a location';
+
+  @override
+  String get noLocationsAvailable => 'No locations available.';
+
+  @override
   String get filterPlayerPickerTitle => 'Select a player';
 
   @override

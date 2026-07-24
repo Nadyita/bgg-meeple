@@ -3,6 +3,7 @@
 ## Purpose
 
 Defines the live search and filter behavior on the main collection screen, including the expandable filter panel, combined AND filtering across search, sub-types, player count, play time, rating ranges, and play count.
+
 ## Requirements
 ### Requirement: Live search by game name
 A search field at the top of the main list SHALL filter the collection by game name as the user types. The search SHALL be case-insensitive and SHALL only match game names (custom name and BGG names), not version edition names.
@@ -157,11 +158,10 @@ When a player chip is removed from the filter panel, that player's entry SHALL b
 
 ### Requirement: Player filters combine with existing filters using AND logic
 
-Player participation filters SHALL be combined with search text, collection sub-types, player count, play time, rating, and play count using AND logic.
+Player participation filters SHALL be combined with search text, collection sub-types, player count, play time, rating, play count, and inventory location using AND logic.
 
 #### Scenario: Search and player filter together
 
 - **GIVEN** the user searches for "Catan" and adds a player filter for "Markus" with state played
 - **WHEN** the list is updated
 - **THEN** only games whose name contains "Catan" and which contain Markus are shown
-

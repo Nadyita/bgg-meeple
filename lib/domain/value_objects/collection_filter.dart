@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import 'collection_sub_type.dart';
+import 'inventory_location_filter.dart';
 import 'player_participation_filter.dart';
 
 /// Filter criteria for the collection list.
@@ -21,6 +22,7 @@ class CollectionFilter extends Equatable {
     this.minPlays,
     this.maxPlays,
     this.playerParticipation = const {},
+    this.inventoryLocationFilters = const {},
   });
 
   final List<CollectionSubType> selectedSubTypes;
@@ -40,6 +42,16 @@ class CollectionFilter extends Equatable {
   /// entries affect filtering.
   final Map<String, PlayerParticipationFilter> playerParticipation;
 
+  /// Per-location inventory filter.
+  ///
+  /// The key is the location name. [InventoryLocationFilter.any] means the
+  /// location does not affect the result. [InventoryLocationFilter.matches]
+  /// keeps only games stored at that location. [InventoryLocationFilter.excludes]
+  /// hides games stored at that location. Multiple `matches` locations are
+  /// combined with OR logic; multiple `excludes` locations are combined with
+  /// AND logic.
+  final Map<String, InventoryLocationFilter> inventoryLocationFilters;
+
   bool get isActive {
     return selectedSubTypes.isNotEmpty ||
         minPlayers != null ||
@@ -52,6 +64,9 @@ class CollectionFilter extends Equatable {
         maxPlays != null ||
         playerParticipation.values.any(
           (v) => v != PlayerParticipationFilter.any,
+        ) ||
+        inventoryLocationFilters.values.any(
+          (v) => v != InventoryLocationFilter.any,
         );
   }
 
@@ -66,6 +81,7 @@ class CollectionFilter extends Equatable {
     int? minPlays,
     int? maxPlays,
     Map<String, PlayerParticipationFilter>? playerParticipation,
+    Map<String, InventoryLocationFilter>? inventoryLocationFilters,
     bool clearMinPlayers = false,
     bool clearMaxPlayers = false,
     bool clearMinPlayTime = false,
@@ -86,6 +102,8 @@ class CollectionFilter extends Equatable {
       minPlays: clearMinPlays ? null : (minPlays ?? this.minPlays),
       maxPlays: clearMaxPlays ? null : (maxPlays ?? this.maxPlays),
       playerParticipation: playerParticipation ?? this.playerParticipation,
+      inventoryLocationFilters:
+          inventoryLocationFilters ?? this.inventoryLocationFilters,
     );
   }
 
@@ -99,6 +117,31 @@ class CollectionFilter extends Equatable {
       }
     }
     return copyWith(playerParticipation: cleaned);
+  }
+
+  /// Returns a copy with every known location kept at its current state and
+  /// every location not present in [availableLocations] removed.
+  CollectionFilter removeObsoleteInventoryLocationFilters(
+    Set<String> availableLocations,
+  ) {
+    final cleaned = <String, InventoryLocationFilter>{};
+    for (final entry in inventoryLocationFilters.entries) {
+      if (availableLocations.contains(entry.key)) {
+        cleaned[entry.key] = entry.value;
+      }
+    }
+    return copyWith(inventoryLocationFilters: cleaned);
+  }
+
+  /// Returns a copy with all inventory-location filter values set to [any]
+  /// while keeping every added location.
+  CollectionFilter resetInventoryLocationFilters() {
+    return copyWith(
+      inventoryLocationFilters: {
+        for (final key in inventoryLocationFilters.keys)
+          key: InventoryLocationFilter.any,
+      },
+    );
   }
 
   /// Serializes the filter to a JSON-compatible map.
@@ -119,6 +162,11 @@ class CollectionFilter extends Equatable {
       if (playerParticipation.isNotEmpty)
         'playerParticipation': {
           for (final entry in playerParticipation.entries)
+            entry.key: entry.value.name,
+        },
+      if (inventoryLocationFilters.isNotEmpty)
+        'inventoryLocationFilters': {
+          for (final entry in inventoryLocationFilters.entries)
             entry.key: entry.value.name,
         },
     };
@@ -162,6 +210,18 @@ class CollectionFilter extends Equatable {
       playerParticipation = const {};
     }
 
+    final locationFiltersJson = json['inventoryLocationFilters'];
+    final Map<String, InventoryLocationFilter> inventoryLocationFilters;
+    if (locationFiltersJson is Map<String, dynamic>) {
+      inventoryLocationFilters = {
+        for (final entry in locationFiltersJson.entries)
+          if (_parseInventoryLocationFilter(entry.value) != null)
+            entry.key: _parseInventoryLocationFilter(entry.value)!,
+      };
+    } else {
+      inventoryLocationFilters = const {};
+    }
+
     return CollectionFilter(
       selectedSubTypes: selectedSubTypes,
       minPlayers: jsonInt(json['minPlayers']),
@@ -173,12 +233,20 @@ class CollectionFilter extends Equatable {
       minPlays: jsonInt(json['minPlays']),
       maxPlays: jsonInt(json['maxPlays']),
       playerParticipation: playerParticipation,
+      inventoryLocationFilters: inventoryLocationFilters,
     );
   }
 
   static PlayerParticipationFilter? _parseParticipationFilter(dynamic value) {
     if (value is! String) return null;
     return PlayerParticipationFilter.values
+        .where((e) => e.name == value)
+        .firstOrNull;
+  }
+
+  static InventoryLocationFilter? _parseInventoryLocationFilter(dynamic value) {
+    if (value is! String) return null;
+    return InventoryLocationFilter.values
         .where((e) => e.name == value)
         .firstOrNull;
   }
@@ -195,5 +263,6 @@ class CollectionFilter extends Equatable {
     minPlays,
     maxPlays,
     playerParticipation,
+    inventoryLocationFilters,
   ];
 }

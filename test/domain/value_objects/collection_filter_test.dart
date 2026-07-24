@@ -1,5 +1,6 @@
 import 'package:bgg_meeple/domain/value_objects/collection_filter.dart';
 import 'package:bgg_meeple/domain/value_objects/collection_sub_type.dart';
+import 'package:bgg_meeple/domain/value_objects/inventory_location_filter.dart';
 import 'package:bgg_meeple/domain/value_objects/player_participation_filter.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -41,6 +42,17 @@ void main() {
         'Markus': PlayerParticipationFilter.played,
       });
     });
+
+    test('updates inventoryLocationFilters', () {
+      final updated = base.copyWith(
+        inventoryLocationFilters: const {
+          'Keller': InventoryLocationFilter.matches,
+        },
+      );
+      expect(updated.inventoryLocationFilters, const {
+        'Keller': InventoryLocationFilter.matches,
+      });
+    });
   });
 
   group('CollectionFilter.isActive', () {
@@ -68,6 +80,20 @@ void main() {
         playerParticipation: {'Markus': PlayerParticipationFilter.played},
       );
       expect(filter.isActive, isTrue);
+    });
+
+    test('is true when an inventory location filter is not any', () {
+      const filter = CollectionFilter(
+        inventoryLocationFilters: {'Keller': InventoryLocationFilter.matches},
+      );
+      expect(filter.isActive, isTrue);
+    });
+
+    test('is false when all inventory location filters are any', () {
+      const filter = CollectionFilter(
+        inventoryLocationFilters: {'Keller': InventoryLocationFilter.any},
+      );
+      expect(filter.isActive, isFalse);
     });
 
     test('is false when all player filters are any', () {
@@ -115,6 +141,7 @@ void main() {
       expect(json, isNot(contains('maxPlayers')));
       expect(json, isNot(contains('minPlayTime')));
       expect(json, isNot(contains('playerParticipation')));
+      expect(json, isNot(contains('inventoryLocationFilters')));
     });
 
     test('serializes playerParticipation including any entries', () {
@@ -133,6 +160,46 @@ void main() {
         'Tom': 'notPlayed',
       });
     });
+
+    test('serializes inventoryLocationFilters', () {
+      const filter = CollectionFilter(
+        inventoryLocationFilters: {
+          'Keller': InventoryLocationFilter.matches,
+          'Wohnzimmer': InventoryLocationFilter.excludes,
+        },
+      );
+      final json = filter.toJson();
+
+      expect(json['inventoryLocationFilters'], {
+        'Keller': 'matches',
+        'Wohnzimmer': 'excludes',
+      });
+    });
+
+    test('does not serialize empty inventoryLocationFilters', () {
+      const filter = CollectionFilter();
+      final json = filter.toJson();
+
+      expect(json, isNot(contains('inventoryLocationFilters')));
+    });
+
+    test(
+      'fromJson parses inventoryLocationFilters and ignores unknown values',
+      () {
+        final restored = CollectionFilter.fromJson({
+          'inventoryLocationFilters': {
+            'Keller': 'matches',
+            'Wohnzimmer': 'excludes',
+            'Eva': 'unknown',
+          },
+        });
+
+        expect(restored.inventoryLocationFilters, {
+          'Keller': InventoryLocationFilter.matches,
+          'Wohnzimmer': InventoryLocationFilter.excludes,
+        });
+      },
+    );
 
     test('fromJson tolerates int-like doubles for integer fields', () {
       final restored = CollectionFilter.fromJson({
@@ -160,6 +227,49 @@ void main() {
       expect(restored.playerParticipation, {
         'Markus': PlayerParticipationFilter.played,
         'Tom': PlayerParticipationFilter.notPlayed,
+      });
+    });
+  });
+
+  group('CollectionFilter.removeObsoleteInventoryLocationFilters', () {
+    test(
+      'keeps known locations at their current state and removes unknown ones',
+      () {
+        const filter = CollectionFilter(
+          inventoryLocationFilters: {
+            'Keller': InventoryLocationFilter.matches,
+            'Wohnzimmer': InventoryLocationFilter.excludes,
+            'Eva': InventoryLocationFilter.matches,
+          },
+        );
+
+        final cleaned = filter.removeObsoleteInventoryLocationFilters(const {
+          'Keller',
+          'Wohnzimmer',
+        });
+
+        expect(cleaned.inventoryLocationFilters, const {
+          'Keller': InventoryLocationFilter.matches,
+          'Wohnzimmer': InventoryLocationFilter.excludes,
+        });
+      },
+    );
+  });
+
+  group('CollectionFilter.resetInventoryLocationFilters', () {
+    test('keeps all locations but sets their state to any', () {
+      const filter = CollectionFilter(
+        inventoryLocationFilters: {
+          'Keller': InventoryLocationFilter.matches,
+          'Wohnzimmer': InventoryLocationFilter.excludes,
+        },
+      );
+
+      final reset = filter.resetInventoryLocationFilters();
+
+      expect(reset.inventoryLocationFilters, const {
+        'Keller': InventoryLocationFilter.any,
+        'Wohnzimmer': InventoryLocationFilter.any,
       });
     });
   });

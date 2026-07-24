@@ -428,6 +428,30 @@ abstract class AppLocalizations {
   /// **'Players'**
   String get filterPlayerSectionTitle;
 
+  /// No description provided for @filterLocationSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get filterLocationSectionTitle;
+
+  /// No description provided for @filterAddLocationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Add location'**
+  String get filterAddLocationLabel;
+
+  /// No description provided for @filterLocationPickerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a location'**
+  String get filterLocationPickerTitle;
+
+  /// No description provided for @noLocationsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No locations available.'**
+  String get noLocationsAvailable;
+
   /// No description provided for @filterPlayerPickerTitle.
   ///
   /// In en, this message translates to:

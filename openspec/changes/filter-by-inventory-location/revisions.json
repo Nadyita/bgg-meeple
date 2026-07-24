@@ -1,0 +1,19 @@
+{
+  "changeId": "filter-by-inventory-location",
+  "revisions": [
+    {
+      "id": "rev-0f6745c9",
+      "description": "Changed inventory-location filter from a simple OR multi-select to a tri-state filter analogous to player participation. Each added location cycles through any/is/isNot. Multiple is-locations use OR logic; multiple isNot-locations use AND logic; is and isNot combine with AND.",
+      "reason": "User clarified the UX should match the player filter in all respects, including tri-state chips.",
+      "author": "AI",
+      "createdAt": "2026-07-24T13:13:15.498Z"
+    },
+    {
+      "id": "rev-b1d92eb8",
+      "description": "Resetting filters now sets inventory-location chips to any instead of removing them. Unknown locations (no longer present in the loaded collection) are removed automatically, matching the player-filter cleanup behavior.",
+      "reason": "User clarified that Clear should reset location filter states to any, not delete chips, and only obsolete locations should be dropped.",
+      "author": "AI",
+      "createdAt": "2026-07-24T13:26:41.695Z"
+    }
+  ]
+}
