@@ -1,10 +1,10 @@
-# android-app-label Specification
+# android-app-label delta spec
 
 ## Purpose
 
-Defines the human-readable launcher label for the MyMeeple app on Android.
+Updates the human-readable launcher label for the app on Android from `BGG Meeple` to `MyMeeple`.
 
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: Android app shows the readable brand name
 
@@ -23,7 +23,3 @@ The project SHALL include an automated test that verifies the `application andro
 
 - **WHEN** a contributor modifies `AndroidManifest.xml`
 - **THEN** the test suite fails if the `android:label` no longer equals `MyMeeple`
-
-## Notes
-
-- The label is intentionally kept in `AndroidManifest.xml` rather than a string resource because the project does not currently require locale-specific Android launcher labels.

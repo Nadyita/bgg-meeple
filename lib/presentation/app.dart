@@ -8,7 +8,7 @@ import 'l10n/app_localizations.dart';
 import 'pages/collection_page.dart';
 import 'pages/settings_page.dart';
 
-/// Root widget of the BGG Meeple app.
+/// Root widget of the MyMeeple app.
 class BggMeepleApp extends StatelessWidget {
   const BggMeepleApp({super.key});
 

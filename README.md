@@ -1,4 +1,4 @@
-# BGG Meeple
+# MyMeeple
 
 A personal offline-first BoardGameGeek collection viewer built with Flutter.
 
@@ -72,7 +72,7 @@ keytool -genkey -v \
   -validity 10000 \
   -storepass YOUR_KEYSTORE_PASSWORD \
   -keypass YOUR_KEY_PASSWORD \
-  -dname "CN=BGG Meeple, O=BGG Meeple, C=DE"
+  -dname "CN=MyMeeple, O=MyMeeple, C=DE"
 ```
 
 #### Encode the keystore for GitHub Actions
@@ -139,7 +139,7 @@ On standard Android these permissions are granted automatically. Some custom ROM
 (e.g. GrapheneOS, CalyxOS, certain Xiaomi/OnePlus builds) treat network access as a manual permission.
 
 If you see `ClientSocketException` or `Failed host lookup: 'boardgamegeek.com'` on a real device
-while the browser works, open the Android app details for **BGG Meeple** and make sure that
+while the browser works, open the Android app details for **MyMeeple** and make sure that
 **Network access** / **Internet** is allowed.
 
 BGG credentials and session cookies are stored via [`flutter_secure_storage`](https://pub.dev/packages/flutter_secure_storage), which uses platform-specific secure storage:

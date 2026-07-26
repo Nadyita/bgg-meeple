@@ -9,7 +9,7 @@ class AppLocalizationsDe extends AppLocalizations {
   AppLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
-  String get appTitle => 'BGG Meeple';
+  String get appTitle => 'MyMeeple';
 
   @override
   String get settingsTitle => 'Einstellungen';
