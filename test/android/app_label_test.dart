@@ -15,7 +15,7 @@ void main() {
       );
     });
 
-    test('application label equals "BGG Meeple"', () {
+    test('application label equals "MyMeeple"', () {
       final content = manifestFile.readAsStringSync();
       final document = XmlDocument.parse(content);
       final application = document.rootElement
@@ -25,7 +25,7 @@ void main() {
 
       expect(
         label,
-        equals('BGG Meeple'),
+        equals('MyMeeple'),
         reason: 'Android application label must be the readable brand name',
       );
     });

@@ -1,6 +1,6 @@
-# BGG Meeple App – Requirements
+# MyMeeple App – Requirements
 
-Central requirements index for the Flutter app **BGG Meeple**.
+Central requirements index for the Flutter app **MyMeeple**.
 The authoritative requirements are now maintained as OpenSpec capability specs under [`openspec/specs/`](openspec/specs/). This file keeps a consolidated human-readable index, project-level rules, and the change history.
 
 ---
@@ -39,7 +39,7 @@ The authoritative requirements are now maintained as OpenSpec capability specs u
 
 ## 1. Vision & Target Audience
 
-- **App name:** BGG Meeple
+- **App name:** MyMeeple
 - **Technology:** Flutter (Android, Linux Desktop; Web optional if effort is justified)
 - **Design system:** Material 3; no custom logo for now.
 - **Primary development target:** Linux Desktop first (local testing environment), then Android.
@@ -66,6 +66,7 @@ Each capability links to its authoritative OpenSpec spec. Detailed acceptance cr
 | Settings and theme | [`openspec/specs/settings-and-theme/spec.md`](openspec/specs/settings-and-theme/spec.md) | UX01–UX02, UX05 | implemented |
 | CI/CD | [`openspec/specs/ci-cd/spec.md`](openspec/specs/ci-cd/spec.md) | NF10–NF12, T07–T08 | implemented |
 | App icon | [`openspec/specs/app-icon/spec.md`](openspec/specs/app-icon/spec.md) | NF01, NF04 | implemented |
+| App identity | [`openspec/specs/app-identity/spec.md`](openspec/specs/app-identity/spec.md) | — | planned |
 | Android app label | [`openspec/specs/android-app-label/spec.md`](openspec/specs/android-app-label/spec.md) | — | planned |
 | Android release signing | [`openspec/specs/android-release-signing/spec.md`](openspec/specs/android-release-signing/spec.md) | NF13 | planned |
 | Plays sync | [`openspec/specs/plays-sync/spec.md`](openspec/specs/plays-sync/spec.md) | — | planned |
