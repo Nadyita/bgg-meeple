@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bgg_meeple/application/use_cases/load_game_details_use_case.dart';
 import 'package:bgg_meeple/domain/entities/board_game.dart';
 import 'package:bgg_meeple/domain/entities/collection_item.dart';
@@ -67,7 +69,7 @@ void main() {
     });
 
     test(
-      'falls back to collection item image when board game has none',
+      'triggers background refresh when details are stale and token is present',
       () async {
         const collectionItem = CollectionItem(
           thingId: 1,
@@ -75,21 +77,109 @@ void main() {
           names: [
             LocalizedName(value: 'Catan', language: null, isPrimary: true),
           ],
-          imageUrl: 'https://example.com/image.png',
+        );
+        final boardGame = BoardGame(
+          id: 1,
+          names: const [
+            LocalizedName(value: 'Catan', language: null, isPrimary: true),
+          ],
+          detailsUpdatedAt: DateTime(2020).millisecondsSinceEpoch,
         );
 
         when(
           () => collectionStore.loadById(1, 1),
         ).thenAnswer((_) async => collectionItem);
-        when(() => gameStore.loadByIds([1])).thenAnswer((_) async => []);
         when(
-          () => imageCache.cache('https://example.com/image.png'),
-        ).thenAnswer((_) async => '/cache/image.png');
+          () => gameStore.loadByIds([1]),
+        ).thenAnswer((_) async => [boardGame]);
+        when(() => imageCache.cache(null)).thenAnswer((_) async => null);
+
+        final completer = Completer<void>();
+        var refreshedId = -1;
+        final useCase = LoadGameDetailsUseCase(
+          collectionStore,
+          gameStore,
+          imageCache,
+          refreshDetails: (id) async {
+            refreshedId = id;
+            completer.complete();
+          },
+          hasApiToken: () async => true,
+          now: () => DateTime(2020, 2).millisecondsSinceEpoch,
+        );
 
         final result = await useCase(1, 1);
 
-        expect(result!.localImagePath, '/cache/image.png');
+        expect(result, isNotNull);
+        await completer.future;
+        expect(refreshedId, 1);
       },
     );
+
+    test('does not refresh when details are recent', () async {
+      const collectionItem = CollectionItem(
+        thingId: 1,
+        collId: 1,
+        names: [LocalizedName(value: 'Catan', language: null, isPrimary: true)],
+      );
+      final boardGame = BoardGame(
+        id: 1,
+        names: const [
+          LocalizedName(value: 'Catan', language: null, isPrimary: true),
+        ],
+        detailsUpdatedAt: DateTime(2020, 1, 15).millisecondsSinceEpoch,
+      );
+
+      when(
+        () => collectionStore.loadById(1, 1),
+      ).thenAnswer((_) async => collectionItem);
+      when(() => gameStore.loadByIds([1])).thenAnswer((_) async => [boardGame]);
+      when(() => imageCache.cache(null)).thenAnswer((_) async => null);
+
+      var refreshed = false;
+      final useCase = LoadGameDetailsUseCase(
+        collectionStore,
+        gameStore,
+        imageCache,
+        refreshDetails: (_) async {
+          refreshed = true;
+        },
+        hasApiToken: () async => true,
+        now: () => DateTime(2020, 2).millisecondsSinceEpoch,
+      );
+
+      await useCase(1, 1);
+
+      expect(refreshed, isFalse);
+    });
+
+    test('does not refresh without API token', () async {
+      const collectionItem = CollectionItem(
+        thingId: 1,
+        collId: 1,
+        names: [LocalizedName(value: 'Catan', language: null, isPrimary: true)],
+      );
+
+      when(
+        () => collectionStore.loadById(1, 1),
+      ).thenAnswer((_) async => collectionItem);
+      when(() => gameStore.loadByIds([1])).thenAnswer((_) async => []);
+      when(() => imageCache.cache(null)).thenAnswer((_) async => null);
+
+      var refreshed = false;
+      final useCase = LoadGameDetailsUseCase(
+        collectionStore,
+        gameStore,
+        imageCache,
+        refreshDetails: (_) async {
+          refreshed = true;
+        },
+        hasApiToken: () async => false,
+      );
+
+      await useCase(1, 1);
+
+      expect(refreshed, isFalse);
+    });
   });
 }

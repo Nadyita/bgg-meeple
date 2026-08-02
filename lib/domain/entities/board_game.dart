@@ -1,3 +1,4 @@
+import '../value_objects/game_link.dart';
 import '../value_objects/localized_name.dart';
 
 /// Represents the static details of a board game fetched from BGG.
@@ -23,15 +24,12 @@ class BoardGame {
     this.numWishing,
     this.averageWeight,
     this.description,
-    this.categories = const [],
-    this.mechanics = const [],
-    this.designers = const [],
-    this.artists = const [],
-    this.publishers = const [],
-    this.families = const [],
-    this.languageDependence,
+    this.links = const [],
+    this.languageDependenceLevel,
     this.bestPlayerCount,
+    this.suggestedPlayerAge,
     this.recommendedPlayerCount,
+    this.detailsUpdatedAt,
   });
 
   final int id;
@@ -54,15 +52,12 @@ class BoardGame {
   final int? numWishing;
   final double? averageWeight;
   final String? description;
-  final List<String> categories;
-  final List<String> mechanics;
-  final List<String> designers;
-  final List<String> artists;
-  final List<String> publishers;
-  final List<String> families;
-  final String? languageDependence;
+  final List<GameLink> links;
+  final String? languageDependenceLevel;
   final String? bestPlayerCount;
+  final String? suggestedPlayerAge;
   final String? recommendedPlayerCount;
+  final int? detailsUpdatedAt;
 
   String displayName({required String preferredLanguage}) {
     if (names.isEmpty) return 'Unknown game';
@@ -108,15 +103,12 @@ class BoardGame {
     int? numWishing,
     double? averageWeight,
     String? description,
-    List<String>? categories,
-    List<String>? mechanics,
-    List<String>? designers,
-    List<String>? artists,
-    List<String>? publishers,
-    List<String>? families,
-    String? languageDependence,
+    List<GameLink>? links,
+    String? languageDependenceLevel,
     String? bestPlayerCount,
+    String? suggestedPlayerAge,
     String? recommendedPlayerCount,
+    int? detailsUpdatedAt,
   }) {
     return BoardGame(
       id: id ?? this.id,
@@ -139,16 +131,14 @@ class BoardGame {
       numWishing: numWishing ?? this.numWishing,
       averageWeight: averageWeight ?? this.averageWeight,
       description: description ?? this.description,
-      categories: categories ?? this.categories,
-      mechanics: mechanics ?? this.mechanics,
-      designers: designers ?? this.designers,
-      artists: artists ?? this.artists,
-      publishers: publishers ?? this.publishers,
-      families: families ?? this.families,
-      languageDependence: languageDependence ?? this.languageDependence,
+      links: links ?? this.links,
+      languageDependenceLevel:
+          languageDependenceLevel ?? this.languageDependenceLevel,
       bestPlayerCount: bestPlayerCount ?? this.bestPlayerCount,
+      suggestedPlayerAge: suggestedPlayerAge ?? this.suggestedPlayerAge,
       recommendedPlayerCount:
           recommendedPlayerCount ?? this.recommendedPlayerCount,
+      detailsUpdatedAt: detailsUpdatedAt ?? this.detailsUpdatedAt,
     );
   }
 

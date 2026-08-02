@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '../../domain/entities/board_game.dart';
 import '../../domain/entities/collection_item.dart';
 import '../../domain/ports/collection_store.dart';
@@ -27,46 +29,53 @@ class GameDetails {
 
 /// Loads the full detail data for a collection item.
 ///
-/// Combines the collection item, the cached [BoardGame] details, and lazily
-/// caches the full game image so it is available offline on subsequent visits.
+/// Combines the collection item, the cached [BoardGame] details, lazily caches
+/// the full game image, and triggers a background refresh of stale game
+/// details when an API token is available.
 class LoadGameDetailsUseCase {
   const LoadGameDetailsUseCase(
     this._collectionStore,
     this._gameStore,
-    this._imageCache,
-  );
+    this._imageCache, {
+    this.refreshDetails,
+    this.hasApiToken = _defaultHasApiToken,
+    this.now = _defaultNow,
+  });
 
   final CollectionStore _collectionStore;
   final GameStore _gameStore;
   final ThumbnailCache _imageCache;
 
+  /// Callback that fetches fresh `/thing` details for the given [thingId] and
+  /// persists them. Called in the background when cached details are stale.
+  final Future<void> Function(int thingId)? refreshDetails;
+
+  /// Returns whether a valid API token is available. Overridable for testing.
+  final Future<bool> Function() hasApiToken;
+
+  /// Returns the current timestamp in milliseconds since epoch. Overridable for
+  /// testing.
+  final int Function() now;
+
+  static Future<bool> _defaultHasApiToken() async => false;
+  static int _defaultNow() => DateTime.now().millisecondsSinceEpoch;
+
+  /// Runs the sync.
   Future<GameDetails?> call(int thingId, int collId) async {
     var collectionItem = await _collectionStore.loadById(thingId, collId);
     collectionItem ??= await _collectionStore.loadById(thingId, thingId);
     if (collectionItem == null) {
-      // ignore: avoid_print
-      print(
-        '[LoadGameDetailsUseCase] Collection item not found for thingId=$thingId collId=$collId',
-      );
       return null;
     }
 
     final games = await _gameStore.loadByIds([thingId]);
     final boardGame = games.firstOrNull;
-    // ignore: avoid_print
-    print(
-      '[LoadGameDetailsUseCase] Loaded board game for thingId=$thingId: ${boardGame != null}',
-    );
 
     final imageUrl = boardGame?.imageUrl ?? collectionItem.imageUrl;
-    // ignore: avoid_print
-    print('[LoadGameDetailsUseCase] Image URL for thingId=$thingId: $imageUrl');
 
     final localImagePath = await _imageCache.cache(imageUrl);
-    // ignore: avoid_print
-    print(
-      '[LoadGameDetailsUseCase] Cached image path for thingId=$thingId: $localImagePath',
-    );
+
+    unawaited(_maybeRefreshDetails(thingId, boardGame).catchError((_) => null));
 
     return GameDetails(
       collectionItem: collectionItem,
@@ -74,5 +83,19 @@ class LoadGameDetailsUseCase {
       imageUrl: imageUrl,
       localImagePath: localImagePath,
     );
+  }
+
+  Future<void> _maybeRefreshDetails(int thingId, BoardGame? boardGame) async {
+    final refresh = refreshDetails;
+    if (refresh == null) return;
+    if (!await hasApiToken()) return;
+
+    final updatedAt = boardGame?.detailsUpdatedAt;
+    if (updatedAt != null) {
+      final ageMs = now() - updatedAt;
+      if (ageMs < const Duration(days: 30).inMilliseconds) return;
+    }
+
+    await refresh(thingId);
   }
 }

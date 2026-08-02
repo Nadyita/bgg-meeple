@@ -1,3 +1,6 @@
+import 'package:collection/collection.dart';
+
+import '../../domain/entities/board_game.dart' as domain;
 import '../../domain/entities/bgg_credentials.dart';
 import '../../domain/entities/collection_item.dart';
 import '../../domain/ports/bgg_api.dart';
@@ -91,8 +94,6 @@ class SyncCollectionUseCase {
     void Function(SyncProgress)? onProgress,
   }) async {
     final items = await _bggApi.fetchCollection(credentials.username);
-    // ignore: avoid_print
-    print('[SyncCollectionUseCase] Fetched ${items.length} collection items');
     onProgress?.call(
       SyncProgress(
         phase: 'collection',
@@ -102,13 +103,11 @@ class SyncCollectionUseCase {
     );
 
     final uniqueThingIds = items.map((i) => i.thingId).toSet().toList();
-    // ignore: avoid_print
-    print(
-      '[SyncCollectionUseCase] Fetching details for ${uniqueThingIds.length} unique games',
-    );
-    final games = await _bggApi.fetchGames(uniqueThingIds);
-    // ignore: avoid_print
-    print('[SyncCollectionUseCase] Received ${games.length} games from /thing');
+
+    final games = credentials.hasApiToken
+        ? await _fetchMissingDetails(uniqueThingIds)
+        : <domain.BoardGame>[];
+
     onProgress?.call(
       SyncProgress(
         phase: 'details',
@@ -119,10 +118,6 @@ class SyncCollectionUseCase {
 
     await _collectionStore.saveAll(items);
     await _gameStore.saveAll(games);
-    // ignore: avoid_print
-    print(
-      '[SyncCollectionUseCase] Saved ${items.length} items and ${games.length} games',
-    );
 
     for (var i = 0; i < items.length; i++) {
       final item = items[i];
@@ -146,6 +141,30 @@ class SyncCollectionUseCase {
     return SyncResult(items: items, duration: stopwatch.elapsed);
   }
 
+  Future<List<domain.BoardGame>> _fetchMissingDetails(
+    List<int> uniqueThingIds,
+  ) async {
+    if (uniqueThingIds.isEmpty) return [];
+
+    final cachedGames = await _gameStore.loadByIds(uniqueThingIds);
+    final missingIds = uniqueThingIds
+        .where(
+          (id) =>
+              cachedGames
+                  .firstWhereOrNull((g) => g.id == id)
+                  ?.description
+                  .isEmptyOrNull ??
+              true,
+        )
+        .toList();
+
+    if (missingIds.isEmpty) return [];
+
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final games = await _bggApi.fetchGames(missingIds);
+    return games.map((g) => g.copyWith(detailsUpdatedAt: now)).toList();
+  }
+
   Future<void> _ensureSession(BggCredentials credentials) async {
     final session = await _sessionStore.load();
     if (session != null && session.isValid) {
@@ -154,5 +173,12 @@ class SyncCollectionUseCase {
 
     final newSession = await _bggApi.authenticate(credentials);
     await _sessionStore.save(newSession);
+  }
+}
+
+extension _NullableStringExtension on String? {
+  bool get isEmptyOrNull {
+    final value = this;
+    return value == null || value.trim().isEmpty;
   }
 }

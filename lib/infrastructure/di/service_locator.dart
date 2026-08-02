@@ -92,6 +92,20 @@ class ServiceLocator {
       _collectionStore,
       gameStore,
       _thumbnailCache,
+      refreshDetails: (thingId) async {
+        final credentials = await _credentialStore.load();
+        if (credentials == null || !credentials.hasApiToken) return;
+        final games = await _bggApi.fetchGames([thingId]);
+        if (games.isEmpty) return;
+        final now = DateTime.now().millisecondsSinceEpoch;
+        await gameStore.saveAll(
+          games.map((g) => g.copyWith(detailsUpdatedAt: now)).toList(),
+        );
+      },
+      hasApiToken: () async {
+        final credentials = await _credentialStore.load();
+        return credentials?.hasApiToken ?? false;
+      },
     );
     loadPlaysInfo = LoadPlaysInfoUseCase(_playStore);
     loadCardLayout = LoadCardLayoutUseCase(_cardLayoutStore);

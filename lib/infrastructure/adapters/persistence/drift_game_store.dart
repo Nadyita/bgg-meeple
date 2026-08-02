@@ -1,9 +1,8 @@
-import 'dart:convert';
-
 import 'package:drift/drift.dart';
 
 import '../../../domain/entities/board_game.dart' as domain;
 import '../../../domain/ports/game_store.dart';
+import '../../../domain/value_objects/game_link.dart';
 import '../../../domain/value_objects/localized_name.dart';
 import 'drift/app_database.dart' as drift;
 
@@ -44,6 +43,8 @@ class DriftGameStore implements GameStore {
               );
         }
       }
+
+      await _syncLinks(games);
     });
   }
 
@@ -64,8 +65,50 @@ class DriftGameStore implements GameStore {
 
   @override
   Future<void> clear() async {
+    await _db.delete(_db.boardGameLinkRels).go();
+    await _db.delete(_db.gameLinks).go();
     await _db.delete(_db.localizedNames).go();
     await _db.delete(_db.boardGames).go();
+  }
+
+  Future<void> _syncLinks(List<domain.BoardGame> games) async {
+    final ids = games.map((g) => g.id).toList();
+    await (_db.delete(
+      _db.boardGameLinkRels,
+    )..where((r) => r.gameId.isIn(ids))).go();
+
+    final allLinks = <GameLink>{};
+    for (final game in games) {
+      allLinks.addAll(game.links);
+    }
+
+    final linkIdsByKey = <String, int>{};
+    for (final link in allLinks) {
+      final companion = drift.GameLinksCompanion(
+        type: Value(link.type),
+        bggId: Value(link.bggId),
+        name: Value(link.name),
+      );
+      final linkId = await _db
+          .into(_db.gameLinks)
+          .insert(companion, onConflict: DoUpdate((_) => companion));
+      linkIdsByKey['${link.type}:${link.bggId}'] = linkId;
+    }
+
+    for (final game in games) {
+      for (final link in game.links) {
+        final linkId = linkIdsByKey['${link.type}:${link.bggId}'];
+        if (linkId == null) continue;
+        await _db
+            .into(_db.boardGameLinkRels)
+            .insert(
+              drift.BoardGameLinkRelsCompanion(
+                gameId: Value(game.id),
+                linkId: Value(linkId),
+              ),
+            );
+      }
+    }
   }
 
   drift.BoardGamesCompanion _toGameCompanion(domain.BoardGame game) {
@@ -89,15 +132,11 @@ class DriftGameStore implements GameStore {
       numWishing: Value(game.numWishing),
       averageWeight: Value(game.averageWeight),
       description: Value(game.description),
-      categories: Value(_encodeList(game.categories)),
-      mechanics: Value(_encodeList(game.mechanics)),
-      designers: Value(_encodeList(game.designers)),
-      artists: Value(_encodeList(game.artists)),
-      publishers: Value(_encodeList(game.publishers)),
-      families: Value(_encodeList(game.families)),
-      languageDependence: Value(game.languageDependence),
+      languageDependenceLevel: Value(game.languageDependenceLevel),
       bestPlayerCount: Value(game.bestPlayerCount),
+      suggestedPlayerAge: Value(game.suggestedPlayerAge),
       recommendedPlayerCount: Value(game.recommendedPlayerCount),
+      detailsUpdatedAt: Value(game.detailsUpdatedAt),
     );
   }
 
@@ -105,6 +144,23 @@ class DriftGameStore implements GameStore {
     final names = await (_db.select(
       _db.localizedNames,
     )..where((n) => n.boardGameId.equals(row.id))).get();
+
+    final linkRows = await (_db.select(_db.gameLinks).join([
+      innerJoin(
+        _db.boardGameLinkRels,
+        _db.boardGameLinkRels.linkId.equalsExp(_db.gameLinks.id),
+      ),
+    ])..where(_db.boardGameLinkRels.gameId.equals(row.id))).get();
+
+    final links = linkRows
+        .map(
+          (r) => GameLink(
+            bggId: r.readTable(_db.gameLinks).bggId,
+            type: r.readTable(_db.gameLinks).type,
+            name: r.readTable(_db.gameLinks).name,
+          ),
+        )
+        .toList();
 
     return domain.BoardGame(
       id: row.id,
@@ -135,32 +191,12 @@ class DriftGameStore implements GameStore {
       numWishing: row.numWishing,
       averageWeight: row.averageWeight,
       description: row.description,
-      categories: _decodeList(row.categories),
-      mechanics: _decodeList(row.mechanics),
-      designers: _decodeList(row.designers),
-      artists: _decodeList(row.artists),
-      publishers: _decodeList(row.publishers),
-      families: _decodeList(row.families),
-      languageDependence: row.languageDependence,
+      links: links,
+      languageDependenceLevel: row.languageDependenceLevel,
       bestPlayerCount: row.bestPlayerCount,
+      suggestedPlayerAge: row.suggestedPlayerAge,
       recommendedPlayerCount: row.recommendedPlayerCount,
+      detailsUpdatedAt: row.detailsUpdatedAt,
     );
-  }
-
-  String? _encodeList(List<String> values) {
-    if (values.isEmpty) return null;
-    return jsonEncode(values);
-  }
-
-  List<String> _decodeList(String? value) {
-    if (value == null || value.isEmpty) return const [];
-    try {
-      final decoded = jsonDecode(value) as List<dynamic>;
-      return decoded.cast<String>();
-    } on FormatException {
-      return const [];
-    } on TypeError {
-      return const [];
-    }
   }
 }

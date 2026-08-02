@@ -12,9 +12,9 @@ void main() {
       await db.close();
     });
 
-    test('schema version is 9', () {
+    test('schema version is 10', () {
       db = AppDatabase(NativeDatabase.memory());
-      expect(db.schemaVersion, 9);
+      expect(db.schemaVersion, 10);
     });
 
     test('migration strategy is configured', () {
@@ -34,6 +34,8 @@ void main() {
         containsAll([
           'collection_items',
           'board_games',
+          'game_links',
+          'board_game_link_rels',
           'localized_names',
           'versions',
           'plays',
@@ -43,66 +45,11 @@ void main() {
     });
 
     test(
-      'upgrade from v8 to v9 recreates tables and includes inventory_location',
+      'upgrade from v8 to v10 recreates tables and includes detailsUpdatedAt',
       () async {
         db = AppDatabase(NativeDatabase.memory());
         final migrator = db.createMigrator();
-        await db.migration.onUpgrade(migrator, 8, 9);
-
-        await db
-            .into(db.collectionItems)
-            .insert(
-              CollectionItemsCompanion(
-                thingId: const Value(1),
-                collId: const Value(1),
-                inventoryLocation: const Value('Shelf'),
-              ),
-            );
-
-        final row = await db.select(db.collectionItems).getSingle();
-        expect(row.thingId, 1);
-        expect(row.inventoryLocation, 'Shelf');
-      },
-    );
-
-    test(
-      'upgrade from v7 to v8 recreates tables and includes play tables',
-      () async {
-        db = AppDatabase(NativeDatabase.memory());
-        final migrator = db.createMigrator();
-        await db.migration.onUpgrade(migrator, 7, 8);
-
-        final tables = db.allSchemaEntities.whereType<TableInfo>().toList();
-        expect(
-          tables.map((t) => t.actualTableName),
-          containsAll(['plays', 'play_players']),
-        );
-
-        await db
-            .into(db.plays)
-            .insert(
-              PlaysCompanion(
-                id: const Value(1),
-                thingId: const Value(13),
-                gameName: const Value('Catan'),
-                date: const Value('2026-07-18'),
-                quantity: const Value(1),
-                length: const Value(60),
-              ),
-            );
-
-        final playRows = await db.select(db.plays).get();
-        expect(playRows.length, 1);
-        expect(playRows.single.gameName, 'Catan');
-      },
-    );
-
-    test(
-      'upgrade from v6 to v9 recreates tables with new game detail columns',
-      () async {
-        db = AppDatabase(NativeDatabase.memory());
-        final migrator = db.createMigrator();
-        await db.migration.onUpgrade(migrator, 6, 9);
+        await db.migration.onUpgrade(migrator, 8, 10);
 
         await db
             .into(db.boardGames)
@@ -110,22 +57,51 @@ void main() {
               BoardGamesCompanion(
                 id: const Value(1),
                 description: const Value('A great game.'),
-                categories: const Value('["Strategy"]'),
-                mechanics: const Value('["Worker Placement"]'),
-                designers: const Value('["Uwe Rosenberg"]'),
-                artists: const Value('["Klemens Franz"]'),
-                publishers: const Value('["Lookout Games"]'),
-                families: const Value('["Harvest"]'),
-                languageDependence: const Value('Some necessary text'),
                 bestPlayerCount: const Value('2'),
-                recommendedPlayerCount: const Value('1, 2, 3'),
+                suggestedPlayerAge: const Value('10.5'),
+                languageDependenceLevel: const Value('2'),
+                detailsUpdatedAt: const Value(123456789),
               ),
             );
 
         final row = await db.select(db.boardGames).getSingle();
         expect(row.id, 1);
         expect(row.description, 'A great game.');
-        expect(row.categories, '["Strategy"]');
+        expect(row.detailsUpdatedAt, 123456789);
+      },
+    );
+
+    test('upgrade from v8 to v10 creates normalized link tables', () async {
+      db = AppDatabase(NativeDatabase.memory());
+      final migrator = db.createMigrator();
+      await db.migration.onUpgrade(migrator, 8, 10);
+
+      final tables = db.allSchemaEntities.whereType<TableInfo>().toList();
+      expect(
+        tables.map((t) => t.actualTableName),
+        containsAll(['game_links', 'board_game_link_rels']),
+      );
+    });
+
+    test(
+      'upgrade from v9 to v10 recreates tables and removes JSON link columns',
+      () async {
+        db = AppDatabase(NativeDatabase.memory());
+        final migrator = db.createMigrator();
+        await db.migration.onUpgrade(migrator, 9, 10);
+
+        await db
+            .into(db.boardGames)
+            .insert(
+              const BoardGamesCompanion(
+                id: Value(1),
+                description: Value('A great game.'),
+              ),
+            );
+
+        final row = await db.select(db.boardGames).getSingle();
+        expect(row.id, 1);
+        expect(row.description, 'A great game.');
       },
     );
   });

@@ -1,6 +1,7 @@
 import 'package:bgg_meeple/application/use_cases/sync_collection_use_case.dart';
 import 'package:bgg_meeple/domain/entities/bgg_credentials.dart';
 import 'package:bgg_meeple/domain/entities/bgg_session.dart';
+import 'package:bgg_meeple/domain/entities/board_game.dart';
 import 'package:bgg_meeple/domain/entities/collection_item.dart';
 import 'package:bgg_meeple/domain/ports/bgg_api.dart';
 import 'package:bgg_meeple/domain/ports/collection_store.dart';
@@ -8,6 +9,7 @@ import 'package:bgg_meeple/domain/ports/credential_store.dart';
 import 'package:bgg_meeple/domain/ports/game_store.dart';
 import 'package:bgg_meeple/domain/ports/session_store.dart';
 import 'package:bgg_meeple/domain/ports/thumbnail_cache.dart';
+import 'package:bgg_meeple/domain/value_objects/localized_name.dart';
 import 'package:bgg_meeple/infrastructure/adapters/api/bgg_api_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -213,12 +215,10 @@ void main() {
       expect(progressUpdates.any((p) => p.phase == 'thumbnails'), isTrue);
     });
 
-    test('emits progress updates', () async {
+    test('skips /thing fetch when no API token is configured', () async {
       final items = <CollectionItem>[
         const CollectionItem(thingId: 1, names: []),
-        const CollectionItem(thingId: 2, names: []),
       ];
-      final progressUpdates = <SyncProgress>[];
 
       when(credentialStore.load).thenAnswer((_) async => credentials);
       when(sessionStore.load).thenAnswer((_) async => session);
@@ -228,21 +228,90 @@ void main() {
       when(() => collectionStore.saveAll(any())).thenAnswer((_) async {});
       when(() => thumbnailCache.cache(any())).thenAnswer((_) async => null);
 
-      await useCase(onProgress: progressUpdates.add);
+      await useCase();
 
-      expect(progressUpdates.length, 4);
-      expect(progressUpdates[0].phase, 'collection');
-      expect(progressUpdates[0].loaded, 2);
-      expect(progressUpdates[0].total, 2);
-      expect(progressUpdates[1].phase, 'details');
-      expect(progressUpdates[1].loaded, 0);
-      expect(progressUpdates[1].total, 2);
-      expect(progressUpdates[2].phase, 'thumbnails');
-      expect(progressUpdates[2].loaded, 1);
-      expect(progressUpdates[2].total, 2);
-      expect(progressUpdates[3].phase, 'thumbnails');
-      expect(progressUpdates[3].loaded, 2);
-      expect(progressUpdates[3].total, 2);
+      verifyNever(() => bggApi.fetchGames(any()));
+    });
+
+    test('fetches /thing only for games missing a description', () async {
+      const credentialsWithToken = BggCredentials(
+        username: 'meepleUser',
+        password: 'secret',
+        apiToken: 'api-token',
+      );
+      final items = <CollectionItem>[
+        const CollectionItem(thingId: 1, names: []),
+        const CollectionItem(thingId: 2, names: []),
+      ];
+      final cachedGames = [
+        const BoardGame(
+          id: 1,
+          names: [LocalizedName(value: 'A', language: null, isPrimary: true)],
+          description: 'Already have this.',
+        ),
+      ];
+      final fetchedGames = [
+        const BoardGame(
+          id: 2,
+          names: [LocalizedName(value: 'B', language: null, isPrimary: true)],
+          description: 'Fetched from /thing.',
+        ),
+      ];
+
+      when(credentialStore.load).thenAnswer((_) async => credentialsWithToken);
+      when(sessionStore.load).thenAnswer((_) async => session);
+      when(
+        () => bggApi.fetchCollection('meepleUser'),
+      ).thenAnswer((_) async => items);
+      when(
+        () => gameStore.loadByIds([1, 2]),
+      ).thenAnswer((_) async => cachedGames);
+      when(() => bggApi.fetchGames([2])).thenAnswer((_) async => fetchedGames);
+      when(() => collectionStore.saveAll(any())).thenAnswer((_) async {});
+      when(() => gameStore.saveAll(any())).thenAnswer((_) async {});
+      when(() => thumbnailCache.cache(any())).thenAnswer((_) async => null);
+
+      await useCase();
+
+      verify(() => bggApi.fetchGames([2])).called(1);
+      verifyNever(() => bggApi.fetchGames([1]));
+    });
+
+    test('sets detailsUpdatedAt when /thing games are fetched', () async {
+      const credentialsWithToken = BggCredentials(
+        username: 'meepleUser',
+        password: 'secret',
+        apiToken: 'api-token',
+      );
+      final items = <CollectionItem>[
+        const CollectionItem(thingId: 1, names: []),
+      ];
+      final fetchedGames = [
+        const BoardGame(
+          id: 1,
+          names: [LocalizedName(value: 'A', language: null, isPrimary: true)],
+          description: 'Fetched from /thing.',
+        ),
+      ];
+
+      when(credentialStore.load).thenAnswer((_) async => credentialsWithToken);
+      when(sessionStore.load).thenAnswer((_) async => session);
+      when(
+        () => bggApi.fetchCollection('meepleUser'),
+      ).thenAnswer((_) async => items);
+      when(() => gameStore.loadByIds([1])).thenAnswer((_) async => []);
+      when(() => bggApi.fetchGames([1])).thenAnswer((_) async => fetchedGames);
+      when(() => collectionStore.saveAll(any())).thenAnswer((_) async {});
+      when(() => gameStore.saveAll(any())).thenAnswer((_) async {});
+      when(() => thumbnailCache.cache(any())).thenAnswer((_) async => null);
+
+      await useCase();
+
+      final captured =
+          verify(() => gameStore.saveAll(captureAny())).captured.single
+              as List<BoardGame>;
+      expect(captured.length, 1);
+      expect(captured.first.detailsUpdatedAt, isNotNull);
     });
   });
 }

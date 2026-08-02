@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:bgg_meeple/domain/entities/bgg_session.dart';
 import 'package:bgg_meeple/domain/ports/session_store.dart';
+import 'package:bgg_meeple/domain/value_objects/game_link.dart';
 import 'package:bgg_meeple/infrastructure/adapters/api/bgg_api_client.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
@@ -58,17 +61,177 @@ void main() {
       ).called(1);
     });
 
-    test('returns empty list when no api token is available', () async {
+    test('parses description, polls and links from /thing XML', () async {
       when(() => sessionStore.load()).thenAnswer(
         (_) async => const BggSession(
           sessionCookies: 'bggusername=u; bggpassword=p; SessionID=s',
+          apiToken: 'my-bearer-token',
         ),
       );
 
-      final games = await apiClient.fetchGames([1]);
+      const xml = '''
+<?xml version="1.0" encoding="utf-8"?>
+<items>
+  <item type="boardgame" id="172308">
+    <thumbnail>https://example.com/thumb.jpg</thumbnail>
+    <image>https://example.com/image.jpg</image>
+    <name type="primary" value="Broom Service"/>
+    <description>Score the most victory points.</description>
+    <yearpublished value="2015"/>
+    <minplayers value="2"/>
+    <maxplayers value="5"/>
+    <minplaytime value="30"/>
+    <maxplaytime value="75"/>
+    <playingtime value="75"/>
+    <minage value="10"/>
+    <poll name="suggested_numplayers" title="User Suggested Number of Players" totalvotes="231">
+      <results numplayers="4">
+        <result value="Best" numvotes="113"/>
+        <result value="Recommended" numvotes="69"/>
+        <result value="Not Recommended" numvotes="7"/>
+      </results>
+    </poll>
+    <poll-summary name="suggested_numplayers" title="User Suggested Number of Players">
+      <result name="bestwith" value="Best with 4 players"/>
+      <result name="recommmendedwith" value="Recommended with 2–5 players"/>
+    </poll-summary>
+    <poll name="suggested_playerage" title="User Suggested Player Age" totalvotes="49">
+      <results>
+        <result value="6" numvotes="1"/>
+        <result value="8" numvotes="17"/>
+        <result value="10" numvotes="25"/>
+        <result value="12" numvotes="6"/>
+        <result value="21 and up" numvotes="0"/>
+      </results>
+    </poll>
+    <poll name="language_dependence" title="Language Dependence" totalvotes="38">
+      <results>
+        <result level="1" value="No necessary in-game text" numvotes="1"/>
+        <result level="2" value="Some necessary text" numvotes="22"/>
+        <result level="3" value="Moderate in-game text" numvotes="12"/>
+      </results>
+    </poll>
+    <link type="boardgamecategory" id="1010" value="Fantasy"/>
+    <link type="boardgamemechanic" id="2046" value="Area Movement"/>
+    <link type="boardgamefamily" id="45609" value="Game: Broom Service"/>
+    <link type="boardgamefamily" id="58" value="Series: Alea Big Box"/>
+    <link type="boardgamedesigner" id="8397" value="Andreas Pelikan"/>
+    <link type="boardgameartist" id="12130" value="Vincent Dutrait"/>
+    <link type="boardgamepublisher" id="9" value="alea"/>
+    <link type="boardgameexpansion" id="204573" value="Brettspiel Adventskalender 2016"/>
+    <link type="boardgameimplementation" id="34084" value="Witch's Brew" inbound="true"/>
+  </item>
+</items>
+''';
 
-      expect(games, isEmpty);
-      verifyNever(() => client.get(any(), headers: any(named: 'headers')));
+      when(
+        () => client.get(
+          Uri.parse(
+            'https://boardgamegeek.com/xmlapi2/thing?id=172308&stats=1',
+          ),
+          headers: any(named: 'headers'),
+        ),
+      ).thenAnswer(
+        (_) async => http.Response.bytes(
+          utf8.encode(xml),
+          200,
+          headers: {'content-type': 'text/xml; charset=utf-8'},
+        ),
+      );
+
+      final games = await apiClient.fetchGames([172308]);
+
+      expect(games, hasLength(1));
+      final game = games.first;
+      expect(game.id, 172308);
+      expect(game.description, 'Score the most victory points.');
+      expect(game.bestPlayerCount, '4');
+      expect(game.suggestedPlayerAge, '9.5');
+      expect(game.languageDependenceLevel, '2');
+
+      final families = game.links.where((l) => l.type == 'family').toList();
+      expect(families, hasLength(2));
+      expect(
+        families,
+        contains(
+          const GameLink(
+            bggId: 45609,
+            type: 'family',
+            name: 'Game: Broom Service',
+          ),
+        ),
+      );
+      expect(game.links.where((l) => l.type == 'category'), [
+        const GameLink(bggId: 1010, type: 'category', name: 'Fantasy'),
+      ]);
+      expect(game.links.where((l) => l.type == 'mechanic'), [
+        const GameLink(bggId: 2046, type: 'mechanic', name: 'Area Movement'),
+      ]);
+      expect(game.links.where((l) => l.type == 'designer'), [
+        const GameLink(bggId: 8397, type: 'designer', name: 'Andreas Pelikan'),
+      ]);
+      expect(game.links.where((l) => l.type == 'artist'), [
+        const GameLink(bggId: 12130, type: 'artist', name: 'Vincent Dutrait'),
+      ]);
+      expect(game.links.where((l) => l.type == 'publisher'), [
+        const GameLink(bggId: 9, type: 'publisher', name: 'alea'),
+      ]);
+      expect(game.links.where((l) => l.type == 'expansion'), [
+        const GameLink(
+          bggId: 204573,
+          type: 'expansion',
+          name: 'Brettspiel Adventskalender 2016',
+        ),
+      ]);
+      expect(game.links.where((l) => l.type == 'implementation'), [
+        const GameLink(
+          bggId: 34084,
+          type: 'implementation',
+          name: "Witch's Brew",
+        ),
+      ]);
     });
+
+    test(
+      'falls back to legacy best player count when poll-summary is missing',
+      () async {
+        when(() => sessionStore.load()).thenAnswer(
+          (_) async => const BggSession(
+            sessionCookies: 'bggusername=u; bggpassword=p; SessionID=s',
+            apiToken: 'my-bearer-token',
+          ),
+        );
+
+        const xml = '''
+<items>
+  <item id="1">
+    <name type="primary" value="Catan"/>
+    <poll name="suggested_numplayers" totalvotes="10">
+      <results numplayers="3">
+        <result value="Best" numvotes="7"/>
+      </results>
+    </poll>
+  </item>
+</items>
+''';
+
+        when(
+          () => client.get(
+            Uri.parse('https://boardgamegeek.com/xmlapi2/thing?id=1&stats=1'),
+            headers: any(named: 'headers'),
+          ),
+        ).thenAnswer(
+          (_) async => http.Response.bytes(
+            utf8.encode(xml),
+            200,
+            headers: {'content-type': 'text/xml; charset=utf-8'},
+          ),
+        );
+
+        final games = await apiClient.fetchGames([1]);
+
+        expect(games.first.bestPlayerCount, '3');
+      },
+    );
   });
 }

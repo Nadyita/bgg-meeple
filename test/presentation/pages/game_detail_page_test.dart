@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:bgg_meeple/application/use_cases/load_game_details_use_case.dart';
 import 'package:bgg_meeple/domain/entities/board_game.dart';
 import 'package:bgg_meeple/domain/entities/collection_item.dart';
+import 'package:bgg_meeple/domain/value_objects/game_link.dart';
 import 'package:bgg_meeple/domain/value_objects/localized_name.dart';
 import 'package:bgg_meeple/domain/value_objects/version_info.dart';
 import 'package:bgg_meeple/presentation/l10n/app_localizations.dart';
@@ -31,6 +32,82 @@ void main() {
       loadGameDetails = _MockLoadGameDetails();
     });
 
+    testWidgets('decodes HTML entities in the description', (tester) async {
+      const item = CollectionItem(
+        thingId: 1,
+        collId: 1,
+        names: [LocalizedName(value: 'Catan', language: null, isPrimary: true)],
+      );
+      const game = BoardGame(
+        id: 1,
+        names: [LocalizedName(value: 'Catan', language: null, isPrimary: true)],
+        description: '5-Minute Dungeon \u0026amp; 5\u0026shy;Minute game.',
+      );
+
+      when(() => loadGameDetails.call(1, 1)).thenAnswer(
+        (_) async => const GameDetails(collectionItem: item, boardGame: game),
+      );
+
+      await tester.pumpWidget(
+        _buildApp(
+          home: GameDetailPage(
+            thingId: 1,
+            collId: 1,
+            loadGameDetails: loadGameDetails,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('5-Minute Dungeon \u0026 5\u00ADMinute game.'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('description text wraps around the image', (tester) async {
+      const item = CollectionItem(
+        thingId: 1,
+        collId: 1,
+        names: [LocalizedName(value: 'Catan', language: null, isPrimary: true)],
+      );
+      const game = BoardGame(
+        id: 1,
+        names: [LocalizedName(value: 'Catan', language: null, isPrimary: true)],
+        description:
+            'First paragraph next to image. Second paragraph continues below the image after enough text has been wrapped beside it so we can verify the split.',
+      );
+
+      when(() => loadGameDetails.call(1, 1)).thenAnswer(
+        (_) async => const GameDetails(collectionItem: item, boardGame: game),
+      );
+
+      await tester.pumpWidget(
+        _buildApp(
+          home: GameDetailPage(
+            thingId: 1,
+            collId: 1,
+            loadGameDetails: loadGameDetails,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // The first sentence appears next to the image, the rest below.
+      expect(
+        find.text('First paragraph next to image. Second paragraph continues'),
+        findsNothing,
+      );
+      expect(
+        find.textContaining('First paragraph next to image.'),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining('Second paragraph continues below the image'),
+        findsOneWidget,
+      );
+    });
+
     testWidgets('displays allowed game details and back button', (
       tester,
     ) async {
@@ -46,7 +123,10 @@ void main() {
         id: 1,
         names: [LocalizedName(value: 'Catan', language: null, isPrimary: true)],
         description: 'A classic game.',
-        categories: ['Strategy', 'Economic'],
+        links: [
+          GameLink(bggId: 1, type: 'category', name: 'Strategy'),
+          GameLink(bggId: 2, type: 'category', name: 'Economic'),
+        ],
       );
 
       when(() => loadGameDetails.call(1, 1)).thenAnswer(
@@ -65,10 +145,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Catan'), findsWidgets);
+      expect(find.text('A classic game.'), findsOneWidget);
       expect(find.textContaining('Original name'), findsOneWidget);
       expect(find.textContaining('Year published'), findsOneWidget);
       expect(find.textContaining('Players:'), findsOneWidget);
-      expect(find.text('A classic game.'), findsNothing);
       expect(find.text('Strategy'), findsNothing);
       expect(find.text('Economic'), findsNothing);
       expect(find.byIcon(Icons.arrow_back), findsOneWidget);
@@ -88,15 +168,17 @@ void main() {
         id: 1,
         names: [LocalizedName(value: 'Catan', language: null, isPrimary: true)],
         description: 'A classic game.',
-        categories: ['Strategy'],
-        mechanics: ['Hand Management'],
-        designers: ['Klaus Teuber'],
-        artists: ['Artist'],
-        publishers: ['Publisher'],
-        families: ['Family'],
+        links: [
+          GameLink(bggId: 1, type: 'category', name: 'Strategy'),
+          GameLink(bggId: 2, type: 'mechanic', name: 'Hand Management'),
+          GameLink(bggId: 3, type: 'family', name: 'Family'),
+          GameLink(bggId: 4, type: 'designer', name: 'Klaus Teuber'),
+          GameLink(bggId: 5, type: 'artist', name: 'Artist'),
+          GameLink(bggId: 6, type: 'publisher', name: 'Publisher'),
+        ],
         averageRating: 7.1,
         averageWeight: 2.5,
-        languageDependence: 'Moderate',
+        languageDependenceLevel: '3',
         bestPlayerCount: '3',
         recommendedPlayerCount: '3–4',
       );
@@ -116,13 +198,13 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('A classic game.'), findsNothing);
+      expect(find.text('A classic game.'), findsOneWidget);
       expect(find.text('Strategy'), findsNothing);
       expect(find.text('Hand Management'), findsNothing);
+      expect(find.text('Family'), findsNothing);
       expect(find.text('Klaus Teuber'), findsNothing);
       expect(find.text('Artist'), findsNothing);
       expect(find.text('Publisher'), findsNothing);
-      expect(find.text('Family'), findsNothing);
       expect(find.textContaining('Minimum age'), findsNothing);
       expect(find.textContaining('Your rating'), findsNothing);
       expect(find.textContaining('Average rating'), findsNothing);
@@ -253,6 +335,44 @@ void main() {
 
       expect(find.text('Bewertung:'), findsOneWidget);
       expect(find.text('7.35 (1234 Bewertungen)'), findsOneWidget);
+    });
+
+    testWidgets('name and status appear above description', (tester) async {
+      const item = CollectionItem(
+        thingId: 1,
+        collId: 1,
+        names: [LocalizedName(value: 'Catan', language: null, isPrimary: true)],
+        isOwned: true,
+      );
+      const game = BoardGame(
+        id: 1,
+        names: [LocalizedName(value: 'Catan', language: null, isPrimary: true)],
+        description: 'A classic game.',
+      );
+
+      when(() => loadGameDetails.call(1, 1)).thenAnswer(
+        (_) async => const GameDetails(collectionItem: item, boardGame: game),
+      );
+
+      await tester.pumpWidget(
+        _buildApp(
+          home: GameDetailPage(
+            thingId: 1,
+            collId: 1,
+            loadGameDetails: loadGameDetails,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final titleFinder = find.text('Catan');
+      final descriptionFinder = find.text('A classic game.');
+      expect(titleFinder, findsWidgets);
+      expect(descriptionFinder, findsOneWidget);
+
+      final titleTop = tester.getTopLeft(titleFinder.first);
+      final descriptionTop = tester.getTopLeft(descriptionFinder);
+      expect(titleTop.dy, lessThan(descriptionTop.dy));
     });
 
     testWidgets('detail fields follow the spec order', (tester) async {

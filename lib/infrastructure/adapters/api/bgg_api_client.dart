@@ -14,6 +14,7 @@ import '../../../domain/entities/play_player.dart';
 import '../../../domain/ports/authentication_service.dart';
 import '../../../domain/ports/bgg_api.dart';
 import '../../../domain/ports/session_store.dart';
+import '../../../domain/value_objects/game_link.dart';
 import '../../../domain/value_objects/localized_name.dart';
 import '../../../domain/value_objects/version_info.dart';
 
@@ -223,8 +224,6 @@ class BggApiClient implements BggApi, AuthenticationService {
     );
 
     if (session == null || !session.hasApiToken) {
-      // ignore: avoid_print
-      print('[BggApiClient] No API token available, skipping /thing fetch');
       return [];
     }
 
@@ -234,21 +233,12 @@ class BggApiClient implements BggApi, AuthenticationService {
       final uri = Uri.parse(
         '$_baseUrl$_thingPath',
       ).replace(queryParameters: {'id': batch.join(','), 'stats': '1'});
-      // ignore: avoid_print
-      print('[BggApiClient] Fetching /thing for ids: $batch');
 
       final response = await _getWithRetry(uri, useToken: true);
-
-      // ignore: avoid_print
-      print(
-        '[BggApiClient] /thing response status: ${response.statusCode}, length: ${response.body.length}',
-      );
 
       final root = _parseXml(response.body);
       final items =
           root.getElement('items')?.findElements('item').toList() ?? [];
-      // ignore: avoid_print
-      print('[BggApiClient] /thing parsed ${items.length} items');
       games.addAll(items.map(_parseBoardGame));
     }
 
@@ -643,14 +633,10 @@ class BggApiClient implements BggApi, AuthenticationService {
       numWishing: _ratingInt(ratings, 'wishing'),
       averageWeight: _ratingValue(ratings, 'averageweight'),
       description: description,
-      categories: _linkValues(item, 'boardgamecategory'),
-      mechanics: _linkValues(item, 'boardgamemechanic'),
-      designers: _linkValues(item, 'boardgamedesigner'),
-      artists: _linkValues(item, 'boardgameartist'),
-      publishers: _linkValues(item, 'boardgamepublisher'),
-      families: _linkValues(item, 'boardgamefamily'),
-      languageDependence: _languageDependence(item),
+      links: _parseGameLinks(item),
+      languageDependenceLevel: _languageDependenceLevel(item),
       bestPlayerCount: _bestPlayerCount(item),
+      suggestedPlayerAge: _suggestedPlayerAge(item),
       recommendedPlayerCount: _recommendedPlayerCount(item),
     );
   }
@@ -672,17 +658,7 @@ class BggApiClient implements BggApi, AuthenticationService {
     return names;
   }
 
-  List<String> _linkValues(XmlElement item, String linkType) {
-    return item
-        .findElements('link')
-        .where((e) => e.getAttribute('type') == linkType)
-        .map((e) => e.getAttribute('value'))
-        .whereType<String>()
-        .where((v) => v.isNotEmpty)
-        .toList();
-  }
-
-  String? _languageDependence(XmlElement item) {
+  String? _languageDependenceLevel(XmlElement item) {
     final poll = item
         .findElements('poll')
         .firstWhereOrNull(
@@ -704,14 +680,81 @@ class BggApiClient implements BggApi, AuthenticationService {
       }
     }
 
-    if (winner == null) return null;
-    final level = winner.getAttribute('level');
-    final value = winner.getAttribute('value');
-    if (value != null && value.isNotEmpty) return value;
-    return level;
+    return winner?.getAttribute('level');
+  }
+
+  String? _suggestedPlayerAge(XmlElement item) {
+    final poll = item
+        .findElements('poll')
+        .firstWhereOrNull(
+          (p) => p.getAttribute('name') == 'suggested_playerage',
+        );
+    if (poll == null) return null;
+
+    final results = poll.findElements('results').firstOrNull;
+    if (results == null) return null;
+
+    var totalVotes = 0;
+    var weightedSum = 0.0;
+    for (final result in results.findElements('result')) {
+      final ageText = result.getAttribute('value');
+      final age = int.tryParse(ageText ?? '');
+      if (age == null) continue;
+      final votesText = result.getAttribute('numvotes');
+      final votes = int.tryParse(votesText ?? '') ?? 0;
+      if (votes <= 0) continue;
+      totalVotes += votes;
+      weightedSum += age * votes;
+    }
+
+    if (totalVotes == 0) return null;
+    return (weightedSum / totalVotes).toStringAsFixed(1);
+  }
+
+  List<GameLink> _parseGameLinks(XmlElement item) {
+    final typeMapping = const {
+      'boardgamecategory': 'category',
+      'boardgamemechanic': 'mechanic',
+      'boardgamefamily': 'family',
+      'boardgamedesigner': 'designer',
+      'boardgameartist': 'artist',
+      'boardgamepublisher': 'publisher',
+      'boardgameexpansion': 'expansion',
+      'boardgameimplementation': 'implementation',
+    };
+
+    final links = <GameLink>[];
+    for (final link in item.findElements('link')) {
+      final rawType = link.getAttribute('type');
+      final type = typeMapping[rawType];
+      final idText = link.getAttribute('id');
+      final name = link.getAttribute('value');
+      final id = int.tryParse(idText ?? '');
+      if (type == null || id == null || name == null || name.isEmpty) continue;
+      links.add(GameLink(bggId: id, type: type, name: name));
+    }
+    return links;
   }
 
   String? _bestPlayerCount(XmlElement item) {
+    final summary = item
+        .findElements('poll-summary')
+        .firstWhereOrNull(
+          (p) => p.getAttribute('name') == 'suggested_numplayers',
+        );
+    if (summary == null) return _legacyBestPlayerCount(item);
+
+    final bestWith = summary
+        .findElements('result')
+        .firstWhereOrNull((r) => r.getAttribute('name') == 'bestwith');
+    final value = bestWith?.getAttribute('value');
+    if (value == null || value.isEmpty) return _legacyBestPlayerCount(item);
+
+    final match = RegExp(r'\d+\+?').firstMatch(value);
+    return match?.group(0);
+  }
+
+  String? _legacyBestPlayerCount(XmlElement item) {
     final poll = item
         .findElements('poll')
         .firstWhereOrNull(
@@ -721,14 +764,19 @@ class BggApiClient implements BggApi, AuthenticationService {
 
     XmlElement? winner;
     var winnerVotes = -1;
-    for (final result in poll.findAllElements('result')) {
-      final numPlayers = result.getAttribute('numplayers');
+    for (final results in poll.findElements('results')) {
+      final numPlayers = results.getAttribute('numplayers');
       if (numPlayers == null || numPlayers.isEmpty) continue;
-      final votesText = result.getAttribute('numvotes');
-      final votes = int.tryParse(votesText ?? '');
-      if (votes != null && votes > winnerVotes) {
-        winnerVotes = votes;
-        winner = result;
+
+      for (final result in results.findElements('result')) {
+        final value = result.getAttribute('value');
+        if (value != 'Best') continue;
+        final votesText = result.getAttribute('numvotes');
+        final votes = int.tryParse(votesText ?? '');
+        if (votes != null && votes > winnerVotes) {
+          winnerVotes = votes;
+          winner = results;
+        }
       }
     }
 

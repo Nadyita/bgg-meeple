@@ -62,6 +62,7 @@ Each capability links to its authoritative OpenSpec spec. Detailed acceptance cr
 | Search and filter | [`openspec/specs/search-and-filter/spec.md`](openspec/specs/search-and-filter/spec.md) | F16–F24 | implemented |
 | Sort and view state | [`openspec/specs/sort-and-view-state/spec.md`](openspec/specs/sort-and-view-state/spec.md) | F25–F26, UX08, T09 | implemented |
 | Game detail | [`openspec/specs/game-detail/spec.md`](openspec/specs/game-detail/spec.md) | F27 | implemented |
+| BGG thing details | [`openspec/specs/bgg-thing-details/spec.md`](openspec/specs/bgg-thing-details/spec.md) | — | implemented |
 | Card layout | [`openspec/specs/card-layout/spec.md`](openspec/specs/card-layout/spec.md) | F14, UX05–UX06 | implemented |
 | Settings and theme | [`openspec/specs/settings-and-theme/spec.md`](openspec/specs/settings-and-theme/spec.md) | UX01–UX02, UX05 | implemented |
 | CI/CD | [`openspec/specs/ci-cd/spec.md`](openspec/specs/ci-cd/spec.md) | NF10–NF12, T07–T08 | implemented |

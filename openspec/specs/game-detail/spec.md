@@ -2,14 +2,50 @@
 
 ## Purpose
 
-Defines the game detail page that opens when a collection card is tapped, including the displayed game data, lazy full-image caching, external BGG link, alternate names, and the available close actions.
+Defines the game detail page that opens when a collection card is tapped, including the displayed game data, description layout, lazy full-image caching, external BGG link, alternate names, and the available close actions.
+
 ## Requirements
+
 ### Requirement: Tapping a card opens a detail page
 Tapping a collection item SHALL open a game detail page for that game.
 
 #### Scenario: Card tap navigates to detail
 - **WHEN** the user taps a collection card
 - **THEN** the app navigates to the detail page for that game
+
+### Requirement: Show game details in order
+The detail page SHALL show the game information in the following vertical order:
+
+1. The game name (identical to the name shown in the overview) in a bold and big font, followed by the status badges (owned, wishlist, etc.) on the same line.
+2. Alternate and localized names behind a toggle.
+3. The game description, with the game image placed in the top-right corner and the description text flowing around it. The description text SHALL be decoded so that HTML entities such as `\u0026shy;` are rendered as their intended characters.
+4. A visual separator.
+5. The remaining detail fields in the order: Original name, Year published, Version, Players, Playing time, Rating, Rank, Plays.
+
+#### Scenario: Name and status appear above description
+- **GIVEN** a board game has a name, status badges, and a description
+- **WHEN** the app shows the detail page
+- **THEN** the name and status badges are shown first
+- **AND** the alternate names toggle appears directly below the name
+- **AND** the description block appears below the name and alternate names toggle
+
+#### Scenario: Description appears with image floating right
+- **GIVEN** a board game has a non-empty description
+- **WHEN** the app shows the detail page
+- **THEN** the game image is displayed in the top-right corner of the description block
+- **AND** the image is sized between the thumbnail fallback height and the full description text height, but never wider than half the available width or taller than three quarters of the screen height
+- **AND** the description text starts at the top-left, fills the space beside the image, and continues in full width below the image
+
+#### Scenario: HTML entities in the description are decoded
+- **GIVEN** a board game description contains the HTML entity `\u0026shy;`
+- **WHEN** the app shows the detail page
+- **THEN** the entity is rendered as a soft-hyphen break opportunity and is not shown as literal `\u0026shy;`
+
+#### Scenario: Missing description omits the section
+- **GIVEN** a board game has no cached description
+- **WHEN** the app shows the detail page
+- **THEN** no description text or image placeholder is shown
+- **AND** the remaining detail fields are still displayed in their defined order
 
 ### Requirement: Show all details on the detail page
 The detail page SHALL show the details in a specific order.
@@ -36,12 +72,12 @@ The detail page SHALL show the details in a specific order.
 
 ### Requirement: Detail page only contains defined details
 The detail page SHALL show only the details listed above.
-No additional game metadata is displayed.
+No additional game metadata such as categories, mechanics, designers, publishers, weight, or families is displayed.
 
 #### Scenario: No extra details are shown
 - **WHEN** the app shows the detail page for a game
 - **THEN** only the fields listed in the strict order are visible
-- **AND** description, categories, mechanics, designers, publishers, weight, and any other game metadata are not shown
+- **AND** categories, mechanics, designers, publishers, weight, and any other game metadata are not shown
 
 ### Requirement: Detail page shows cached full image behind thumbnail
 The detail page SHALL show the game's thumbnail immediately. The full-resolution game image SHALL be loaded lazily, cached locally, and replace the thumbnail once available.
@@ -78,4 +114,3 @@ All labels used on the detail page SHALL be concise and fit their interpolation 
 - **WHEN** the app shows the rating together with the user count
 - **THEN** the formatted line uses a short, grammatically correct label after the number, e.g. `6.19 (5567 votes)` in English
 - **AND** the German equivalent reads as `6.19 (5567 Bewertungen)`
-

@@ -12,6 +12,8 @@ part 'app_database.g.dart';
   tables: [
     CollectionItems,
     BoardGames,
+    GameLinks,
+    BoardGameLinkRels,
     LocalizedNames,
     Versions,
     Plays,
@@ -24,7 +26,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 9;
+  int get schemaVersion => 10;
 
   @override
   MigrationStrategy get migration {
@@ -33,10 +35,11 @@ class AppDatabase extends _$AppDatabase {
         await m.createAll();
       },
       onUpgrade: (Migrator m, int from, int to) async {
-        if (from < 9) {
-          // Schema v9 adds inventory_location to collection_items. Cache data is
-          // repopulated on next sync, so we recreate all tables rather than
-          // migrating in place.
+        if (from < 10) {
+          // Schema v10 replaces JSON link columns with normalized link tables
+          // and adds detailsUpdatedAt to board_games. Cache data is repopulated
+          // on next sync, so we recreate all tables rather than migrating in
+          // place.
           for (final table in allTables) {
             await m.deleteTable(table.actualTableName);
           }
@@ -125,18 +128,36 @@ class BoardGames extends Table {
   IntColumn get numWishing => integer().nullable()();
   RealColumn get averageWeight => real().nullable()();
   TextColumn get description => text().nullable()();
-  TextColumn get categories => text().nullable()();
-  TextColumn get mechanics => text().nullable()();
-  TextColumn get designers => text().nullable()();
-  TextColumn get artists => text().nullable()();
-  TextColumn get publishers => text().nullable()();
-  TextColumn get families => text().nullable()();
-  TextColumn get languageDependence => text().nullable()();
+  TextColumn get languageDependenceLevel => text().nullable()();
   TextColumn get bestPlayerCount => text().nullable()();
+  TextColumn get suggestedPlayerAge => text().nullable()();
   TextColumn get recommendedPlayerCount => text().nullable()();
+  IntColumn get detailsUpdatedAt => integer().nullable()();
 
   @override
   Set<Column> get primaryKey => {id};
+}
+
+/// Local cache for normalized BGG links referenced by board games.
+class GameLinks extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get type => text()();
+  IntColumn get bggId => integer()();
+  TextColumn get name => text()();
+
+  @override
+  List<String> get customConstraints => ['UNIQUE (type, bgg_id)'];
+}
+
+/// Many-to-many relation between board games and normalized BGG links.
+class BoardGameLinkRels extends Table {
+  IntColumn get gameId =>
+      integer().customConstraint('REFERENCES board_games(id) NOT NULL')();
+  IntColumn get linkId =>
+      integer().customConstraint('REFERENCES game_links(id) NOT NULL')();
+
+  @override
+  Set<Column> get primaryKey => {gameId, linkId};
 }
 
 /// Local cache for selected BGG versions/editions.

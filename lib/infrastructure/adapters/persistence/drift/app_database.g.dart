@@ -2320,78 +2320,12 @@ class $BoardGamesTable extends BoardGames
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _categoriesMeta = const VerificationMeta(
-    'categories',
-  );
+  static const VerificationMeta _languageDependenceLevelMeta =
+      const VerificationMeta('languageDependenceLevel');
   @override
-  late final GeneratedColumn<String> categories = GeneratedColumn<String>(
-    'categories',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _mechanicsMeta = const VerificationMeta(
-    'mechanics',
-  );
-  @override
-  late final GeneratedColumn<String> mechanics = GeneratedColumn<String>(
-    'mechanics',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _designersMeta = const VerificationMeta(
-    'designers',
-  );
-  @override
-  late final GeneratedColumn<String> designers = GeneratedColumn<String>(
-    'designers',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _artistsMeta = const VerificationMeta(
-    'artists',
-  );
-  @override
-  late final GeneratedColumn<String> artists = GeneratedColumn<String>(
-    'artists',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _publishersMeta = const VerificationMeta(
-    'publishers',
-  );
-  @override
-  late final GeneratedColumn<String> publishers = GeneratedColumn<String>(
-    'publishers',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _familiesMeta = const VerificationMeta(
-    'families',
-  );
-  @override
-  late final GeneratedColumn<String> families = GeneratedColumn<String>(
-    'families',
-    aliasedName,
-    true,
-    type: DriftSqlType.string,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _languageDependenceMeta =
-      const VerificationMeta('languageDependence');
-  @override
-  late final GeneratedColumn<String> languageDependence =
+  late final GeneratedColumn<String> languageDependenceLevel =
       GeneratedColumn<String>(
-        'language_dependence',
+        'language_dependence_level',
         aliasedName,
         true,
         type: DriftSqlType.string,
@@ -2408,6 +2342,17 @@ class $BoardGamesTable extends BoardGames
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _suggestedPlayerAgeMeta =
+      const VerificationMeta('suggestedPlayerAge');
+  @override
+  late final GeneratedColumn<String> suggestedPlayerAge =
+      GeneratedColumn<String>(
+        'suggested_player_age',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
   static const VerificationMeta _recommendedPlayerCountMeta =
       const VerificationMeta('recommendedPlayerCount');
   @override
@@ -2419,6 +2364,17 @@ class $BoardGamesTable extends BoardGames
         type: DriftSqlType.string,
         requiredDuringInsert: false,
       );
+  static const VerificationMeta _detailsUpdatedAtMeta = const VerificationMeta(
+    'detailsUpdatedAt',
+  );
+  @override
+  late final GeneratedColumn<int> detailsUpdatedAt = GeneratedColumn<int>(
+    'details_updated_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -2440,15 +2396,11 @@ class $BoardGamesTable extends BoardGames
     numWishing,
     averageWeight,
     description,
-    categories,
-    mechanics,
-    designers,
-    artists,
-    publishers,
-    families,
-    languageDependence,
+    languageDependenceLevel,
     bestPlayerCount,
+    suggestedPlayerAge,
     recommendedPlayerCount,
+    detailsUpdatedAt,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -2600,48 +2552,12 @@ class $BoardGamesTable extends BoardGames
         ),
       );
     }
-    if (data.containsKey('categories')) {
+    if (data.containsKey('language_dependence_level')) {
       context.handle(
-        _categoriesMeta,
-        categories.isAcceptableOrUnknown(data['categories']!, _categoriesMeta),
-      );
-    }
-    if (data.containsKey('mechanics')) {
-      context.handle(
-        _mechanicsMeta,
-        mechanics.isAcceptableOrUnknown(data['mechanics']!, _mechanicsMeta),
-      );
-    }
-    if (data.containsKey('designers')) {
-      context.handle(
-        _designersMeta,
-        designers.isAcceptableOrUnknown(data['designers']!, _designersMeta),
-      );
-    }
-    if (data.containsKey('artists')) {
-      context.handle(
-        _artistsMeta,
-        artists.isAcceptableOrUnknown(data['artists']!, _artistsMeta),
-      );
-    }
-    if (data.containsKey('publishers')) {
-      context.handle(
-        _publishersMeta,
-        publishers.isAcceptableOrUnknown(data['publishers']!, _publishersMeta),
-      );
-    }
-    if (data.containsKey('families')) {
-      context.handle(
-        _familiesMeta,
-        families.isAcceptableOrUnknown(data['families']!, _familiesMeta),
-      );
-    }
-    if (data.containsKey('language_dependence')) {
-      context.handle(
-        _languageDependenceMeta,
-        languageDependence.isAcceptableOrUnknown(
-          data['language_dependence']!,
-          _languageDependenceMeta,
+        _languageDependenceLevelMeta,
+        languageDependenceLevel.isAcceptableOrUnknown(
+          data['language_dependence_level']!,
+          _languageDependenceLevelMeta,
         ),
       );
     }
@@ -2654,12 +2570,30 @@ class $BoardGamesTable extends BoardGames
         ),
       );
     }
+    if (data.containsKey('suggested_player_age')) {
+      context.handle(
+        _suggestedPlayerAgeMeta,
+        suggestedPlayerAge.isAcceptableOrUnknown(
+          data['suggested_player_age']!,
+          _suggestedPlayerAgeMeta,
+        ),
+      );
+    }
     if (data.containsKey('recommended_player_count')) {
       context.handle(
         _recommendedPlayerCountMeta,
         recommendedPlayerCount.isAcceptableOrUnknown(
           data['recommended_player_count']!,
           _recommendedPlayerCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('details_updated_at')) {
+      context.handle(
+        _detailsUpdatedAtMeta,
+        detailsUpdatedAt.isAcceptableOrUnknown(
+          data['details_updated_at']!,
+          _detailsUpdatedAtMeta,
         ),
       );
     }
@@ -2748,41 +2682,25 @@ class $BoardGamesTable extends BoardGames
         DriftSqlType.string,
         data['${effectivePrefix}description'],
       ),
-      categories: attachedDatabase.typeMapping.read(
+      languageDependenceLevel: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}categories'],
-      ),
-      mechanics: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}mechanics'],
-      ),
-      designers: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}designers'],
-      ),
-      artists: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}artists'],
-      ),
-      publishers: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}publishers'],
-      ),
-      families: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}families'],
-      ),
-      languageDependence: attachedDatabase.typeMapping.read(
-        DriftSqlType.string,
-        data['${effectivePrefix}language_dependence'],
+        data['${effectivePrefix}language_dependence_level'],
       ),
       bestPlayerCount: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}best_player_count'],
       ),
+      suggestedPlayerAge: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}suggested_player_age'],
+      ),
       recommendedPlayerCount: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}recommended_player_count'],
+      ),
+      detailsUpdatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}details_updated_at'],
       ),
     );
   }
@@ -2813,15 +2731,11 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
   final int? numWishing;
   final double? averageWeight;
   final String? description;
-  final String? categories;
-  final String? mechanics;
-  final String? designers;
-  final String? artists;
-  final String? publishers;
-  final String? families;
-  final String? languageDependence;
+  final String? languageDependenceLevel;
   final String? bestPlayerCount;
+  final String? suggestedPlayerAge;
   final String? recommendedPlayerCount;
+  final int? detailsUpdatedAt;
   const BoardGame({
     required this.id,
     this.imageUrl,
@@ -2842,15 +2756,11 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
     this.numWishing,
     this.averageWeight,
     this.description,
-    this.categories,
-    this.mechanics,
-    this.designers,
-    this.artists,
-    this.publishers,
-    this.families,
-    this.languageDependence,
+    this.languageDependenceLevel,
     this.bestPlayerCount,
+    this.suggestedPlayerAge,
     this.recommendedPlayerCount,
+    this.detailsUpdatedAt,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -2910,34 +2820,24 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
     if (!nullToAbsent || description != null) {
       map['description'] = Variable<String>(description);
     }
-    if (!nullToAbsent || categories != null) {
-      map['categories'] = Variable<String>(categories);
-    }
-    if (!nullToAbsent || mechanics != null) {
-      map['mechanics'] = Variable<String>(mechanics);
-    }
-    if (!nullToAbsent || designers != null) {
-      map['designers'] = Variable<String>(designers);
-    }
-    if (!nullToAbsent || artists != null) {
-      map['artists'] = Variable<String>(artists);
-    }
-    if (!nullToAbsent || publishers != null) {
-      map['publishers'] = Variable<String>(publishers);
-    }
-    if (!nullToAbsent || families != null) {
-      map['families'] = Variable<String>(families);
-    }
-    if (!nullToAbsent || languageDependence != null) {
-      map['language_dependence'] = Variable<String>(languageDependence);
+    if (!nullToAbsent || languageDependenceLevel != null) {
+      map['language_dependence_level'] = Variable<String>(
+        languageDependenceLevel,
+      );
     }
     if (!nullToAbsent || bestPlayerCount != null) {
       map['best_player_count'] = Variable<String>(bestPlayerCount);
+    }
+    if (!nullToAbsent || suggestedPlayerAge != null) {
+      map['suggested_player_age'] = Variable<String>(suggestedPlayerAge);
     }
     if (!nullToAbsent || recommendedPlayerCount != null) {
       map['recommended_player_count'] = Variable<String>(
         recommendedPlayerCount,
       );
+    }
+    if (!nullToAbsent || detailsUpdatedAt != null) {
+      map['details_updated_at'] = Variable<int>(detailsUpdatedAt);
     }
     return map;
   }
@@ -2999,33 +2899,21 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
       description: description == null && nullToAbsent
           ? const Value.absent()
           : Value(description),
-      categories: categories == null && nullToAbsent
+      languageDependenceLevel: languageDependenceLevel == null && nullToAbsent
           ? const Value.absent()
-          : Value(categories),
-      mechanics: mechanics == null && nullToAbsent
-          ? const Value.absent()
-          : Value(mechanics),
-      designers: designers == null && nullToAbsent
-          ? const Value.absent()
-          : Value(designers),
-      artists: artists == null && nullToAbsent
-          ? const Value.absent()
-          : Value(artists),
-      publishers: publishers == null && nullToAbsent
-          ? const Value.absent()
-          : Value(publishers),
-      families: families == null && nullToAbsent
-          ? const Value.absent()
-          : Value(families),
-      languageDependence: languageDependence == null && nullToAbsent
-          ? const Value.absent()
-          : Value(languageDependence),
+          : Value(languageDependenceLevel),
       bestPlayerCount: bestPlayerCount == null && nullToAbsent
           ? const Value.absent()
           : Value(bestPlayerCount),
+      suggestedPlayerAge: suggestedPlayerAge == null && nullToAbsent
+          ? const Value.absent()
+          : Value(suggestedPlayerAge),
       recommendedPlayerCount: recommendedPlayerCount == null && nullToAbsent
           ? const Value.absent()
           : Value(recommendedPlayerCount),
+      detailsUpdatedAt: detailsUpdatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(detailsUpdatedAt),
     );
   }
 
@@ -3054,19 +2942,17 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
       numWishing: serializer.fromJson<int?>(json['numWishing']),
       averageWeight: serializer.fromJson<double?>(json['averageWeight']),
       description: serializer.fromJson<String?>(json['description']),
-      categories: serializer.fromJson<String?>(json['categories']),
-      mechanics: serializer.fromJson<String?>(json['mechanics']),
-      designers: serializer.fromJson<String?>(json['designers']),
-      artists: serializer.fromJson<String?>(json['artists']),
-      publishers: serializer.fromJson<String?>(json['publishers']),
-      families: serializer.fromJson<String?>(json['families']),
-      languageDependence: serializer.fromJson<String?>(
-        json['languageDependence'],
+      languageDependenceLevel: serializer.fromJson<String?>(
+        json['languageDependenceLevel'],
       ),
       bestPlayerCount: serializer.fromJson<String?>(json['bestPlayerCount']),
+      suggestedPlayerAge: serializer.fromJson<String?>(
+        json['suggestedPlayerAge'],
+      ),
       recommendedPlayerCount: serializer.fromJson<String?>(
         json['recommendedPlayerCount'],
       ),
+      detailsUpdatedAt: serializer.fromJson<int?>(json['detailsUpdatedAt']),
     );
   }
   @override
@@ -3092,17 +2978,15 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
       'numWishing': serializer.toJson<int?>(numWishing),
       'averageWeight': serializer.toJson<double?>(averageWeight),
       'description': serializer.toJson<String?>(description),
-      'categories': serializer.toJson<String?>(categories),
-      'mechanics': serializer.toJson<String?>(mechanics),
-      'designers': serializer.toJson<String?>(designers),
-      'artists': serializer.toJson<String?>(artists),
-      'publishers': serializer.toJson<String?>(publishers),
-      'families': serializer.toJson<String?>(families),
-      'languageDependence': serializer.toJson<String?>(languageDependence),
+      'languageDependenceLevel': serializer.toJson<String?>(
+        languageDependenceLevel,
+      ),
       'bestPlayerCount': serializer.toJson<String?>(bestPlayerCount),
+      'suggestedPlayerAge': serializer.toJson<String?>(suggestedPlayerAge),
       'recommendedPlayerCount': serializer.toJson<String?>(
         recommendedPlayerCount,
       ),
+      'detailsUpdatedAt': serializer.toJson<int?>(detailsUpdatedAt),
     };
   }
 
@@ -3126,15 +3010,11 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
     Value<int?> numWishing = const Value.absent(),
     Value<double?> averageWeight = const Value.absent(),
     Value<String?> description = const Value.absent(),
-    Value<String?> categories = const Value.absent(),
-    Value<String?> mechanics = const Value.absent(),
-    Value<String?> designers = const Value.absent(),
-    Value<String?> artists = const Value.absent(),
-    Value<String?> publishers = const Value.absent(),
-    Value<String?> families = const Value.absent(),
-    Value<String?> languageDependence = const Value.absent(),
+    Value<String?> languageDependenceLevel = const Value.absent(),
     Value<String?> bestPlayerCount = const Value.absent(),
+    Value<String?> suggestedPlayerAge = const Value.absent(),
     Value<String?> recommendedPlayerCount = const Value.absent(),
+    Value<int?> detailsUpdatedAt = const Value.absent(),
   }) => BoardGame(
     id: id ?? this.id,
     imageUrl: imageUrl.present ? imageUrl.value : this.imageUrl,
@@ -3161,21 +3041,21 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
         ? averageWeight.value
         : this.averageWeight,
     description: description.present ? description.value : this.description,
-    categories: categories.present ? categories.value : this.categories,
-    mechanics: mechanics.present ? mechanics.value : this.mechanics,
-    designers: designers.present ? designers.value : this.designers,
-    artists: artists.present ? artists.value : this.artists,
-    publishers: publishers.present ? publishers.value : this.publishers,
-    families: families.present ? families.value : this.families,
-    languageDependence: languageDependence.present
-        ? languageDependence.value
-        : this.languageDependence,
+    languageDependenceLevel: languageDependenceLevel.present
+        ? languageDependenceLevel.value
+        : this.languageDependenceLevel,
     bestPlayerCount: bestPlayerCount.present
         ? bestPlayerCount.value
         : this.bestPlayerCount,
+    suggestedPlayerAge: suggestedPlayerAge.present
+        ? suggestedPlayerAge.value
+        : this.suggestedPlayerAge,
     recommendedPlayerCount: recommendedPlayerCount.present
         ? recommendedPlayerCount.value
         : this.recommendedPlayerCount,
+    detailsUpdatedAt: detailsUpdatedAt.present
+        ? detailsUpdatedAt.value
+        : this.detailsUpdatedAt,
   );
   BoardGame copyWithCompanion(BoardGamesCompanion data) {
     return BoardGame(
@@ -3226,25 +3106,21 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
       description: data.description.present
           ? data.description.value
           : this.description,
-      categories: data.categories.present
-          ? data.categories.value
-          : this.categories,
-      mechanics: data.mechanics.present ? data.mechanics.value : this.mechanics,
-      designers: data.designers.present ? data.designers.value : this.designers,
-      artists: data.artists.present ? data.artists.value : this.artists,
-      publishers: data.publishers.present
-          ? data.publishers.value
-          : this.publishers,
-      families: data.families.present ? data.families.value : this.families,
-      languageDependence: data.languageDependence.present
-          ? data.languageDependence.value
-          : this.languageDependence,
+      languageDependenceLevel: data.languageDependenceLevel.present
+          ? data.languageDependenceLevel.value
+          : this.languageDependenceLevel,
       bestPlayerCount: data.bestPlayerCount.present
           ? data.bestPlayerCount.value
           : this.bestPlayerCount,
+      suggestedPlayerAge: data.suggestedPlayerAge.present
+          ? data.suggestedPlayerAge.value
+          : this.suggestedPlayerAge,
       recommendedPlayerCount: data.recommendedPlayerCount.present
           ? data.recommendedPlayerCount.value
           : this.recommendedPlayerCount,
+      detailsUpdatedAt: data.detailsUpdatedAt.present
+          ? data.detailsUpdatedAt.value
+          : this.detailsUpdatedAt,
     );
   }
 
@@ -3270,15 +3146,11 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
           ..write('numWishing: $numWishing, ')
           ..write('averageWeight: $averageWeight, ')
           ..write('description: $description, ')
-          ..write('categories: $categories, ')
-          ..write('mechanics: $mechanics, ')
-          ..write('designers: $designers, ')
-          ..write('artists: $artists, ')
-          ..write('publishers: $publishers, ')
-          ..write('families: $families, ')
-          ..write('languageDependence: $languageDependence, ')
+          ..write('languageDependenceLevel: $languageDependenceLevel, ')
           ..write('bestPlayerCount: $bestPlayerCount, ')
-          ..write('recommendedPlayerCount: $recommendedPlayerCount')
+          ..write('suggestedPlayerAge: $suggestedPlayerAge, ')
+          ..write('recommendedPlayerCount: $recommendedPlayerCount, ')
+          ..write('detailsUpdatedAt: $detailsUpdatedAt')
           ..write(')'))
         .toString();
   }
@@ -3304,15 +3176,11 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
     numWishing,
     averageWeight,
     description,
-    categories,
-    mechanics,
-    designers,
-    artists,
-    publishers,
-    families,
-    languageDependence,
+    languageDependenceLevel,
     bestPlayerCount,
+    suggestedPlayerAge,
     recommendedPlayerCount,
+    detailsUpdatedAt,
   ]);
   @override
   bool operator ==(Object other) =>
@@ -3337,15 +3205,11 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
           other.numWishing == this.numWishing &&
           other.averageWeight == this.averageWeight &&
           other.description == this.description &&
-          other.categories == this.categories &&
-          other.mechanics == this.mechanics &&
-          other.designers == this.designers &&
-          other.artists == this.artists &&
-          other.publishers == this.publishers &&
-          other.families == this.families &&
-          other.languageDependence == this.languageDependence &&
+          other.languageDependenceLevel == this.languageDependenceLevel &&
           other.bestPlayerCount == this.bestPlayerCount &&
-          other.recommendedPlayerCount == this.recommendedPlayerCount);
+          other.suggestedPlayerAge == this.suggestedPlayerAge &&
+          other.recommendedPlayerCount == this.recommendedPlayerCount &&
+          other.detailsUpdatedAt == this.detailsUpdatedAt);
 }
 
 class BoardGamesCompanion extends UpdateCompanion<BoardGame> {
@@ -3368,15 +3232,11 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGame> {
   final Value<int?> numWishing;
   final Value<double?> averageWeight;
   final Value<String?> description;
-  final Value<String?> categories;
-  final Value<String?> mechanics;
-  final Value<String?> designers;
-  final Value<String?> artists;
-  final Value<String?> publishers;
-  final Value<String?> families;
-  final Value<String?> languageDependence;
+  final Value<String?> languageDependenceLevel;
   final Value<String?> bestPlayerCount;
+  final Value<String?> suggestedPlayerAge;
   final Value<String?> recommendedPlayerCount;
+  final Value<int?> detailsUpdatedAt;
   const BoardGamesCompanion({
     this.id = const Value.absent(),
     this.imageUrl = const Value.absent(),
@@ -3397,15 +3257,11 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGame> {
     this.numWishing = const Value.absent(),
     this.averageWeight = const Value.absent(),
     this.description = const Value.absent(),
-    this.categories = const Value.absent(),
-    this.mechanics = const Value.absent(),
-    this.designers = const Value.absent(),
-    this.artists = const Value.absent(),
-    this.publishers = const Value.absent(),
-    this.families = const Value.absent(),
-    this.languageDependence = const Value.absent(),
+    this.languageDependenceLevel = const Value.absent(),
     this.bestPlayerCount = const Value.absent(),
+    this.suggestedPlayerAge = const Value.absent(),
     this.recommendedPlayerCount = const Value.absent(),
+    this.detailsUpdatedAt = const Value.absent(),
   });
   BoardGamesCompanion.insert({
     this.id = const Value.absent(),
@@ -3427,15 +3283,11 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGame> {
     this.numWishing = const Value.absent(),
     this.averageWeight = const Value.absent(),
     this.description = const Value.absent(),
-    this.categories = const Value.absent(),
-    this.mechanics = const Value.absent(),
-    this.designers = const Value.absent(),
-    this.artists = const Value.absent(),
-    this.publishers = const Value.absent(),
-    this.families = const Value.absent(),
-    this.languageDependence = const Value.absent(),
+    this.languageDependenceLevel = const Value.absent(),
     this.bestPlayerCount = const Value.absent(),
+    this.suggestedPlayerAge = const Value.absent(),
     this.recommendedPlayerCount = const Value.absent(),
+    this.detailsUpdatedAt = const Value.absent(),
   });
   static Insertable<BoardGame> custom({
     Expression<int>? id,
@@ -3457,15 +3309,11 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGame> {
     Expression<int>? numWishing,
     Expression<double>? averageWeight,
     Expression<String>? description,
-    Expression<String>? categories,
-    Expression<String>? mechanics,
-    Expression<String>? designers,
-    Expression<String>? artists,
-    Expression<String>? publishers,
-    Expression<String>? families,
-    Expression<String>? languageDependence,
+    Expression<String>? languageDependenceLevel,
     Expression<String>? bestPlayerCount,
+    Expression<String>? suggestedPlayerAge,
     Expression<String>? recommendedPlayerCount,
+    Expression<int>? detailsUpdatedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -3487,16 +3335,14 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGame> {
       if (numWishing != null) 'num_wishing': numWishing,
       if (averageWeight != null) 'average_weight': averageWeight,
       if (description != null) 'description': description,
-      if (categories != null) 'categories': categories,
-      if (mechanics != null) 'mechanics': mechanics,
-      if (designers != null) 'designers': designers,
-      if (artists != null) 'artists': artists,
-      if (publishers != null) 'publishers': publishers,
-      if (families != null) 'families': families,
-      if (languageDependence != null) 'language_dependence': languageDependence,
+      if (languageDependenceLevel != null)
+        'language_dependence_level': languageDependenceLevel,
       if (bestPlayerCount != null) 'best_player_count': bestPlayerCount,
+      if (suggestedPlayerAge != null)
+        'suggested_player_age': suggestedPlayerAge,
       if (recommendedPlayerCount != null)
         'recommended_player_count': recommendedPlayerCount,
+      if (detailsUpdatedAt != null) 'details_updated_at': detailsUpdatedAt,
     });
   }
 
@@ -3520,15 +3366,11 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGame> {
     Value<int?>? numWishing,
     Value<double?>? averageWeight,
     Value<String?>? description,
-    Value<String?>? categories,
-    Value<String?>? mechanics,
-    Value<String?>? designers,
-    Value<String?>? artists,
-    Value<String?>? publishers,
-    Value<String?>? families,
-    Value<String?>? languageDependence,
+    Value<String?>? languageDependenceLevel,
     Value<String?>? bestPlayerCount,
+    Value<String?>? suggestedPlayerAge,
     Value<String?>? recommendedPlayerCount,
+    Value<int?>? detailsUpdatedAt,
   }) {
     return BoardGamesCompanion(
       id: id ?? this.id,
@@ -3550,16 +3392,13 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGame> {
       numWishing: numWishing ?? this.numWishing,
       averageWeight: averageWeight ?? this.averageWeight,
       description: description ?? this.description,
-      categories: categories ?? this.categories,
-      mechanics: mechanics ?? this.mechanics,
-      designers: designers ?? this.designers,
-      artists: artists ?? this.artists,
-      publishers: publishers ?? this.publishers,
-      families: families ?? this.families,
-      languageDependence: languageDependence ?? this.languageDependence,
+      languageDependenceLevel:
+          languageDependenceLevel ?? this.languageDependenceLevel,
       bestPlayerCount: bestPlayerCount ?? this.bestPlayerCount,
+      suggestedPlayerAge: suggestedPlayerAge ?? this.suggestedPlayerAge,
       recommendedPlayerCount:
           recommendedPlayerCount ?? this.recommendedPlayerCount,
+      detailsUpdatedAt: detailsUpdatedAt ?? this.detailsUpdatedAt,
     );
   }
 
@@ -3623,34 +3462,24 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGame> {
     if (description.present) {
       map['description'] = Variable<String>(description.value);
     }
-    if (categories.present) {
-      map['categories'] = Variable<String>(categories.value);
-    }
-    if (mechanics.present) {
-      map['mechanics'] = Variable<String>(mechanics.value);
-    }
-    if (designers.present) {
-      map['designers'] = Variable<String>(designers.value);
-    }
-    if (artists.present) {
-      map['artists'] = Variable<String>(artists.value);
-    }
-    if (publishers.present) {
-      map['publishers'] = Variable<String>(publishers.value);
-    }
-    if (families.present) {
-      map['families'] = Variable<String>(families.value);
-    }
-    if (languageDependence.present) {
-      map['language_dependence'] = Variable<String>(languageDependence.value);
+    if (languageDependenceLevel.present) {
+      map['language_dependence_level'] = Variable<String>(
+        languageDependenceLevel.value,
+      );
     }
     if (bestPlayerCount.present) {
       map['best_player_count'] = Variable<String>(bestPlayerCount.value);
+    }
+    if (suggestedPlayerAge.present) {
+      map['suggested_player_age'] = Variable<String>(suggestedPlayerAge.value);
     }
     if (recommendedPlayerCount.present) {
       map['recommended_player_count'] = Variable<String>(
         recommendedPlayerCount.value,
       );
+    }
+    if (detailsUpdatedAt.present) {
+      map['details_updated_at'] = Variable<int>(detailsUpdatedAt.value);
     }
     return map;
   }
@@ -3677,15 +3506,517 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGame> {
           ..write('numWishing: $numWishing, ')
           ..write('averageWeight: $averageWeight, ')
           ..write('description: $description, ')
-          ..write('categories: $categories, ')
-          ..write('mechanics: $mechanics, ')
-          ..write('designers: $designers, ')
-          ..write('artists: $artists, ')
-          ..write('publishers: $publishers, ')
-          ..write('families: $families, ')
-          ..write('languageDependence: $languageDependence, ')
+          ..write('languageDependenceLevel: $languageDependenceLevel, ')
           ..write('bestPlayerCount: $bestPlayerCount, ')
-          ..write('recommendedPlayerCount: $recommendedPlayerCount')
+          ..write('suggestedPlayerAge: $suggestedPlayerAge, ')
+          ..write('recommendedPlayerCount: $recommendedPlayerCount, ')
+          ..write('detailsUpdatedAt: $detailsUpdatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $GameLinksTable extends GameLinks
+    with TableInfo<$GameLinksTable, GameLink> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $GameLinksTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _typeMeta = const VerificationMeta('type');
+  @override
+  late final GeneratedColumn<String> type = GeneratedColumn<String>(
+    'type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _bggIdMeta = const VerificationMeta('bggId');
+  @override
+  late final GeneratedColumn<int> bggId = GeneratedColumn<int>(
+    'bgg_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _nameMeta = const VerificationMeta('name');
+  @override
+  late final GeneratedColumn<String> name = GeneratedColumn<String>(
+    'name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, type, bggId, name];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'game_links';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<GameLink> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('type')) {
+      context.handle(
+        _typeMeta,
+        type.isAcceptableOrUnknown(data['type']!, _typeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_typeMeta);
+    }
+    if (data.containsKey('bgg_id')) {
+      context.handle(
+        _bggIdMeta,
+        bggId.isAcceptableOrUnknown(data['bgg_id']!, _bggIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_bggIdMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+        _nameMeta,
+        name.isAcceptableOrUnknown(data['name']!, _nameMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  GameLink map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return GameLink(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      type: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}type'],
+      )!,
+      bggId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}bgg_id'],
+      )!,
+      name: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}name'],
+      )!,
+    );
+  }
+
+  @override
+  $GameLinksTable createAlias(String alias) {
+    return $GameLinksTable(attachedDatabase, alias);
+  }
+}
+
+class GameLink extends DataClass implements Insertable<GameLink> {
+  final int id;
+  final String type;
+  final int bggId;
+  final String name;
+  const GameLink({
+    required this.id,
+    required this.type,
+    required this.bggId,
+    required this.name,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['type'] = Variable<String>(type);
+    map['bgg_id'] = Variable<int>(bggId);
+    map['name'] = Variable<String>(name);
+    return map;
+  }
+
+  GameLinksCompanion toCompanion(bool nullToAbsent) {
+    return GameLinksCompanion(
+      id: Value(id),
+      type: Value(type),
+      bggId: Value(bggId),
+      name: Value(name),
+    );
+  }
+
+  factory GameLink.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return GameLink(
+      id: serializer.fromJson<int>(json['id']),
+      type: serializer.fromJson<String>(json['type']),
+      bggId: serializer.fromJson<int>(json['bggId']),
+      name: serializer.fromJson<String>(json['name']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'type': serializer.toJson<String>(type),
+      'bggId': serializer.toJson<int>(bggId),
+      'name': serializer.toJson<String>(name),
+    };
+  }
+
+  GameLink copyWith({int? id, String? type, int? bggId, String? name}) =>
+      GameLink(
+        id: id ?? this.id,
+        type: type ?? this.type,
+        bggId: bggId ?? this.bggId,
+        name: name ?? this.name,
+      );
+  GameLink copyWithCompanion(GameLinksCompanion data) {
+    return GameLink(
+      id: data.id.present ? data.id.value : this.id,
+      type: data.type.present ? data.type.value : this.type,
+      bggId: data.bggId.present ? data.bggId.value : this.bggId,
+      name: data.name.present ? data.name.value : this.name,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('GameLink(')
+          ..write('id: $id, ')
+          ..write('type: $type, ')
+          ..write('bggId: $bggId, ')
+          ..write('name: $name')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, type, bggId, name);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is GameLink &&
+          other.id == this.id &&
+          other.type == this.type &&
+          other.bggId == this.bggId &&
+          other.name == this.name);
+}
+
+class GameLinksCompanion extends UpdateCompanion<GameLink> {
+  final Value<int> id;
+  final Value<String> type;
+  final Value<int> bggId;
+  final Value<String> name;
+  const GameLinksCompanion({
+    this.id = const Value.absent(),
+    this.type = const Value.absent(),
+    this.bggId = const Value.absent(),
+    this.name = const Value.absent(),
+  });
+  GameLinksCompanion.insert({
+    this.id = const Value.absent(),
+    required String type,
+    required int bggId,
+    required String name,
+  }) : type = Value(type),
+       bggId = Value(bggId),
+       name = Value(name);
+  static Insertable<GameLink> custom({
+    Expression<int>? id,
+    Expression<String>? type,
+    Expression<int>? bggId,
+    Expression<String>? name,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (type != null) 'type': type,
+      if (bggId != null) 'bgg_id': bggId,
+      if (name != null) 'name': name,
+    });
+  }
+
+  GameLinksCompanion copyWith({
+    Value<int>? id,
+    Value<String>? type,
+    Value<int>? bggId,
+    Value<String>? name,
+  }) {
+    return GameLinksCompanion(
+      id: id ?? this.id,
+      type: type ?? this.type,
+      bggId: bggId ?? this.bggId,
+      name: name ?? this.name,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (type.present) {
+      map['type'] = Variable<String>(type.value);
+    }
+    if (bggId.present) {
+      map['bgg_id'] = Variable<int>(bggId.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('GameLinksCompanion(')
+          ..write('id: $id, ')
+          ..write('type: $type, ')
+          ..write('bggId: $bggId, ')
+          ..write('name: $name')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $BoardGameLinkRelsTable extends BoardGameLinkRels
+    with TableInfo<$BoardGameLinkRelsTable, BoardGameLinkRel> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $BoardGameLinkRelsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _gameIdMeta = const VerificationMeta('gameId');
+  @override
+  late final GeneratedColumn<int> gameId = GeneratedColumn<int>(
+    'game_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'REFERENCES board_games(id) NOT NULL',
+  );
+  static const VerificationMeta _linkIdMeta = const VerificationMeta('linkId');
+  @override
+  late final GeneratedColumn<int> linkId = GeneratedColumn<int>(
+    'link_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+    $customConstraints: 'REFERENCES game_links(id) NOT NULL',
+  );
+  @override
+  List<GeneratedColumn> get $columns => [gameId, linkId];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'board_game_link_rels';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<BoardGameLinkRel> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('game_id')) {
+      context.handle(
+        _gameIdMeta,
+        gameId.isAcceptableOrUnknown(data['game_id']!, _gameIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_gameIdMeta);
+    }
+    if (data.containsKey('link_id')) {
+      context.handle(
+        _linkIdMeta,
+        linkId.isAcceptableOrUnknown(data['link_id']!, _linkIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_linkIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {gameId, linkId};
+  @override
+  BoardGameLinkRel map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return BoardGameLinkRel(
+      gameId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}game_id'],
+      )!,
+      linkId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}link_id'],
+      )!,
+    );
+  }
+
+  @override
+  $BoardGameLinkRelsTable createAlias(String alias) {
+    return $BoardGameLinkRelsTable(attachedDatabase, alias);
+  }
+}
+
+class BoardGameLinkRel extends DataClass
+    implements Insertable<BoardGameLinkRel> {
+  final int gameId;
+  final int linkId;
+  const BoardGameLinkRel({required this.gameId, required this.linkId});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['game_id'] = Variable<int>(gameId);
+    map['link_id'] = Variable<int>(linkId);
+    return map;
+  }
+
+  BoardGameLinkRelsCompanion toCompanion(bool nullToAbsent) {
+    return BoardGameLinkRelsCompanion(
+      gameId: Value(gameId),
+      linkId: Value(linkId),
+    );
+  }
+
+  factory BoardGameLinkRel.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return BoardGameLinkRel(
+      gameId: serializer.fromJson<int>(json['gameId']),
+      linkId: serializer.fromJson<int>(json['linkId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'gameId': serializer.toJson<int>(gameId),
+      'linkId': serializer.toJson<int>(linkId),
+    };
+  }
+
+  BoardGameLinkRel copyWith({int? gameId, int? linkId}) => BoardGameLinkRel(
+    gameId: gameId ?? this.gameId,
+    linkId: linkId ?? this.linkId,
+  );
+  BoardGameLinkRel copyWithCompanion(BoardGameLinkRelsCompanion data) {
+    return BoardGameLinkRel(
+      gameId: data.gameId.present ? data.gameId.value : this.gameId,
+      linkId: data.linkId.present ? data.linkId.value : this.linkId,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BoardGameLinkRel(')
+          ..write('gameId: $gameId, ')
+          ..write('linkId: $linkId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(gameId, linkId);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is BoardGameLinkRel &&
+          other.gameId == this.gameId &&
+          other.linkId == this.linkId);
+}
+
+class BoardGameLinkRelsCompanion extends UpdateCompanion<BoardGameLinkRel> {
+  final Value<int> gameId;
+  final Value<int> linkId;
+  final Value<int> rowid;
+  const BoardGameLinkRelsCompanion({
+    this.gameId = const Value.absent(),
+    this.linkId = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  BoardGameLinkRelsCompanion.insert({
+    required int gameId,
+    required int linkId,
+    this.rowid = const Value.absent(),
+  }) : gameId = Value(gameId),
+       linkId = Value(linkId);
+  static Insertable<BoardGameLinkRel> custom({
+    Expression<int>? gameId,
+    Expression<int>? linkId,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (gameId != null) 'game_id': gameId,
+      if (linkId != null) 'link_id': linkId,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  BoardGameLinkRelsCompanion copyWith({
+    Value<int>? gameId,
+    Value<int>? linkId,
+    Value<int>? rowid,
+  }) {
+    return BoardGameLinkRelsCompanion(
+      gameId: gameId ?? this.gameId,
+      linkId: linkId ?? this.linkId,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (gameId.present) {
+      map['game_id'] = Variable<int>(gameId.value);
+    }
+    if (linkId.present) {
+      map['link_id'] = Variable<int>(linkId.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BoardGameLinkRelsCompanion(')
+          ..write('gameId: $gameId, ')
+          ..write('linkId: $linkId, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -5401,6 +5732,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     this,
   );
   late final $BoardGamesTable boardGames = $BoardGamesTable(this);
+  late final $GameLinksTable gameLinks = $GameLinksTable(this);
+  late final $BoardGameLinkRelsTable boardGameLinkRels =
+      $BoardGameLinkRelsTable(this);
   late final $LocalizedNamesTable localizedNames = $LocalizedNamesTable(this);
   late final $PlaysTable plays = $PlaysTable(this);
   late final $PlayPlayersTable playPlayers = $PlayPlayersTable(this);
@@ -5412,6 +5746,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     versions,
     collectionItems,
     boardGames,
+    gameLinks,
+    boardGameLinkRels,
     localizedNames,
     plays,
     playPlayers,
@@ -6709,15 +7045,11 @@ typedef $$BoardGamesTableCreateCompanionBuilder =
       Value<int?> numWishing,
       Value<double?> averageWeight,
       Value<String?> description,
-      Value<String?> categories,
-      Value<String?> mechanics,
-      Value<String?> designers,
-      Value<String?> artists,
-      Value<String?> publishers,
-      Value<String?> families,
-      Value<String?> languageDependence,
+      Value<String?> languageDependenceLevel,
       Value<String?> bestPlayerCount,
+      Value<String?> suggestedPlayerAge,
       Value<String?> recommendedPlayerCount,
+      Value<int?> detailsUpdatedAt,
     });
 typedef $$BoardGamesTableUpdateCompanionBuilder =
     BoardGamesCompanion Function({
@@ -6740,20 +7072,40 @@ typedef $$BoardGamesTableUpdateCompanionBuilder =
       Value<int?> numWishing,
       Value<double?> averageWeight,
       Value<String?> description,
-      Value<String?> categories,
-      Value<String?> mechanics,
-      Value<String?> designers,
-      Value<String?> artists,
-      Value<String?> publishers,
-      Value<String?> families,
-      Value<String?> languageDependence,
+      Value<String?> languageDependenceLevel,
       Value<String?> bestPlayerCount,
+      Value<String?> suggestedPlayerAge,
       Value<String?> recommendedPlayerCount,
+      Value<int?> detailsUpdatedAt,
     });
 
 final class $$BoardGamesTableReferences
     extends BaseReferences<_$AppDatabase, $BoardGamesTable, BoardGame> {
   $$BoardGamesTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$BoardGameLinkRelsTable, List<BoardGameLinkRel>>
+  _boardGameLinkRelsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.boardGameLinkRels,
+        aliasName: $_aliasNameGenerator(
+          db.boardGames.id,
+          db.boardGameLinkRels.gameId,
+        ),
+      );
+
+  $$BoardGameLinkRelsTableProcessedTableManager get boardGameLinkRelsRefs {
+    final manager = $$BoardGameLinkRelsTableTableManager(
+      $_db,
+      $_db.boardGameLinkRels,
+    ).filter((f) => f.gameId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _boardGameLinkRelsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 
   static MultiTypedResultKey<$LocalizedNamesTable, List<LocalizedName>>
   _localizedNamesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
@@ -6881,38 +7233,8 @@ class $$BoardGamesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get categories => $composableBuilder(
-    column: $table.categories,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get mechanics => $composableBuilder(
-    column: $table.mechanics,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get designers => $composableBuilder(
-    column: $table.designers,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get artists => $composableBuilder(
-    column: $table.artists,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get publishers => $composableBuilder(
-    column: $table.publishers,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get families => $composableBuilder(
-    column: $table.families,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<String> get languageDependence => $composableBuilder(
-    column: $table.languageDependence,
+  ColumnFilters<String> get languageDependenceLevel => $composableBuilder(
+    column: $table.languageDependenceLevel,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -6921,10 +7243,45 @@ class $$BoardGamesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get suggestedPlayerAge => $composableBuilder(
+    column: $table.suggestedPlayerAge,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get recommendedPlayerCount => $composableBuilder(
     column: $table.recommendedPlayerCount,
     builder: (column) => ColumnFilters(column),
   );
+
+  ColumnFilters<int> get detailsUpdatedAt => $composableBuilder(
+    column: $table.detailsUpdatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> boardGameLinkRelsRefs(
+    Expression<bool> Function($$BoardGameLinkRelsTableFilterComposer f) f,
+  ) {
+    final $$BoardGameLinkRelsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.boardGameLinkRels,
+      getReferencedColumn: (t) => t.gameId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BoardGameLinkRelsTableFilterComposer(
+            $db: $db,
+            $table: $db.boardGameLinkRels,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 
   Expression<bool> localizedNamesRefs(
     Expression<bool> Function($$LocalizedNamesTableFilterComposer f) f,
@@ -7056,38 +7413,8 @@ class $$BoardGamesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<String> get categories => $composableBuilder(
-    column: $table.categories,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get mechanics => $composableBuilder(
-    column: $table.mechanics,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get designers => $composableBuilder(
-    column: $table.designers,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get artists => $composableBuilder(
-    column: $table.artists,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get publishers => $composableBuilder(
-    column: $table.publishers,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get families => $composableBuilder(
-    column: $table.families,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<String> get languageDependence => $composableBuilder(
-    column: $table.languageDependence,
+  ColumnOrderings<String> get languageDependenceLevel => $composableBuilder(
+    column: $table.languageDependenceLevel,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -7096,8 +7423,18 @@ class $$BoardGamesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get suggestedPlayerAge => $composableBuilder(
+    column: $table.suggestedPlayerAge,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get recommendedPlayerCount => $composableBuilder(
     column: $table.recommendedPlayerCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get detailsUpdatedAt => $composableBuilder(
+    column: $table.detailsUpdatedAt,
     builder: (column) => ColumnOrderings(column),
   );
 }
@@ -7196,30 +7533,8 @@ class $$BoardGamesTableAnnotationComposer
     builder: (column) => column,
   );
 
-  GeneratedColumn<String> get categories => $composableBuilder(
-    column: $table.categories,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get mechanics =>
-      $composableBuilder(column: $table.mechanics, builder: (column) => column);
-
-  GeneratedColumn<String> get designers =>
-      $composableBuilder(column: $table.designers, builder: (column) => column);
-
-  GeneratedColumn<String> get artists =>
-      $composableBuilder(column: $table.artists, builder: (column) => column);
-
-  GeneratedColumn<String> get publishers => $composableBuilder(
-    column: $table.publishers,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<String> get families =>
-      $composableBuilder(column: $table.families, builder: (column) => column);
-
-  GeneratedColumn<String> get languageDependence => $composableBuilder(
-    column: $table.languageDependence,
+  GeneratedColumn<String> get languageDependenceLevel => $composableBuilder(
+    column: $table.languageDependenceLevel,
     builder: (column) => column,
   );
 
@@ -7228,10 +7543,46 @@ class $$BoardGamesTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<String> get suggestedPlayerAge => $composableBuilder(
+    column: $table.suggestedPlayerAge,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get recommendedPlayerCount => $composableBuilder(
     column: $table.recommendedPlayerCount,
     builder: (column) => column,
   );
+
+  GeneratedColumn<int> get detailsUpdatedAt => $composableBuilder(
+    column: $table.detailsUpdatedAt,
+    builder: (column) => column,
+  );
+
+  Expression<T> boardGameLinkRelsRefs<T extends Object>(
+    Expression<T> Function($$BoardGameLinkRelsTableAnnotationComposer a) f,
+  ) {
+    final $$BoardGameLinkRelsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.boardGameLinkRels,
+          getReferencedColumn: (t) => t.gameId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$BoardGameLinkRelsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.boardGameLinkRels,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 
   Expression<T> localizedNamesRefs<T extends Object>(
     Expression<T> Function($$LocalizedNamesTableAnnotationComposer a) f,
@@ -7272,7 +7623,10 @@ class $$BoardGamesTableTableManager
           $$BoardGamesTableUpdateCompanionBuilder,
           (BoardGame, $$BoardGamesTableReferences),
           BoardGame,
-          PrefetchHooks Function({bool localizedNamesRefs})
+          PrefetchHooks Function({
+            bool boardGameLinkRelsRefs,
+            bool localizedNamesRefs,
+          })
         > {
   $$BoardGamesTableTableManager(_$AppDatabase db, $BoardGamesTable table)
     : super(
@@ -7306,15 +7660,11 @@ class $$BoardGamesTableTableManager
                 Value<int?> numWishing = const Value.absent(),
                 Value<double?> averageWeight = const Value.absent(),
                 Value<String?> description = const Value.absent(),
-                Value<String?> categories = const Value.absent(),
-                Value<String?> mechanics = const Value.absent(),
-                Value<String?> designers = const Value.absent(),
-                Value<String?> artists = const Value.absent(),
-                Value<String?> publishers = const Value.absent(),
-                Value<String?> families = const Value.absent(),
-                Value<String?> languageDependence = const Value.absent(),
+                Value<String?> languageDependenceLevel = const Value.absent(),
                 Value<String?> bestPlayerCount = const Value.absent(),
+                Value<String?> suggestedPlayerAge = const Value.absent(),
                 Value<String?> recommendedPlayerCount = const Value.absent(),
+                Value<int?> detailsUpdatedAt = const Value.absent(),
               }) => BoardGamesCompanion(
                 id: id,
                 imageUrl: imageUrl,
@@ -7335,15 +7685,11 @@ class $$BoardGamesTableTableManager
                 numWishing: numWishing,
                 averageWeight: averageWeight,
                 description: description,
-                categories: categories,
-                mechanics: mechanics,
-                designers: designers,
-                artists: artists,
-                publishers: publishers,
-                families: families,
-                languageDependence: languageDependence,
+                languageDependenceLevel: languageDependenceLevel,
                 bestPlayerCount: bestPlayerCount,
+                suggestedPlayerAge: suggestedPlayerAge,
                 recommendedPlayerCount: recommendedPlayerCount,
+                detailsUpdatedAt: detailsUpdatedAt,
               ),
           createCompanionCallback:
               ({
@@ -7366,15 +7712,11 @@ class $$BoardGamesTableTableManager
                 Value<int?> numWishing = const Value.absent(),
                 Value<double?> averageWeight = const Value.absent(),
                 Value<String?> description = const Value.absent(),
-                Value<String?> categories = const Value.absent(),
-                Value<String?> mechanics = const Value.absent(),
-                Value<String?> designers = const Value.absent(),
-                Value<String?> artists = const Value.absent(),
-                Value<String?> publishers = const Value.absent(),
-                Value<String?> families = const Value.absent(),
-                Value<String?> languageDependence = const Value.absent(),
+                Value<String?> languageDependenceLevel = const Value.absent(),
                 Value<String?> bestPlayerCount = const Value.absent(),
+                Value<String?> suggestedPlayerAge = const Value.absent(),
                 Value<String?> recommendedPlayerCount = const Value.absent(),
+                Value<int?> detailsUpdatedAt = const Value.absent(),
               }) => BoardGamesCompanion.insert(
                 id: id,
                 imageUrl: imageUrl,
@@ -7395,15 +7737,11 @@ class $$BoardGamesTableTableManager
                 numWishing: numWishing,
                 averageWeight: averageWeight,
                 description: description,
-                categories: categories,
-                mechanics: mechanics,
-                designers: designers,
-                artists: artists,
-                publishers: publishers,
-                families: families,
-                languageDependence: languageDependence,
+                languageDependenceLevel: languageDependenceLevel,
                 bestPlayerCount: bestPlayerCount,
+                suggestedPlayerAge: suggestedPlayerAge,
                 recommendedPlayerCount: recommendedPlayerCount,
+                detailsUpdatedAt: detailsUpdatedAt,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -7413,40 +7751,63 @@ class $$BoardGamesTableTableManager
                 ),
               )
               .toList(),
-          prefetchHooksCallback: ({localizedNamesRefs = false}) {
-            return PrefetchHooks(
-              db: db,
-              explicitlyWatchedTables: [
-                if (localizedNamesRefs) db.localizedNames,
-              ],
-              addJoins: null,
-              getPrefetchedDataCallback: (items) async {
-                return [
-                  if (localizedNamesRefs)
-                    await $_getPrefetchedData<
-                      BoardGame,
-                      $BoardGamesTable,
-                      LocalizedName
-                    >(
-                      currentTable: table,
-                      referencedTable: $$BoardGamesTableReferences
-                          ._localizedNamesRefsTable(db),
-                      managerFromTypedResult: (p0) =>
-                          $$BoardGamesTableReferences(
-                            db,
-                            table,
-                            p0,
-                          ).localizedNamesRefs,
-                      referencedItemsForCurrentItem: (item, referencedItems) =>
-                          referencedItems.where(
-                            (e) => e.boardGameId == item.id,
-                          ),
-                      typedResults: items,
-                    ),
-                ];
+          prefetchHooksCallback:
+              ({boardGameLinkRelsRefs = false, localizedNamesRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (boardGameLinkRelsRefs) db.boardGameLinkRels,
+                    if (localizedNamesRefs) db.localizedNames,
+                  ],
+                  addJoins: null,
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (boardGameLinkRelsRefs)
+                        await $_getPrefetchedData<
+                          BoardGame,
+                          $BoardGamesTable,
+                          BoardGameLinkRel
+                        >(
+                          currentTable: table,
+                          referencedTable: $$BoardGamesTableReferences
+                              ._boardGameLinkRelsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$BoardGamesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).boardGameLinkRelsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.gameId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                      if (localizedNamesRefs)
+                        await $_getPrefetchedData<
+                          BoardGame,
+                          $BoardGamesTable,
+                          LocalizedName
+                        >(
+                          currentTable: table,
+                          referencedTable: $$BoardGamesTableReferences
+                              ._localizedNamesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$BoardGamesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).localizedNamesRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.boardGameId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
               },
-            );
-          },
         ),
       );
 }
@@ -7463,7 +7824,663 @@ typedef $$BoardGamesTableProcessedTableManager =
       $$BoardGamesTableUpdateCompanionBuilder,
       (BoardGame, $$BoardGamesTableReferences),
       BoardGame,
-      PrefetchHooks Function({bool localizedNamesRefs})
+      PrefetchHooks Function({
+        bool boardGameLinkRelsRefs,
+        bool localizedNamesRefs,
+      })
+    >;
+typedef $$GameLinksTableCreateCompanionBuilder =
+    GameLinksCompanion Function({
+      Value<int> id,
+      required String type,
+      required int bggId,
+      required String name,
+    });
+typedef $$GameLinksTableUpdateCompanionBuilder =
+    GameLinksCompanion Function({
+      Value<int> id,
+      Value<String> type,
+      Value<int> bggId,
+      Value<String> name,
+    });
+
+final class $$GameLinksTableReferences
+    extends BaseReferences<_$AppDatabase, $GameLinksTable, GameLink> {
+  $$GameLinksTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$BoardGameLinkRelsTable, List<BoardGameLinkRel>>
+  _boardGameLinkRelsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.boardGameLinkRels,
+        aliasName: $_aliasNameGenerator(
+          db.gameLinks.id,
+          db.boardGameLinkRels.linkId,
+        ),
+      );
+
+  $$BoardGameLinkRelsTableProcessedTableManager get boardGameLinkRelsRefs {
+    final manager = $$BoardGameLinkRelsTableTableManager(
+      $_db,
+      $_db.boardGameLinkRels,
+    ).filter((f) => f.linkId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _boardGameLinkRelsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$GameLinksTableFilterComposer
+    extends Composer<_$AppDatabase, $GameLinksTable> {
+  $$GameLinksTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get bggId => $composableBuilder(
+    column: $table.bggId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  Expression<bool> boardGameLinkRelsRefs(
+    Expression<bool> Function($$BoardGameLinkRelsTableFilterComposer f) f,
+  ) {
+    final $$BoardGameLinkRelsTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.boardGameLinkRels,
+      getReferencedColumn: (t) => t.linkId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BoardGameLinkRelsTableFilterComposer(
+            $db: $db,
+            $table: $db.boardGameLinkRels,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$GameLinksTableOrderingComposer
+    extends Composer<_$AppDatabase, $GameLinksTable> {
+  $$GameLinksTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get type => $composableBuilder(
+    column: $table.type,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get bggId => $composableBuilder(
+    column: $table.bggId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get name => $composableBuilder(
+    column: $table.name,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$GameLinksTableAnnotationComposer
+    extends Composer<_$AppDatabase, $GameLinksTable> {
+  $$GameLinksTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get type =>
+      $composableBuilder(column: $table.type, builder: (column) => column);
+
+  GeneratedColumn<int> get bggId =>
+      $composableBuilder(column: $table.bggId, builder: (column) => column);
+
+  GeneratedColumn<String> get name =>
+      $composableBuilder(column: $table.name, builder: (column) => column);
+
+  Expression<T> boardGameLinkRelsRefs<T extends Object>(
+    Expression<T> Function($$BoardGameLinkRelsTableAnnotationComposer a) f,
+  ) {
+    final $$BoardGameLinkRelsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.boardGameLinkRels,
+          getReferencedColumn: (t) => t.linkId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$BoardGameLinkRelsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.boardGameLinkRels,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
+}
+
+class $$GameLinksTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $GameLinksTable,
+          GameLink,
+          $$GameLinksTableFilterComposer,
+          $$GameLinksTableOrderingComposer,
+          $$GameLinksTableAnnotationComposer,
+          $$GameLinksTableCreateCompanionBuilder,
+          $$GameLinksTableUpdateCompanionBuilder,
+          (GameLink, $$GameLinksTableReferences),
+          GameLink,
+          PrefetchHooks Function({bool boardGameLinkRelsRefs})
+        > {
+  $$GameLinksTableTableManager(_$AppDatabase db, $GameLinksTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$GameLinksTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$GameLinksTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$GameLinksTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> type = const Value.absent(),
+                Value<int> bggId = const Value.absent(),
+                Value<String> name = const Value.absent(),
+              }) => GameLinksCompanion(
+                id: id,
+                type: type,
+                bggId: bggId,
+                name: name,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String type,
+                required int bggId,
+                required String name,
+              }) => GameLinksCompanion.insert(
+                id: id,
+                type: type,
+                bggId: bggId,
+                name: name,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$GameLinksTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({boardGameLinkRelsRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [
+                if (boardGameLinkRelsRefs) db.boardGameLinkRels,
+              ],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (boardGameLinkRelsRefs)
+                    await $_getPrefetchedData<
+                      GameLink,
+                      $GameLinksTable,
+                      BoardGameLinkRel
+                    >(
+                      currentTable: table,
+                      referencedTable: $$GameLinksTableReferences
+                          ._boardGameLinkRelsRefsTable(db),
+                      managerFromTypedResult: (p0) =>
+                          $$GameLinksTableReferences(
+                            db,
+                            table,
+                            p0,
+                          ).boardGameLinkRelsRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.linkId == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$GameLinksTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $GameLinksTable,
+      GameLink,
+      $$GameLinksTableFilterComposer,
+      $$GameLinksTableOrderingComposer,
+      $$GameLinksTableAnnotationComposer,
+      $$GameLinksTableCreateCompanionBuilder,
+      $$GameLinksTableUpdateCompanionBuilder,
+      (GameLink, $$GameLinksTableReferences),
+      GameLink,
+      PrefetchHooks Function({bool boardGameLinkRelsRefs})
+    >;
+typedef $$BoardGameLinkRelsTableCreateCompanionBuilder =
+    BoardGameLinkRelsCompanion Function({
+      required int gameId,
+      required int linkId,
+      Value<int> rowid,
+    });
+typedef $$BoardGameLinkRelsTableUpdateCompanionBuilder =
+    BoardGameLinkRelsCompanion Function({
+      Value<int> gameId,
+      Value<int> linkId,
+      Value<int> rowid,
+    });
+
+final class $$BoardGameLinkRelsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $BoardGameLinkRelsTable,
+          BoardGameLinkRel
+        > {
+  $$BoardGameLinkRelsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $BoardGamesTable _gameIdTable(_$AppDatabase db) =>
+      db.boardGames.createAlias(
+        $_aliasNameGenerator(db.boardGameLinkRels.gameId, db.boardGames.id),
+      );
+
+  $$BoardGamesTableProcessedTableManager get gameId {
+    final $_column = $_itemColumn<int>('game_id')!;
+
+    final manager = $$BoardGamesTableTableManager(
+      $_db,
+      $_db.boardGames,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_gameIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $GameLinksTable _linkIdTable(_$AppDatabase db) =>
+      db.gameLinks.createAlias(
+        $_aliasNameGenerator(db.boardGameLinkRels.linkId, db.gameLinks.id),
+      );
+
+  $$GameLinksTableProcessedTableManager get linkId {
+    final $_column = $_itemColumn<int>('link_id')!;
+
+    final manager = $$GameLinksTableTableManager(
+      $_db,
+      $_db.gameLinks,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_linkIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$BoardGameLinkRelsTableFilterComposer
+    extends Composer<_$AppDatabase, $BoardGameLinkRelsTable> {
+  $$BoardGameLinkRelsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  $$BoardGamesTableFilterComposer get gameId {
+    final $$BoardGamesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.gameId,
+      referencedTable: $db.boardGames,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BoardGamesTableFilterComposer(
+            $db: $db,
+            $table: $db.boardGames,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$GameLinksTableFilterComposer get linkId {
+    final $$GameLinksTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.linkId,
+      referencedTable: $db.gameLinks,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GameLinksTableFilterComposer(
+            $db: $db,
+            $table: $db.gameLinks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$BoardGameLinkRelsTableOrderingComposer
+    extends Composer<_$AppDatabase, $BoardGameLinkRelsTable> {
+  $$BoardGameLinkRelsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  $$BoardGamesTableOrderingComposer get gameId {
+    final $$BoardGamesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.gameId,
+      referencedTable: $db.boardGames,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BoardGamesTableOrderingComposer(
+            $db: $db,
+            $table: $db.boardGames,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$GameLinksTableOrderingComposer get linkId {
+    final $$GameLinksTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.linkId,
+      referencedTable: $db.gameLinks,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GameLinksTableOrderingComposer(
+            $db: $db,
+            $table: $db.gameLinks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$BoardGameLinkRelsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $BoardGameLinkRelsTable> {
+  $$BoardGameLinkRelsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  $$BoardGamesTableAnnotationComposer get gameId {
+    final $$BoardGamesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.gameId,
+      referencedTable: $db.boardGames,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BoardGamesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.boardGames,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$GameLinksTableAnnotationComposer get linkId {
+    final $$GameLinksTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.linkId,
+      referencedTable: $db.gameLinks,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$GameLinksTableAnnotationComposer(
+            $db: $db,
+            $table: $db.gameLinks,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$BoardGameLinkRelsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $BoardGameLinkRelsTable,
+          BoardGameLinkRel,
+          $$BoardGameLinkRelsTableFilterComposer,
+          $$BoardGameLinkRelsTableOrderingComposer,
+          $$BoardGameLinkRelsTableAnnotationComposer,
+          $$BoardGameLinkRelsTableCreateCompanionBuilder,
+          $$BoardGameLinkRelsTableUpdateCompanionBuilder,
+          (BoardGameLinkRel, $$BoardGameLinkRelsTableReferences),
+          BoardGameLinkRel,
+          PrefetchHooks Function({bool gameId, bool linkId})
+        > {
+  $$BoardGameLinkRelsTableTableManager(
+    _$AppDatabase db,
+    $BoardGameLinkRelsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$BoardGameLinkRelsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$BoardGameLinkRelsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$BoardGameLinkRelsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> gameId = const Value.absent(),
+                Value<int> linkId = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => BoardGameLinkRelsCompanion(
+                gameId: gameId,
+                linkId: linkId,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required int gameId,
+                required int linkId,
+                Value<int> rowid = const Value.absent(),
+              }) => BoardGameLinkRelsCompanion.insert(
+                gameId: gameId,
+                linkId: linkId,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$BoardGameLinkRelsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({gameId = false, linkId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (gameId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.gameId,
+                                referencedTable:
+                                    $$BoardGameLinkRelsTableReferences
+                                        ._gameIdTable(db),
+                                referencedColumn:
+                                    $$BoardGameLinkRelsTableReferences
+                                        ._gameIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+                    if (linkId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.linkId,
+                                referencedTable:
+                                    $$BoardGameLinkRelsTableReferences
+                                        ._linkIdTable(db),
+                                referencedColumn:
+                                    $$BoardGameLinkRelsTableReferences
+                                        ._linkIdTable(db)
+                                        .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$BoardGameLinkRelsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $BoardGameLinkRelsTable,
+      BoardGameLinkRel,
+      $$BoardGameLinkRelsTableFilterComposer,
+      $$BoardGameLinkRelsTableOrderingComposer,
+      $$BoardGameLinkRelsTableAnnotationComposer,
+      $$BoardGameLinkRelsTableCreateCompanionBuilder,
+      $$BoardGameLinkRelsTableUpdateCompanionBuilder,
+      (BoardGameLinkRel, $$BoardGameLinkRelsTableReferences),
+      BoardGameLinkRel,
+      PrefetchHooks Function({bool gameId, bool linkId})
     >;
 typedef $$LocalizedNamesTableCreateCompanionBuilder =
     LocalizedNamesCompanion Function({
@@ -8733,6 +9750,10 @@ class $AppDatabaseManager {
       $$CollectionItemsTableTableManager(_db, _db.collectionItems);
   $$BoardGamesTableTableManager get boardGames =>
       $$BoardGamesTableTableManager(_db, _db.boardGames);
+  $$GameLinksTableTableManager get gameLinks =>
+      $$GameLinksTableTableManager(_db, _db.gameLinks);
+  $$BoardGameLinkRelsTableTableManager get boardGameLinkRels =>
+      $$BoardGameLinkRelsTableTableManager(_db, _db.boardGameLinkRels);
   $$LocalizedNamesTableTableManager get localizedNames =>
       $$LocalizedNamesTableTableManager(_db, _db.localizedNames);
   $$PlaysTableTableManager get plays =>
