@@ -820,13 +820,6 @@ class _DetailFields extends StatelessWidget {
     final recommendedMin = game?.recommendedPlayerCountMin;
     final recommendedMax = game?.recommendedPlayerCountMax;
 
-    final bestSameAsBase = _rangesEqual(min, max, bestMin, bestMax);
-    final recommendedSameAsBase = _rangesEqual(
-      min,
-      max,
-      recommendedMin,
-      recommendedMax,
-    );
     final recommendedSameAsBest = _rangesEqual(
       bestMin,
       bestMax,
@@ -834,26 +827,34 @@ class _DetailFields extends StatelessWidget {
       recommendedMax,
     );
 
-    if (bestSameAsBase && recommendedSameAsBase) {
+    final best = _formatPlayerCountRange(localizations, bestMin, bestMax);
+    final recommended = _formatPlayerCountRange(
+      localizations,
+      recommendedMin,
+      recommendedMax,
+    );
+
+    final showBest = best != null && !_rangesEqual(min, max, bestMin, bestMax);
+    final showRecommended =
+        recommended != null &&
+        !recommendedSameAsBest &&
+        !_rangesEqual(min, max, recommendedMin, recommendedMax);
+
+    if (!showBest && !showRecommended) {
       return base;
     }
 
     final buffer = StringBuffer(base);
     buffer.write(' (');
 
-    if (!recommendedSameAsBest && !recommendedSameAsBase) {
-      final recommended = _formatPlayerCountRange(
-        localizations,
-        recommendedMin,
-        recommendedMax,
-      );
-      if (recommended != null) {
-        buffer.write('${localizations.detailRecommendedLabel}: $recommended, ');
+    if (showRecommended) {
+      buffer.write('${localizations.detailRecommendedLabel}: $recommended');
+      if (showBest) {
+        buffer.write(', ');
       }
     }
 
-    final best = _formatPlayerCountRange(localizations, bestMin, bestMax);
-    if (best != null) {
+    if (showBest) {
       buffer.write('${localizations.detailBestLabel}: $best');
     }
 

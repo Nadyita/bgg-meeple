@@ -482,10 +482,50 @@ void main() {
 
         expect(find.textContaining('2 - 7 Players'), findsOneWidget);
         expect(
-          find.textContaining('Recommended: 3 - 6 Players'),
+          find.textContaining(
+            'Recommended: 3 - 6 Players, Best: 4 - 5 Players',
+          ),
           findsOneWidget,
         );
-        expect(find.textContaining('Best: 4 - 5 Players'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'omits empty parentheses when only base player count is available',
+      (tester) async {
+        const item = CollectionItem(
+          thingId: 1,
+          collId: 1,
+          names: [
+            LocalizedName(value: 'Catan', language: null, isPrimary: true),
+          ],
+          minPlayers: 1,
+          maxPlayers: 4,
+        );
+        const game = BoardGame(
+          id: 1,
+          names: [
+            LocalizedName(value: 'Catan', language: null, isPrimary: true),
+          ],
+        );
+
+        when(() => loadGameDetails.call(1, 1)).thenAnswer(
+          (_) async => const GameDetails(collectionItem: item, boardGame: game),
+        );
+
+        await tester.pumpWidget(
+          _buildApp(
+            home: GameDetailPage(
+              thingId: 1,
+              collId: 1,
+              loadGameDetails: loadGameDetails,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.textContaining('1 - 4 Players'), findsOneWidget);
+        expect(find.textContaining('()'), findsNothing);
       },
     );
 
