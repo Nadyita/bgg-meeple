@@ -3,9 +3,7 @@
 ## Purpose
 
 Defines how the app enriches cached board game data via the authenticated BoardGameGeek `/xmlapi2/thing` endpoint when a user-provided API key is present. This includes parsing additional fields, normalizing BGG links in the local cache, and refreshing stale details lazily.
-
 ## Requirements
-
 ### Requirement: Fetch /thing details when description is missing during sync
 When a valid API key is stored and a board game's description is missing or empty, the app SHALL fetch the game's `/xmlapi2/thing` data and persist the newly parsed fields.
 
@@ -31,40 +29,58 @@ The app SHALL extract the game's description from `item/description` and store i
 - **THEN** the description text is stored on the cached board game
 
 ### Requirement: Parse best player count from poll summary
-The app SHALL parse the `bestwith` value in `poll-summary[@name='suggested_numplayers']` into numeric `bestPlayerCountMin` and `bestPlayerCountMax` values. It SHALL support the forms `X`, `X-Y`, `X+`, and `X-Y+`.
+The app SHALL parse the `bestwith` value in `poll-summary[@name='suggested_numplayers']` into a textual `bestPlayerCount` value and numeric `bestPlayerCountMin` and `bestPlayerCountMax` values. It SHALL support the forms `X`, `X-Y`, `X+`, `X-Y+`, and comma-separated lists of these forms.
 
 #### Scenario: Single best player count
 - **GIVEN** the `bestwith` value is "Best with 4 players"
 - **WHEN** the app parses the summary
-- **THEN** `bestPlayerCountMin` is 4 and `bestPlayerCountMax` is 4
+- **THEN** `bestPlayerCount` is "4"
+- **AND** `bestPlayerCountMin` is 4 and `bestPlayerCountMax` is 4
 
 #### Scenario: Closed best player count range
 - **GIVEN** the `bestwith` value is "Best with 4–5 players"
 - **WHEN** the app parses the summary
-- **THEN** `bestPlayerCountMin` is 4 and `bestPlayerCountMax` is 5
+- **THEN** `bestPlayerCount` is "4-5"
+- **AND** `bestPlayerCountMin` is 4 and `bestPlayerCountMax` is 5
 
 #### Scenario: Open-ended best player count
 - **GIVEN** the `bestwith` value is "Best with 5+ players"
 - **WHEN** the app parses the summary
-- **THEN** `bestPlayerCountMin` is 5 and `bestPlayerCountMax` is null
+- **THEN** `bestPlayerCount` is "5+"
+- **AND** `bestPlayerCountMin` is 5 and `bestPlayerCountMax` is null
 
 #### Scenario: Closed open-ended best player count range
 - **GIVEN** the `bestwith` value is "Best with 8–18+ players"
 - **WHEN** the app parses the summary
-- **THEN** `bestPlayerCountMin` is 8 and `bestPlayerCountMax` is null
+- **THEN** `bestPlayerCount` is "8-18+"
+- **AND** `bestPlayerCountMin` is 8 and `bestPlayerCountMax` is null
+
+#### Scenario: Comma-separated list of best player counts
+- **GIVEN** the `bestwith` value is "Best with 6, 8 players"
+- **WHEN** the app parses the summary
+- **THEN** `bestPlayerCount` is "6, 8"
+- **AND** `bestPlayerCountMin` is 6 and `bestPlayerCountMax` is 8
 
 ### Requirement: Parse recommended player count from poll summary
-The app SHALL parse the `recommendedwith` value in `poll-summary[@name='suggested_numplayers']` into numeric `recommendedPlayerCountMin` and `recommendedPlayerCountMax` values, using the same rules as for the best player count.
+The app SHALL parse the `recommendedwith` value in `poll-summary[@name='suggested_numplayers']` into a textual `recommendedPlayerCount` value and numeric `recommendedPlayerCountMin` and `recommendedPlayerCountMax` values, using the same rules as for the best player count.
 
 #### Scenario: Closed recommended range
 - **GIVEN** the `recommendedwith` value is "Recommended with 3–7 players"
 - **WHEN** the app parses the summary
-- **THEN** `recommendedPlayerCountMin` is 3 and `recommendedPlayerCountMax` is 7
+- **THEN** `recommendedPlayerCount` is "3-7"
+- **AND** `recommendedPlayerCountMin` is 3 and `recommendedPlayerCountMax` is 7
 
 #### Scenario: Open-ended recommended range
 - **GIVEN** the `recommendedwith` value is "Recommended with 8—18+ players"
 - **WHEN** the app parses the summary
-- **THEN** `recommendedPlayerCountMin` is 8 and `recommendedPlayerCountMax` is null
+- **THEN** `recommendedPlayerCount` is "8-18+"
+- **AND** `recommendedPlayerCountMin` is 8 and `recommendedPlayerCountMax` is null
+
+#### Scenario: Comma-separated mixed recommended list
+- **GIVEN** the `recommendedwith` value is "Recommended with 4, 6–10, 12 players"
+- **WHEN** the app parses the summary
+- **THEN** `recommendedPlayerCount` is "4, 6-10, 12"
+- **AND** `recommendedPlayerCountMin` is 4 and `recommendedPlayerCountMax` is 12
 
 ### Requirement: Accept different dash characters as range separators
 The app SHALL treat en-dash (`–`), em-dash (`—`), and hyphen-minus (`-`) as equivalent range separators when parsing player count ranges.
@@ -182,3 +198,4 @@ The app SHALL only call `/xmlapi2/thing` when a valid API token is available. If
 - **WHEN** a sync or detail page visit occurs
 - **THEN** no `/xmlapi2/thing` request is made
 - **AND** existing cached details remain unchanged
+
