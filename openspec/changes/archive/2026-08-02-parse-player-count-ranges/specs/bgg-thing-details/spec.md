@@ -6,10 +6,10 @@ Adds numeric min/max player count fields for best and recommended player counts 
 
 ## MODIFIED Requirements
 
-### Requirement: Parse best player count range from poll summary
+### Requirement: Parse best player count from poll summary
 The app SHALL parse the `bestwith` value in `poll-summary[@name='suggested_numplayers']` into numeric `bestPlayerCountMin` and `bestPlayerCountMax` values. It SHALL support the forms `X`, `X-Y`, `X+`, and `X-Y+`.
 
-#### Scenario: Single best player count
+#### Scenario: Best player count is parsed from summary
 - **GIVEN** the `bestwith` value is "Best with 3 players"
 - **WHEN** the app parses the summary
 - **THEN** `bestPlayerCountMin` is 3 and `bestPlayerCountMax` is 3
