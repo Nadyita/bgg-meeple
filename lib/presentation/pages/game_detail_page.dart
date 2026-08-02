@@ -815,11 +815,21 @@ class _DetailFields extends StatelessWidget {
     final base = _formatPlayerCountRange(localizations, min, max);
     if (base == null) return null;
 
+    final bestDisplay = game?.bestPlayerCount;
+    final recommendedDisplay = game?.recommendedPlayerCount;
+
     final bestMin = game?.bestPlayerCountMin;
     final bestMax = game?.bestPlayerCountMax;
     final recommendedMin = game?.recommendedPlayerCountMin;
     final recommendedMax = game?.recommendedPlayerCountMax;
 
+    final bestSameAsBase = _rangesEqual(min, max, bestMin, bestMax);
+    final recommendedSameAsBase = _rangesEqual(
+      min,
+      max,
+      recommendedMin,
+      recommendedMax,
+    );
     final recommendedSameAsBest = _rangesEqual(
       bestMin,
       bestMax,
@@ -827,12 +837,16 @@ class _DetailFields extends StatelessWidget {
       recommendedMax,
     );
 
-    final best = _formatPlayerCountRange(localizations, bestMin, bestMax);
-    final recommended = _formatPlayerCountRange(
-      localizations,
-      recommendedMin,
-      recommendedMax,
-    );
+    if (bestSameAsBase && recommendedSameAsBase) {
+      return base;
+    }
+
+    final best = bestDisplay != null
+        ? localizations.detailBestValue(bestDisplay)
+        : null;
+    final recommended = recommendedDisplay != null
+        ? localizations.detailRecommendedValue(recommendedDisplay)
+        : null;
 
     final showBest = best != null && !_rangesEqual(min, max, bestMin, bestMax);
     final showRecommended =

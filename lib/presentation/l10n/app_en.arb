@@ -299,6 +299,24 @@
   "detailUserCount": "votes",
   "detailRecommendedLabel": "Recommended",
   "detailBestLabel": "Best",
+  "detailBestValue": "{value} Players",
+  "@detailBestValue": {
+    "description": "Best player count value with its label on the detail page",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "detailRecommendedValue": "{value} Players",
+  "@detailRecommendedValue": {
+    "description": "Recommended player count value with its label on the detail page",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
   "detailNotAvailable": "–",
   "detailGameNotFound": "Game not found"
 }

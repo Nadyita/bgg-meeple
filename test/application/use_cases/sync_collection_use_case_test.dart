@@ -249,6 +249,7 @@ void main() {
           id: 1,
           names: [LocalizedName(value: 'A', language: null, isPrimary: true)],
           description: 'Already have this.',
+          detailsUpdatedAt: 123456789,
           bestPlayerCountMin: 2,
           bestPlayerCountMax: 4,
           recommendedPlayerCountMin: 2,

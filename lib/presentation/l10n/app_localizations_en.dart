@@ -418,6 +418,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get detailBestLabel => 'Best';
 
   @override
+  String detailBestValue(String value) {
+    return '$value Players';
+  }
+
+  @override
+  String detailRecommendedValue(String value) {
+    return '$value Players';
+  }
+
+  @override
   String get detailNotAvailable => '–';
 
   @override

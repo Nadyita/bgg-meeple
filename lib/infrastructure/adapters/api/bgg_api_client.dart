@@ -41,6 +41,9 @@ class _PlayerCountRange {
 
   final int? min;
   final int? max;
+
+  /// Original textual value from the BGG summary, normalized to a consistent
+  /// dash character, e.g. "4, 6-10, 12" or "6, 8".
   final String? display;
 }
 
@@ -853,35 +856,61 @@ class BggApiClient implements BggApi, AuthenticationService {
     // Normalize dashes: en-dash, em-dash, hyphen-minus all become '-'
     final normalized = text.replaceAll('–', '-').replaceAll('—', '-');
 
-    final match = RegExp(
-      r'(?<min>\d+)\s*(?:-\s*(?<max>\d+))?\s*(?<plus>\+)?',
-    ).firstMatch(normalized);
-    if (match == null) return null;
+    final expressions = <String>[];
+    int? overallMin;
+    int? overallMax;
+    var hasOpenEnd = false;
 
-    final minText = match.namedGroup('min');
-    final maxText = match.namedGroup('max');
-    final hasPlus = match.namedGroup('plus') != null;
-    final min = int.tryParse(minText ?? '');
-    if (min == null) return null;
+    final regex = RegExp(r'(?<min>\d+)\s*(?:-\s*(?<max>\d+))?\s*(?<plus>\+)?');
+    for (final match in regex.allMatches(normalized)) {
+      final minText = match.namedGroup('min');
+      final maxText = match.namedGroup('max');
+      final hasPlus = match.namedGroup('plus') != null;
+      final min = int.tryParse(minText ?? '');
+      if (min == null) continue;
 
-    int? max;
-    if (maxText != null) {
-      max = int.tryParse(maxText);
-    } else if (!hasPlus) {
-      max = min;
+      int? max;
+      if (maxText != null) {
+        max = int.tryParse(maxText);
+      } else if (!hasPlus) {
+        max = min;
+      }
+
+      if (hasPlus) {
+        hasOpenEnd = true;
+      }
+
+      overallMin = overallMin == null ? min : math.min(overallMin, min);
+      final candidateMax = max;
+      if (candidateMax != null) {
+        overallMax = overallMax == null
+            ? candidateMax
+            : math.max(overallMax, candidateMax);
+      }
+
+      final displayValue = _formatPlayerCountRange(min, max, hasPlus: hasPlus);
+      expressions.add(displayValue);
     }
-    if (hasPlus) {
-      max = null;
-    }
 
-    final display = _formatPlayerCountRange(min, max);
-    return _PlayerCountRange(min: min, max: max, display: display);
+    if (expressions.isEmpty) return null;
+
+    final display = expressions.join(', ');
+    final effectiveMax = hasOpenEnd ? null : overallMax;
+    return _PlayerCountRange(
+      min: overallMin,
+      max: effectiveMax,
+      display: display,
+    );
   }
 
-  String _formatPlayerCountRange(int min, int? max) {
-    if (max == null) return '$min+';
-    if (min == max) return '$min';
-    return '$min-$max';
+  String _formatPlayerCountRange(int min, int? max, {bool hasPlus = false}) {
+    if (min == max) {
+      return hasPlus ? '$min+' : '$min';
+    }
+    if (max == null) {
+      return '$min+';
+    }
+    return hasPlus ? '$min-$max+' : '$min-$max';
   }
 
   _PlayerCountRange _playerCountRangeFromValues(List<String> values) {

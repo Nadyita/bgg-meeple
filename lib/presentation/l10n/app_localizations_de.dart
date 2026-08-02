@@ -420,6 +420,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get detailBestLabel => 'Beste';
 
   @override
+  String detailBestValue(String value) {
+    return '$value Spieler';
+  }
+
+  @override
+  String detailRecommendedValue(String value) {
+    return '$value Spieler';
+  }
+
+  @override
   String get detailNotAvailable => '–';
 
   @override
