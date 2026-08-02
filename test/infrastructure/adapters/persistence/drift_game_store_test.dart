@@ -129,6 +129,63 @@ void main() {
       expect(linkRows.length, 3);
     });
 
+    test('saves shared links without violating unique constraint', () async {
+      final firstBatch = [
+        const BoardGame(
+          id: 1,
+          names: [LocalizedName(value: 'A', language: null, isPrimary: true)],
+          links: [
+            GameLink(bggId: 1009, type: 'category', name: 'Abstract Strategy'),
+          ],
+        ),
+      ];
+      final secondBatch = [
+        const BoardGame(
+          id: 2,
+          names: [LocalizedName(value: 'B', language: null, isPrimary: true)],
+          links: [
+            GameLink(bggId: 1009, type: 'category', name: 'Abstract Strategy'),
+          ],
+        ),
+      ];
+
+      await store.saveAll(firstBatch);
+      await store.saveAll(secondBatch);
+
+      final linkRows = await db.select(db.gameLinks).get();
+      expect(linkRows.length, 1);
+      expect(linkRows.first.name, 'Abstract Strategy');
+
+      final relRows = await db.select(db.boardGameLinkRels).get();
+      expect(relRows.length, 2);
+    });
+
+    test('updates existing link name when it changed', () async {
+      final firstBatch = [
+        const BoardGame(
+          id: 1,
+          names: [LocalizedName(value: 'A', language: null, isPrimary: true)],
+          links: [
+            GameLink(bggId: 1009, type: 'category', name: 'Abstract Strategy'),
+          ],
+        ),
+      ];
+      final secondBatch = [
+        const BoardGame(
+          id: 2,
+          names: [LocalizedName(value: 'B', language: null, isPrimary: true)],
+          links: [GameLink(bggId: 1009, type: 'category', name: 'Strategy')],
+        ),
+      ];
+
+      await store.saveAll(firstBatch);
+      await store.saveAll(secondBatch);
+
+      final linkRows = await db.select(db.gameLinks).get();
+      expect(linkRows.length, 1);
+      expect(linkRows.first.name, 'Strategy');
+    });
+
     test('loadByIds returns only requested games with links', () async {
       final games = [
         const BoardGame(

@@ -81,18 +81,41 @@ class DriftGameStore implements GameStore {
     for (final game in games) {
       allLinks.addAll(game.links);
     }
+    if (allLinks.isEmpty) return;
+
+    final existingRows =
+        await (_db.select(_db.gameLinks)..where(
+              (l) => Expression.and([
+                l.type.isIn(allLinks.map((e) => e.type).toList()),
+                l.bggId.isIn(allLinks.map((e) => e.bggId).toList()),
+              ]),
+            ))
+            .get();
+    final existingByKey = {
+      for (final row in existingRows) '${row.type}:${row.bggId}': row,
+    };
 
     final linkIdsByKey = <String, int>{};
     for (final link in allLinks) {
-      final companion = drift.GameLinksCompanion(
-        type: Value(link.type),
-        bggId: Value(link.bggId),
-        name: Value(link.name),
-      );
-      final linkId = await _db
-          .into(_db.gameLinks)
-          .insert(companion, onConflict: DoUpdate((_) => companion));
-      linkIdsByKey['${link.type}:${link.bggId}'] = linkId;
+      final key = '${link.type}:${link.bggId}';
+      final existing = existingByKey[key];
+      if (existing != null) {
+        // Keep the existing row id; update the name in case it changed.
+        if (existing.name != link.name) {
+          await (_db.update(_db.gameLinks)
+                ..where((l) => l.id.equals(existing.id)))
+              .write(drift.GameLinksCompanion(name: Value(link.name)));
+        }
+        linkIdsByKey[key] = existing.id;
+      } else {
+        final companion = drift.GameLinksCompanion(
+          type: Value(link.type),
+          bggId: Value(link.bggId),
+          name: Value(link.name),
+        );
+        final linkId = await _db.into(_db.gameLinks).insert(companion);
+        linkIdsByKey[key] = linkId;
+      }
     }
 
     for (final game in games) {

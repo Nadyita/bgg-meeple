@@ -147,16 +147,18 @@ class SyncCollectionUseCase {
     if (uniqueThingIds.isEmpty) return [];
 
     final cachedGames = await _gameStore.loadByIds(uniqueThingIds);
-    final missingIds = uniqueThingIds
-        .where(
-          (id) =>
-              cachedGames
-                  .firstWhereOrNull((g) => g.id == id)
-                  ?.description
-                  .isEmptyOrNull ??
-              true,
-        )
-        .toList();
+    final missingIds = uniqueThingIds.where((id) {
+      final game = cachedGames.firstWhereOrNull((g) => g.id == id);
+      if (game == null) return true;
+      if (game.description.isEmptyOrNull) return true;
+      // Player-count ranges were added after initial /thing support; treat
+      // cached details without them as incomplete so they are refreshed.
+      if (game.bestPlayerCountMin == null &&
+          game.recommendedPlayerCountMin == null) {
+        return true;
+      }
+      return false;
+    }).toList();
 
     if (missingIds.isEmpty) return [];
 

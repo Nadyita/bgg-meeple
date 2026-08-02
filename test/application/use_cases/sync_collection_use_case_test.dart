@@ -233,7 +233,7 @@ void main() {
       verifyNever(() => bggApi.fetchGames(any()));
     });
 
-    test('fetches /thing only for games missing a description', () async {
+    test('fetches /thing only for games missing details', () async {
       const credentialsWithToken = BggCredentials(
         username: 'meepleUser',
         password: 'secret',
@@ -242,18 +242,28 @@ void main() {
       final items = <CollectionItem>[
         const CollectionItem(thingId: 1, names: []),
         const CollectionItem(thingId: 2, names: []),
+        const CollectionItem(thingId: 3, names: []),
       ];
       final cachedGames = [
         const BoardGame(
           id: 1,
           names: [LocalizedName(value: 'A', language: null, isPrimary: true)],
           description: 'Already have this.',
+          bestPlayerCountMin: 2,
+          bestPlayerCountMax: 4,
+          recommendedPlayerCountMin: 2,
+          recommendedPlayerCountMax: 4,
+        ),
+        const BoardGame(
+          id: 2,
+          names: [LocalizedName(value: 'B', language: null, isPrimary: true)],
+          description: 'Missing range fields.',
         ),
       ];
       final fetchedGames = [
         const BoardGame(
-          id: 2,
-          names: [LocalizedName(value: 'B', language: null, isPrimary: true)],
+          id: 3,
+          names: [LocalizedName(value: 'C', language: null, isPrimary: true)],
           description: 'Fetched from /thing.',
         ),
       ];
@@ -264,16 +274,18 @@ void main() {
         () => bggApi.fetchCollection('meepleUser'),
       ).thenAnswer((_) async => items);
       when(
-        () => gameStore.loadByIds([1, 2]),
+        () => gameStore.loadByIds([1, 2, 3]),
       ).thenAnswer((_) async => cachedGames);
-      when(() => bggApi.fetchGames([2])).thenAnswer((_) async => fetchedGames);
+      when(
+        () => bggApi.fetchGames([2, 3]),
+      ).thenAnswer((_) async => fetchedGames);
       when(() => collectionStore.saveAll(any())).thenAnswer((_) async {});
       when(() => gameStore.saveAll(any())).thenAnswer((_) async {});
       when(() => thumbnailCache.cache(any())).thenAnswer((_) async => null);
 
       await useCase();
 
-      verify(() => bggApi.fetchGames([2])).called(1);
+      verify(() => bggApi.fetchGames([2, 3])).called(1);
       verifyNever(() => bggApi.fetchGames([1]));
     });
 
