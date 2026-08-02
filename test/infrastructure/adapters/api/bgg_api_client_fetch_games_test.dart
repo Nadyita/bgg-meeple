@@ -227,6 +227,19 @@ void main() {
       <result name="bestwith" value="Best with 8-10+ players"/>
     </poll-summary>
   </item>
+  <item id="4">
+    <name type="primary" value="D"/>
+    <poll-summary name="suggested_numplayers">
+      <result name="bestwith" value="Best with 6, 8 players"/>
+      <result name="recommmendedwith" value="Recommended with 4, 6–10, 12 players"/>
+    </poll-summary>
+  </item>
+  <item id="5">
+    <name type="primary" value="E"/>
+    <poll-summary name="suggested_numplayers">
+      <result name="recommmendedwith" value="Recommended with 4, 6+ players"/>
+    </poll-summary>
+  </item>
 </items>
 ''';
 
@@ -238,9 +251,9 @@ void main() {
         ),
       );
 
-      final games = await apiClient.fetchGames([1, 2, 3]);
+      final games = await apiClient.fetchGames([1, 2, 3, 4, 5]);
 
-      expect(games, hasLength(3));
+      expect(games, hasLength(5));
       final first = games.firstWhere((g) => g.id == 1);
       expect(first.bestPlayerCount, '3');
       expect(first.bestPlayerCountMin, 3);
@@ -253,14 +266,27 @@ void main() {
       expect(second.bestPlayerCount, '5+');
       expect(second.bestPlayerCountMin, 5);
       expect(second.bestPlayerCountMax, isNull);
-      expect(second.recommendedPlayerCount, '8+');
+      expect(second.recommendedPlayerCount, '8-18+');
       expect(second.recommendedPlayerCountMin, 8);
       expect(second.recommendedPlayerCountMax, isNull);
 
       final third = games.firstWhere((g) => g.id == 3);
-      expect(third.bestPlayerCount, '8+');
+      expect(third.bestPlayerCount, '8-10+');
       expect(third.bestPlayerCountMin, 8);
       expect(third.bestPlayerCountMax, isNull);
+
+      final fourth = games.firstWhere((g) => g.id == 4);
+      expect(fourth.bestPlayerCount, '6, 8');
+      expect(fourth.bestPlayerCountMin, 6);
+      expect(fourth.bestPlayerCountMax, 8);
+      expect(fourth.recommendedPlayerCount, '4, 6-10, 12');
+      expect(fourth.recommendedPlayerCountMin, 4);
+      expect(fourth.recommendedPlayerCountMax, 12);
+
+      final fifth = games.firstWhere((g) => g.id == 5);
+      expect(fifth.recommendedPlayerCount, '4, 6+');
+      expect(fifth.recommendedPlayerCountMin, 4);
+      expect(fifth.recommendedPlayerCountMax, isNull);
     });
 
     test(

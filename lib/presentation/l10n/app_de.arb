@@ -299,6 +299,24 @@
   "detailUserCount": "Bewertungen",
   "detailRecommendedLabel": "Empfohlen",
   "detailBestLabel": "Beste",
+  "detailBestValue": "{value} Spieler",
+  "@detailBestValue": {
+    "description": "Beste Spielerzahl mit Bezeichnung auf der Detailseite",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "detailRecommendedValue": "{value} Spieler",
+  "@detailRecommendedValue": {
+    "description": "Empfohlene Spielerzahl mit Bezeichnung auf der Detailseite",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
   "detailNotAvailable": "–",
   "detailGameNotFound": "Spiel nicht gefunden"
 }

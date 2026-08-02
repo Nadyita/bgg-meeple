@@ -26,7 +26,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 11;
+  int get schemaVersion => 12;
 
   @override
   MigrationStrategy get migration {
@@ -49,6 +49,13 @@ class AppDatabase extends _$AppDatabase {
           await m.addColumn(boardGames, boardGames.bestPlayerCountMax);
           await m.addColumn(boardGames, boardGames.recommendedPlayerCountMin);
           await m.addColumn(boardGames, boardGames.recommendedPlayerCountMax);
+        } else if (from < 12) {
+          // Player-count parsing now supports comma-separated lists from BGG
+          // poll summaries. Force a lazy refresh of all cached details so the
+          // new string values and numeric bounds are repopulated on next sync.
+          await customStatement(
+            'UPDATE board_games SET details_updated_at = NULL',
+          );
         }
       },
     );

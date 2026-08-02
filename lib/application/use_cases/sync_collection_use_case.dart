@@ -151,6 +151,9 @@ class SyncCollectionUseCase {
       final game = cachedGames.firstWhereOrNull((g) => g.id == id);
       if (game == null) return true;
       if (game.description.isEmptyOrNull) return true;
+      // detailsUpdatedAt is cleared when the parser gains new data so stale
+      // cached details are refreshed on the next sync.
+      if (game.detailsUpdatedAt == null) return true;
       // Player-count ranges were added after initial /thing support; treat
       // cached details without them as incomplete so they are refreshed.
       if (game.bestPlayerCountMin == null &&

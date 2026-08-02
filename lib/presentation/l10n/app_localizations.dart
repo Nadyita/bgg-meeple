@@ -806,6 +806,18 @@ abstract class AppLocalizations {
   /// **'Best'**
   String get detailBestLabel;
 
+  /// Best player count value with its label on the detail page
+  ///
+  /// In en, this message translates to:
+  /// **'{value} Players'**
+  String detailBestValue(String value);
+
+  /// Recommended player count value with its label on the detail page
+  ///
+  /// In en, this message translates to:
+  /// **'{value} Players'**
+  String detailRecommendedValue(String value);
+
   /// No description provided for @detailNotAvailable.
   ///
   /// In en, this message translates to:

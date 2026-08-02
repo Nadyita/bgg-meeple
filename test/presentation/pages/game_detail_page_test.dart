@@ -482,13 +482,109 @@ void main() {
 
         expect(find.textContaining('2 - 7 Players'), findsOneWidget);
         expect(
+          find.textContaining('Recommended: 3-6 Players, Best: 4-5 Players'),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets(
+      'shows combined player count with list values and localized labels',
+      (tester) async {
+        const item = CollectionItem(
+          thingId: 1,
+          collId: 1,
+          names: [
+            LocalizedName(value: 'Catan', language: null, isPrimary: true),
+          ],
+          minPlayers: 1,
+          maxPlayers: 12,
+        );
+        const game = BoardGame(
+          id: 1,
+          names: [
+            LocalizedName(value: 'Catan', language: null, isPrimary: true),
+          ],
+          bestPlayerCount: '6, 8',
+          bestPlayerCountMin: 6,
+          bestPlayerCountMax: 8,
+          recommendedPlayerCount: '4, 6-10, 12',
+          recommendedPlayerCountMin: 4,
+          recommendedPlayerCountMax: 12,
+        );
+
+        when(() => loadGameDetails.call(1, 1)).thenAnswer(
+          (_) async => const GameDetails(collectionItem: item, boardGame: game),
+        );
+
+        await tester.pumpWidget(
+          _buildApp(
+            home: GameDetailPage(
+              thingId: 1,
+              collId: 1,
+              loadGameDetails: loadGameDetails,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.textContaining('1 - 12 Players'), findsOneWidget);
+        expect(
           find.textContaining(
-            'Recommended: 3 - 6 Players, Best: 4 - 5 Players',
+            'Recommended: 4, 6-10, 12 Players, Best: 6, 8 Players',
           ),
           findsOneWidget,
         );
       },
     );
+
+    testWidgets('shows German player count labels when locale is de', (
+      tester,
+    ) async {
+      const item = CollectionItem(
+        thingId: 1,
+        collId: 1,
+        names: [LocalizedName(value: 'Catan', language: null, isPrimary: true)],
+        minPlayers: 1,
+        maxPlayers: 12,
+      );
+      const game = BoardGame(
+        id: 1,
+        names: [LocalizedName(value: 'Catan', language: null, isPrimary: true)],
+        bestPlayerCount: '6, 8',
+        bestPlayerCountMin: 6,
+        bestPlayerCountMax: 8,
+        recommendedPlayerCount: '4, 6-10, 12',
+        recommendedPlayerCountMin: 4,
+        recommendedPlayerCountMax: 12,
+      );
+
+      when(() => loadGameDetails.call(1, 1)).thenAnswer(
+        (_) async => const GameDetails(collectionItem: item, boardGame: game),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: const Locale('de'),
+          home: GameDetailPage(
+            thingId: 1,
+            collId: 1,
+            loadGameDetails: loadGameDetails,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('1 - 12 Spieler'), findsOneWidget);
+      expect(
+        find.textContaining(
+          'Empfohlen: 4, 6-10, 12 Spieler, Beste: 6, 8 Spieler',
+        ),
+        findsOneWidget,
+      );
+    });
 
     testWidgets(
       'omits empty parentheses when only base player count is available',

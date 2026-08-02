@@ -1,4 +1,4 @@
-import 'package:drift/drift.dart' hide isNotNull;
+import 'package:drift/drift.dart' hide isNotNull, isNull;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -12,9 +12,9 @@ void main() {
       await db.close();
     });
 
-    test('schema version is 11', () {
+    test('schema version is 12', () {
       db = AppDatabase(NativeDatabase.memory());
-      expect(db.schemaVersion, 11);
+      expect(db.schemaVersion, 12);
     });
 
     test('migration strategy is configured', () {
@@ -109,9 +109,6 @@ void main() {
       db = AppDatabase(NativeDatabase.memory());
       final migrator = db.createMigrator();
 
-      // The in-memory database is auto-created with the latest schema. Drop
-      // the v11 player-count range columns to simulate a v10 database before
-      // running the upgrade.
       await db.customStatement(
         'ALTER TABLE board_games DROP COLUMN best_player_count_min',
       );
@@ -149,5 +146,27 @@ void main() {
       expect(row.recommendedPlayerCountMin, 3);
       expect(row.recommendedPlayerCountMax, 7);
     });
+
+    test(
+      'upgrade from v11 to v12 clears detailsUpdatedAt for lazy refresh',
+      () async {
+        db = AppDatabase(NativeDatabase.memory());
+        await db
+            .into(db.boardGames)
+            .insert(
+              const BoardGamesCompanion(
+                id: Value(1),
+                detailsUpdatedAt: Value(123456789),
+              ),
+            );
+
+        final migrator = db.createMigrator();
+        await db.migration.onUpgrade(migrator, 11, 12);
+
+        final row = await db.select(db.boardGames).getSingle();
+        expect(row.id, 1);
+        expect(row.detailsUpdatedAt, isNull);
+      },
+    );
   });
 }
