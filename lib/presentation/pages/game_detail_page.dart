@@ -811,10 +811,70 @@ class _DetailFields extends StatelessWidget {
     final min = _readInt(item, game, 'minPlayers');
     final max = _readInt(item, game, 'maxPlayers');
     if (min == null && max == null) return null;
+
+    final base = _formatPlayerCountRange(localizations, min, max);
+    if (base == null) return null;
+
+    final bestMin = game?.bestPlayerCountMin;
+    final bestMax = game?.bestPlayerCountMax;
+    final recommendedMin = game?.recommendedPlayerCountMin;
+    final recommendedMax = game?.recommendedPlayerCountMax;
+
+    final bestSameAsBase = _rangesEqual(min, max, bestMin, bestMax);
+    final recommendedSameAsBase = _rangesEqual(
+      min,
+      max,
+      recommendedMin,
+      recommendedMax,
+    );
+    final recommendedSameAsBest = _rangesEqual(
+      bestMin,
+      bestMax,
+      recommendedMin,
+      recommendedMax,
+    );
+
+    if (bestSameAsBase && recommendedSameAsBase) {
+      return base;
+    }
+
+    final buffer = StringBuffer(base);
+    buffer.write(' (');
+
+    if (!recommendedSameAsBest && !recommendedSameAsBase) {
+      final recommended = _formatPlayerCountRange(
+        localizations,
+        recommendedMin,
+        recommendedMax,
+      );
+      if (recommended != null) {
+        buffer.write('${localizations.detailRecommendedLabel}: $recommended, ');
+      }
+    }
+
+    final best = _formatPlayerCountRange(localizations, bestMin, bestMax);
+    if (best != null) {
+      buffer.write('${localizations.detailBestLabel}: $best');
+    }
+
+    buffer.write(')');
+    return buffer.toString();
+  }
+
+  String? _formatPlayerCountRange(
+    AppLocalizations localizations,
+    int? min,
+    int? max,
+  ) {
+    if (min == null && max == null) return null;
     if (min == max) return localizations.cardPlayerCountExact(min!);
     if (min == null) return localizations.cardPlayerCountRangeMaxOnly(max!);
     if (max == null) return localizations.cardPlayerCountRangeMinOnly(min);
     return localizations.cardPlayerCountRange(min, max);
+  }
+
+  bool _rangesEqual(int? minA, int? maxA, int? minB, int? maxB) {
+    return minA == minB && maxA == maxB;
   }
 
   String? _formatPlayTime(

@@ -412,6 +412,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get detailUserCount => 'votes';
 
   @override
+  String get detailRecommendedLabel => 'Recommended';
+
+  @override
+  String get detailBestLabel => 'Best';
+
+  @override
   String get detailNotAvailable => '–';
 
   @override

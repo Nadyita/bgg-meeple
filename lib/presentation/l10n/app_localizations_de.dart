@@ -414,6 +414,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get detailUserCount => 'Bewertungen';
 
   @override
+  String get detailRecommendedLabel => 'Empfohlen';
+
+  @override
+  String get detailBestLabel => 'Beste';
+
+  @override
   String get detailNotAvailable => '–';
 
   @override

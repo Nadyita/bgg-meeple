@@ -146,6 +146,11 @@ void main() {
       expect(game.id, 172308);
       expect(game.description, 'Score the most victory points.');
       expect(game.bestPlayerCount, '4');
+      expect(game.bestPlayerCountMin, 4);
+      expect(game.bestPlayerCountMax, 4);
+      expect(game.recommendedPlayerCount, '2-5');
+      expect(game.recommendedPlayerCountMin, 2);
+      expect(game.recommendedPlayerCountMax, 5);
       expect(game.suggestedPlayerAge, '9.5');
       expect(game.languageDependenceLevel, '2');
 
@@ -190,6 +195,72 @@ void main() {
           name: "Witch's Brew",
         ),
       ]);
+    });
+
+    test('parses all player count range forms from poll-summary', () async {
+      when(() => sessionStore.load()).thenAnswer(
+        (_) async => const BggSession(
+          sessionCookies: 'bggusername=u; bggpassword=p; SessionID=s',
+          apiToken: 'my-bearer-token',
+        ),
+      );
+
+      const xml = '''
+<items>
+  <item id="1">
+    <name type="primary" value="A"/>
+    <poll-summary name="suggested_numplayers">
+      <result name="bestwith" value="Best with 3 players"/>
+      <result name="recommmendedwith" value="Recommended with 4–5 players"/>
+    </poll-summary>
+  </item>
+  <item id="2">
+    <name type="primary" value="B"/>
+    <poll-summary name="suggested_numplayers">
+      <result name="bestwith" value="Best with 5+ players"/>
+      <result name="recommmendedwith" value="Recommended with 8—18+ players"/>
+    </poll-summary>
+  </item>
+  <item id="3">
+    <name type="primary" value="C"/>
+    <poll-summary name="suggested_numplayers">
+      <result name="bestwith" value="Best with 8-10+ players"/>
+    </poll-summary>
+  </item>
+</items>
+''';
+
+      when(() => client.get(any(), headers: any(named: 'headers'))).thenAnswer(
+        (_) async => http.Response.bytes(
+          utf8.encode(xml),
+          200,
+          headers: {'content-type': 'text/xml; charset=utf-8'},
+        ),
+      );
+
+      final games = await apiClient.fetchGames([1, 2, 3]);
+
+      expect(games, hasLength(3));
+      final first = games.firstWhere((g) => g.id == 1);
+      expect(first.bestPlayerCount, '3');
+      expect(first.bestPlayerCountMin, 3);
+      expect(first.bestPlayerCountMax, 3);
+      expect(first.recommendedPlayerCount, '4-5');
+      expect(first.recommendedPlayerCountMin, 4);
+      expect(first.recommendedPlayerCountMax, 5);
+
+      final second = games.firstWhere((g) => g.id == 2);
+      expect(second.bestPlayerCount, '5+');
+      expect(second.bestPlayerCountMin, 5);
+      expect(second.bestPlayerCountMax, isNull);
+      expect(second.recommendedPlayerCount, '8+');
+      expect(second.recommendedPlayerCountMin, 8);
+      expect(second.recommendedPlayerCountMax, isNull);
+
+      final third = games.firstWhere((g) => g.id == 3);
+      expect(third.bestPlayerCount, '8+');
+      expect(third.bestPlayerCountMin, 8);
+      expect(third.bestPlayerCountMax, isNull);
     });
 
     test(

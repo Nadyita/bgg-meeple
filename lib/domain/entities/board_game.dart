@@ -27,8 +27,12 @@ class BoardGame {
     this.links = const [],
     this.languageDependenceLevel,
     this.bestPlayerCount,
+    this.bestPlayerCountMin,
+    this.bestPlayerCountMax,
     this.suggestedPlayerAge,
     this.recommendedPlayerCount,
+    this.recommendedPlayerCountMin,
+    this.recommendedPlayerCountMax,
     this.detailsUpdatedAt,
   });
 
@@ -55,8 +59,12 @@ class BoardGame {
   final List<GameLink> links;
   final String? languageDependenceLevel;
   final String? bestPlayerCount;
+  final int? bestPlayerCountMin;
+  final int? bestPlayerCountMax;
   final String? suggestedPlayerAge;
   final String? recommendedPlayerCount;
+  final int? recommendedPlayerCountMin;
+  final int? recommendedPlayerCountMax;
   final int? detailsUpdatedAt;
 
   String displayName({required String preferredLanguage}) {
@@ -106,8 +114,12 @@ class BoardGame {
     List<GameLink>? links,
     String? languageDependenceLevel,
     String? bestPlayerCount,
+    int? bestPlayerCountMin,
+    int? bestPlayerCountMax,
     String? suggestedPlayerAge,
     String? recommendedPlayerCount,
+    int? recommendedPlayerCountMin,
+    int? recommendedPlayerCountMax,
     int? detailsUpdatedAt,
   }) {
     return BoardGame(
@@ -135,9 +147,15 @@ class BoardGame {
       languageDependenceLevel:
           languageDependenceLevel ?? this.languageDependenceLevel,
       bestPlayerCount: bestPlayerCount ?? this.bestPlayerCount,
+      bestPlayerCountMin: bestPlayerCountMin ?? this.bestPlayerCountMin,
+      bestPlayerCountMax: bestPlayerCountMax ?? this.bestPlayerCountMax,
       suggestedPlayerAge: suggestedPlayerAge ?? this.suggestedPlayerAge,
       recommendedPlayerCount:
           recommendedPlayerCount ?? this.recommendedPlayerCount,
+      recommendedPlayerCountMin:
+          recommendedPlayerCountMin ?? this.recommendedPlayerCountMin,
+      recommendedPlayerCountMax:
+          recommendedPlayerCountMax ?? this.recommendedPlayerCountMax,
       detailsUpdatedAt: detailsUpdatedAt ?? this.detailsUpdatedAt,
     );
   }

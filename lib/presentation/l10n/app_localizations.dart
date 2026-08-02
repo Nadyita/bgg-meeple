@@ -794,6 +794,18 @@ abstract class AppLocalizations {
   /// **'votes'**
   String get detailUserCount;
 
+  /// No description provided for @detailRecommendedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended'**
+  String get detailRecommendedLabel;
+
+  /// No description provided for @detailBestLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Best'**
+  String get detailBestLabel;
+
   /// No description provided for @detailNotAvailable.
   ///
   /// In en, this message translates to:

@@ -2342,6 +2342,26 @@ class $BoardGamesTable extends BoardGames
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _bestPlayerCountMinMeta =
+      const VerificationMeta('bestPlayerCountMin');
+  @override
+  late final GeneratedColumn<int> bestPlayerCountMin = GeneratedColumn<int>(
+    'best_player_count_min',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _bestPlayerCountMaxMeta =
+      const VerificationMeta('bestPlayerCountMax');
+  @override
+  late final GeneratedColumn<int> bestPlayerCountMax = GeneratedColumn<int>(
+    'best_player_count_max',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _suggestedPlayerAgeMeta =
       const VerificationMeta('suggestedPlayerAge');
   @override
@@ -2362,6 +2382,28 @@ class $BoardGamesTable extends BoardGames
         aliasedName,
         true,
         type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _recommendedPlayerCountMinMeta =
+      const VerificationMeta('recommendedPlayerCountMin');
+  @override
+  late final GeneratedColumn<int> recommendedPlayerCountMin =
+      GeneratedColumn<int>(
+        'recommended_player_count_min',
+        aliasedName,
+        true,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _recommendedPlayerCountMaxMeta =
+      const VerificationMeta('recommendedPlayerCountMax');
+  @override
+  late final GeneratedColumn<int> recommendedPlayerCountMax =
+      GeneratedColumn<int>(
+        'recommended_player_count_max',
+        aliasedName,
+        true,
+        type: DriftSqlType.int,
         requiredDuringInsert: false,
       );
   static const VerificationMeta _detailsUpdatedAtMeta = const VerificationMeta(
@@ -2398,8 +2440,12 @@ class $BoardGamesTable extends BoardGames
     description,
     languageDependenceLevel,
     bestPlayerCount,
+    bestPlayerCountMin,
+    bestPlayerCountMax,
     suggestedPlayerAge,
     recommendedPlayerCount,
+    recommendedPlayerCountMin,
+    recommendedPlayerCountMax,
     detailsUpdatedAt,
   ];
   @override
@@ -2570,6 +2616,24 @@ class $BoardGamesTable extends BoardGames
         ),
       );
     }
+    if (data.containsKey('best_player_count_min')) {
+      context.handle(
+        _bestPlayerCountMinMeta,
+        bestPlayerCountMin.isAcceptableOrUnknown(
+          data['best_player_count_min']!,
+          _bestPlayerCountMinMeta,
+        ),
+      );
+    }
+    if (data.containsKey('best_player_count_max')) {
+      context.handle(
+        _bestPlayerCountMaxMeta,
+        bestPlayerCountMax.isAcceptableOrUnknown(
+          data['best_player_count_max']!,
+          _bestPlayerCountMaxMeta,
+        ),
+      );
+    }
     if (data.containsKey('suggested_player_age')) {
       context.handle(
         _suggestedPlayerAgeMeta,
@@ -2585,6 +2649,24 @@ class $BoardGamesTable extends BoardGames
         recommendedPlayerCount.isAcceptableOrUnknown(
           data['recommended_player_count']!,
           _recommendedPlayerCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('recommended_player_count_min')) {
+      context.handle(
+        _recommendedPlayerCountMinMeta,
+        recommendedPlayerCountMin.isAcceptableOrUnknown(
+          data['recommended_player_count_min']!,
+          _recommendedPlayerCountMinMeta,
+        ),
+      );
+    }
+    if (data.containsKey('recommended_player_count_max')) {
+      context.handle(
+        _recommendedPlayerCountMaxMeta,
+        recommendedPlayerCountMax.isAcceptableOrUnknown(
+          data['recommended_player_count_max']!,
+          _recommendedPlayerCountMaxMeta,
         ),
       );
     }
@@ -2690,6 +2772,14 @@ class $BoardGamesTable extends BoardGames
         DriftSqlType.string,
         data['${effectivePrefix}best_player_count'],
       ),
+      bestPlayerCountMin: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}best_player_count_min'],
+      ),
+      bestPlayerCountMax: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}best_player_count_max'],
+      ),
       suggestedPlayerAge: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}suggested_player_age'],
@@ -2697,6 +2787,14 @@ class $BoardGamesTable extends BoardGames
       recommendedPlayerCount: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}recommended_player_count'],
+      ),
+      recommendedPlayerCountMin: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}recommended_player_count_min'],
+      ),
+      recommendedPlayerCountMax: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}recommended_player_count_max'],
       ),
       detailsUpdatedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
@@ -2733,8 +2831,12 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
   final String? description;
   final String? languageDependenceLevel;
   final String? bestPlayerCount;
+  final int? bestPlayerCountMin;
+  final int? bestPlayerCountMax;
   final String? suggestedPlayerAge;
   final String? recommendedPlayerCount;
+  final int? recommendedPlayerCountMin;
+  final int? recommendedPlayerCountMax;
   final int? detailsUpdatedAt;
   const BoardGame({
     required this.id,
@@ -2758,8 +2860,12 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
     this.description,
     this.languageDependenceLevel,
     this.bestPlayerCount,
+    this.bestPlayerCountMin,
+    this.bestPlayerCountMax,
     this.suggestedPlayerAge,
     this.recommendedPlayerCount,
+    this.recommendedPlayerCountMin,
+    this.recommendedPlayerCountMax,
     this.detailsUpdatedAt,
   });
   @override
@@ -2828,12 +2934,28 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
     if (!nullToAbsent || bestPlayerCount != null) {
       map['best_player_count'] = Variable<String>(bestPlayerCount);
     }
+    if (!nullToAbsent || bestPlayerCountMin != null) {
+      map['best_player_count_min'] = Variable<int>(bestPlayerCountMin);
+    }
+    if (!nullToAbsent || bestPlayerCountMax != null) {
+      map['best_player_count_max'] = Variable<int>(bestPlayerCountMax);
+    }
     if (!nullToAbsent || suggestedPlayerAge != null) {
       map['suggested_player_age'] = Variable<String>(suggestedPlayerAge);
     }
     if (!nullToAbsent || recommendedPlayerCount != null) {
       map['recommended_player_count'] = Variable<String>(
         recommendedPlayerCount,
+      );
+    }
+    if (!nullToAbsent || recommendedPlayerCountMin != null) {
+      map['recommended_player_count_min'] = Variable<int>(
+        recommendedPlayerCountMin,
+      );
+    }
+    if (!nullToAbsent || recommendedPlayerCountMax != null) {
+      map['recommended_player_count_max'] = Variable<int>(
+        recommendedPlayerCountMax,
       );
     }
     if (!nullToAbsent || detailsUpdatedAt != null) {
@@ -2905,12 +3027,26 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
       bestPlayerCount: bestPlayerCount == null && nullToAbsent
           ? const Value.absent()
           : Value(bestPlayerCount),
+      bestPlayerCountMin: bestPlayerCountMin == null && nullToAbsent
+          ? const Value.absent()
+          : Value(bestPlayerCountMin),
+      bestPlayerCountMax: bestPlayerCountMax == null && nullToAbsent
+          ? const Value.absent()
+          : Value(bestPlayerCountMax),
       suggestedPlayerAge: suggestedPlayerAge == null && nullToAbsent
           ? const Value.absent()
           : Value(suggestedPlayerAge),
       recommendedPlayerCount: recommendedPlayerCount == null && nullToAbsent
           ? const Value.absent()
           : Value(recommendedPlayerCount),
+      recommendedPlayerCountMin:
+          recommendedPlayerCountMin == null && nullToAbsent
+          ? const Value.absent()
+          : Value(recommendedPlayerCountMin),
+      recommendedPlayerCountMax:
+          recommendedPlayerCountMax == null && nullToAbsent
+          ? const Value.absent()
+          : Value(recommendedPlayerCountMax),
       detailsUpdatedAt: detailsUpdatedAt == null && nullToAbsent
           ? const Value.absent()
           : Value(detailsUpdatedAt),
@@ -2946,11 +3082,19 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
         json['languageDependenceLevel'],
       ),
       bestPlayerCount: serializer.fromJson<String?>(json['bestPlayerCount']),
+      bestPlayerCountMin: serializer.fromJson<int?>(json['bestPlayerCountMin']),
+      bestPlayerCountMax: serializer.fromJson<int?>(json['bestPlayerCountMax']),
       suggestedPlayerAge: serializer.fromJson<String?>(
         json['suggestedPlayerAge'],
       ),
       recommendedPlayerCount: serializer.fromJson<String?>(
         json['recommendedPlayerCount'],
+      ),
+      recommendedPlayerCountMin: serializer.fromJson<int?>(
+        json['recommendedPlayerCountMin'],
+      ),
+      recommendedPlayerCountMax: serializer.fromJson<int?>(
+        json['recommendedPlayerCountMax'],
       ),
       detailsUpdatedAt: serializer.fromJson<int?>(json['detailsUpdatedAt']),
     );
@@ -2982,9 +3126,17 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
         languageDependenceLevel,
       ),
       'bestPlayerCount': serializer.toJson<String?>(bestPlayerCount),
+      'bestPlayerCountMin': serializer.toJson<int?>(bestPlayerCountMin),
+      'bestPlayerCountMax': serializer.toJson<int?>(bestPlayerCountMax),
       'suggestedPlayerAge': serializer.toJson<String?>(suggestedPlayerAge),
       'recommendedPlayerCount': serializer.toJson<String?>(
         recommendedPlayerCount,
+      ),
+      'recommendedPlayerCountMin': serializer.toJson<int?>(
+        recommendedPlayerCountMin,
+      ),
+      'recommendedPlayerCountMax': serializer.toJson<int?>(
+        recommendedPlayerCountMax,
       ),
       'detailsUpdatedAt': serializer.toJson<int?>(detailsUpdatedAt),
     };
@@ -3012,8 +3164,12 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
     Value<String?> description = const Value.absent(),
     Value<String?> languageDependenceLevel = const Value.absent(),
     Value<String?> bestPlayerCount = const Value.absent(),
+    Value<int?> bestPlayerCountMin = const Value.absent(),
+    Value<int?> bestPlayerCountMax = const Value.absent(),
     Value<String?> suggestedPlayerAge = const Value.absent(),
     Value<String?> recommendedPlayerCount = const Value.absent(),
+    Value<int?> recommendedPlayerCountMin = const Value.absent(),
+    Value<int?> recommendedPlayerCountMax = const Value.absent(),
     Value<int?> detailsUpdatedAt = const Value.absent(),
   }) => BoardGame(
     id: id ?? this.id,
@@ -3047,12 +3203,24 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
     bestPlayerCount: bestPlayerCount.present
         ? bestPlayerCount.value
         : this.bestPlayerCount,
+    bestPlayerCountMin: bestPlayerCountMin.present
+        ? bestPlayerCountMin.value
+        : this.bestPlayerCountMin,
+    bestPlayerCountMax: bestPlayerCountMax.present
+        ? bestPlayerCountMax.value
+        : this.bestPlayerCountMax,
     suggestedPlayerAge: suggestedPlayerAge.present
         ? suggestedPlayerAge.value
         : this.suggestedPlayerAge,
     recommendedPlayerCount: recommendedPlayerCount.present
         ? recommendedPlayerCount.value
         : this.recommendedPlayerCount,
+    recommendedPlayerCountMin: recommendedPlayerCountMin.present
+        ? recommendedPlayerCountMin.value
+        : this.recommendedPlayerCountMin,
+    recommendedPlayerCountMax: recommendedPlayerCountMax.present
+        ? recommendedPlayerCountMax.value
+        : this.recommendedPlayerCountMax,
     detailsUpdatedAt: detailsUpdatedAt.present
         ? detailsUpdatedAt.value
         : this.detailsUpdatedAt,
@@ -3112,12 +3280,24 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
       bestPlayerCount: data.bestPlayerCount.present
           ? data.bestPlayerCount.value
           : this.bestPlayerCount,
+      bestPlayerCountMin: data.bestPlayerCountMin.present
+          ? data.bestPlayerCountMin.value
+          : this.bestPlayerCountMin,
+      bestPlayerCountMax: data.bestPlayerCountMax.present
+          ? data.bestPlayerCountMax.value
+          : this.bestPlayerCountMax,
       suggestedPlayerAge: data.suggestedPlayerAge.present
           ? data.suggestedPlayerAge.value
           : this.suggestedPlayerAge,
       recommendedPlayerCount: data.recommendedPlayerCount.present
           ? data.recommendedPlayerCount.value
           : this.recommendedPlayerCount,
+      recommendedPlayerCountMin: data.recommendedPlayerCountMin.present
+          ? data.recommendedPlayerCountMin.value
+          : this.recommendedPlayerCountMin,
+      recommendedPlayerCountMax: data.recommendedPlayerCountMax.present
+          ? data.recommendedPlayerCountMax.value
+          : this.recommendedPlayerCountMax,
       detailsUpdatedAt: data.detailsUpdatedAt.present
           ? data.detailsUpdatedAt.value
           : this.detailsUpdatedAt,
@@ -3148,8 +3328,12 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
           ..write('description: $description, ')
           ..write('languageDependenceLevel: $languageDependenceLevel, ')
           ..write('bestPlayerCount: $bestPlayerCount, ')
+          ..write('bestPlayerCountMin: $bestPlayerCountMin, ')
+          ..write('bestPlayerCountMax: $bestPlayerCountMax, ')
           ..write('suggestedPlayerAge: $suggestedPlayerAge, ')
           ..write('recommendedPlayerCount: $recommendedPlayerCount, ')
+          ..write('recommendedPlayerCountMin: $recommendedPlayerCountMin, ')
+          ..write('recommendedPlayerCountMax: $recommendedPlayerCountMax, ')
           ..write('detailsUpdatedAt: $detailsUpdatedAt')
           ..write(')'))
         .toString();
@@ -3178,8 +3362,12 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
     description,
     languageDependenceLevel,
     bestPlayerCount,
+    bestPlayerCountMin,
+    bestPlayerCountMax,
     suggestedPlayerAge,
     recommendedPlayerCount,
+    recommendedPlayerCountMin,
+    recommendedPlayerCountMax,
     detailsUpdatedAt,
   ]);
   @override
@@ -3207,8 +3395,12 @@ class BoardGame extends DataClass implements Insertable<BoardGame> {
           other.description == this.description &&
           other.languageDependenceLevel == this.languageDependenceLevel &&
           other.bestPlayerCount == this.bestPlayerCount &&
+          other.bestPlayerCountMin == this.bestPlayerCountMin &&
+          other.bestPlayerCountMax == this.bestPlayerCountMax &&
           other.suggestedPlayerAge == this.suggestedPlayerAge &&
           other.recommendedPlayerCount == this.recommendedPlayerCount &&
+          other.recommendedPlayerCountMin == this.recommendedPlayerCountMin &&
+          other.recommendedPlayerCountMax == this.recommendedPlayerCountMax &&
           other.detailsUpdatedAt == this.detailsUpdatedAt);
 }
 
@@ -3234,8 +3426,12 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGame> {
   final Value<String?> description;
   final Value<String?> languageDependenceLevel;
   final Value<String?> bestPlayerCount;
+  final Value<int?> bestPlayerCountMin;
+  final Value<int?> bestPlayerCountMax;
   final Value<String?> suggestedPlayerAge;
   final Value<String?> recommendedPlayerCount;
+  final Value<int?> recommendedPlayerCountMin;
+  final Value<int?> recommendedPlayerCountMax;
   final Value<int?> detailsUpdatedAt;
   const BoardGamesCompanion({
     this.id = const Value.absent(),
@@ -3259,8 +3455,12 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGame> {
     this.description = const Value.absent(),
     this.languageDependenceLevel = const Value.absent(),
     this.bestPlayerCount = const Value.absent(),
+    this.bestPlayerCountMin = const Value.absent(),
+    this.bestPlayerCountMax = const Value.absent(),
     this.suggestedPlayerAge = const Value.absent(),
     this.recommendedPlayerCount = const Value.absent(),
+    this.recommendedPlayerCountMin = const Value.absent(),
+    this.recommendedPlayerCountMax = const Value.absent(),
     this.detailsUpdatedAt = const Value.absent(),
   });
   BoardGamesCompanion.insert({
@@ -3285,8 +3485,12 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGame> {
     this.description = const Value.absent(),
     this.languageDependenceLevel = const Value.absent(),
     this.bestPlayerCount = const Value.absent(),
+    this.bestPlayerCountMin = const Value.absent(),
+    this.bestPlayerCountMax = const Value.absent(),
     this.suggestedPlayerAge = const Value.absent(),
     this.recommendedPlayerCount = const Value.absent(),
+    this.recommendedPlayerCountMin = const Value.absent(),
+    this.recommendedPlayerCountMax = const Value.absent(),
     this.detailsUpdatedAt = const Value.absent(),
   });
   static Insertable<BoardGame> custom({
@@ -3311,8 +3515,12 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGame> {
     Expression<String>? description,
     Expression<String>? languageDependenceLevel,
     Expression<String>? bestPlayerCount,
+    Expression<int>? bestPlayerCountMin,
+    Expression<int>? bestPlayerCountMax,
     Expression<String>? suggestedPlayerAge,
     Expression<String>? recommendedPlayerCount,
+    Expression<int>? recommendedPlayerCountMin,
+    Expression<int>? recommendedPlayerCountMax,
     Expression<int>? detailsUpdatedAt,
   }) {
     return RawValuesInsertable({
@@ -3338,10 +3546,18 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGame> {
       if (languageDependenceLevel != null)
         'language_dependence_level': languageDependenceLevel,
       if (bestPlayerCount != null) 'best_player_count': bestPlayerCount,
+      if (bestPlayerCountMin != null)
+        'best_player_count_min': bestPlayerCountMin,
+      if (bestPlayerCountMax != null)
+        'best_player_count_max': bestPlayerCountMax,
       if (suggestedPlayerAge != null)
         'suggested_player_age': suggestedPlayerAge,
       if (recommendedPlayerCount != null)
         'recommended_player_count': recommendedPlayerCount,
+      if (recommendedPlayerCountMin != null)
+        'recommended_player_count_min': recommendedPlayerCountMin,
+      if (recommendedPlayerCountMax != null)
+        'recommended_player_count_max': recommendedPlayerCountMax,
       if (detailsUpdatedAt != null) 'details_updated_at': detailsUpdatedAt,
     });
   }
@@ -3368,8 +3584,12 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGame> {
     Value<String?>? description,
     Value<String?>? languageDependenceLevel,
     Value<String?>? bestPlayerCount,
+    Value<int?>? bestPlayerCountMin,
+    Value<int?>? bestPlayerCountMax,
     Value<String?>? suggestedPlayerAge,
     Value<String?>? recommendedPlayerCount,
+    Value<int?>? recommendedPlayerCountMin,
+    Value<int?>? recommendedPlayerCountMax,
     Value<int?>? detailsUpdatedAt,
   }) {
     return BoardGamesCompanion(
@@ -3395,9 +3615,15 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGame> {
       languageDependenceLevel:
           languageDependenceLevel ?? this.languageDependenceLevel,
       bestPlayerCount: bestPlayerCount ?? this.bestPlayerCount,
+      bestPlayerCountMin: bestPlayerCountMin ?? this.bestPlayerCountMin,
+      bestPlayerCountMax: bestPlayerCountMax ?? this.bestPlayerCountMax,
       suggestedPlayerAge: suggestedPlayerAge ?? this.suggestedPlayerAge,
       recommendedPlayerCount:
           recommendedPlayerCount ?? this.recommendedPlayerCount,
+      recommendedPlayerCountMin:
+          recommendedPlayerCountMin ?? this.recommendedPlayerCountMin,
+      recommendedPlayerCountMax:
+          recommendedPlayerCountMax ?? this.recommendedPlayerCountMax,
       detailsUpdatedAt: detailsUpdatedAt ?? this.detailsUpdatedAt,
     );
   }
@@ -3470,12 +3696,28 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGame> {
     if (bestPlayerCount.present) {
       map['best_player_count'] = Variable<String>(bestPlayerCount.value);
     }
+    if (bestPlayerCountMin.present) {
+      map['best_player_count_min'] = Variable<int>(bestPlayerCountMin.value);
+    }
+    if (bestPlayerCountMax.present) {
+      map['best_player_count_max'] = Variable<int>(bestPlayerCountMax.value);
+    }
     if (suggestedPlayerAge.present) {
       map['suggested_player_age'] = Variable<String>(suggestedPlayerAge.value);
     }
     if (recommendedPlayerCount.present) {
       map['recommended_player_count'] = Variable<String>(
         recommendedPlayerCount.value,
+      );
+    }
+    if (recommendedPlayerCountMin.present) {
+      map['recommended_player_count_min'] = Variable<int>(
+        recommendedPlayerCountMin.value,
+      );
+    }
+    if (recommendedPlayerCountMax.present) {
+      map['recommended_player_count_max'] = Variable<int>(
+        recommendedPlayerCountMax.value,
       );
     }
     if (detailsUpdatedAt.present) {
@@ -3508,8 +3750,12 @@ class BoardGamesCompanion extends UpdateCompanion<BoardGame> {
           ..write('description: $description, ')
           ..write('languageDependenceLevel: $languageDependenceLevel, ')
           ..write('bestPlayerCount: $bestPlayerCount, ')
+          ..write('bestPlayerCountMin: $bestPlayerCountMin, ')
+          ..write('bestPlayerCountMax: $bestPlayerCountMax, ')
           ..write('suggestedPlayerAge: $suggestedPlayerAge, ')
           ..write('recommendedPlayerCount: $recommendedPlayerCount, ')
+          ..write('recommendedPlayerCountMin: $recommendedPlayerCountMin, ')
+          ..write('recommendedPlayerCountMax: $recommendedPlayerCountMax, ')
           ..write('detailsUpdatedAt: $detailsUpdatedAt')
           ..write(')'))
         .toString();
@@ -7047,8 +7293,12 @@ typedef $$BoardGamesTableCreateCompanionBuilder =
       Value<String?> description,
       Value<String?> languageDependenceLevel,
       Value<String?> bestPlayerCount,
+      Value<int?> bestPlayerCountMin,
+      Value<int?> bestPlayerCountMax,
       Value<String?> suggestedPlayerAge,
       Value<String?> recommendedPlayerCount,
+      Value<int?> recommendedPlayerCountMin,
+      Value<int?> recommendedPlayerCountMax,
       Value<int?> detailsUpdatedAt,
     });
 typedef $$BoardGamesTableUpdateCompanionBuilder =
@@ -7074,8 +7324,12 @@ typedef $$BoardGamesTableUpdateCompanionBuilder =
       Value<String?> description,
       Value<String?> languageDependenceLevel,
       Value<String?> bestPlayerCount,
+      Value<int?> bestPlayerCountMin,
+      Value<int?> bestPlayerCountMax,
       Value<String?> suggestedPlayerAge,
       Value<String?> recommendedPlayerCount,
+      Value<int?> recommendedPlayerCountMin,
+      Value<int?> recommendedPlayerCountMax,
       Value<int?> detailsUpdatedAt,
     });
 
@@ -7243,6 +7497,16 @@ class $$BoardGamesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<int> get bestPlayerCountMin => $composableBuilder(
+    column: $table.bestPlayerCountMin,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get bestPlayerCountMax => $composableBuilder(
+    column: $table.bestPlayerCountMax,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get suggestedPlayerAge => $composableBuilder(
     column: $table.suggestedPlayerAge,
     builder: (column) => ColumnFilters(column),
@@ -7250,6 +7514,16 @@ class $$BoardGamesTableFilterComposer
 
   ColumnFilters<String> get recommendedPlayerCount => $composableBuilder(
     column: $table.recommendedPlayerCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get recommendedPlayerCountMin => $composableBuilder(
+    column: $table.recommendedPlayerCountMin,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get recommendedPlayerCountMax => $composableBuilder(
+    column: $table.recommendedPlayerCountMax,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -7423,6 +7697,16 @@ class $$BoardGamesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get bestPlayerCountMin => $composableBuilder(
+    column: $table.bestPlayerCountMin,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get bestPlayerCountMax => $composableBuilder(
+    column: $table.bestPlayerCountMax,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get suggestedPlayerAge => $composableBuilder(
     column: $table.suggestedPlayerAge,
     builder: (column) => ColumnOrderings(column),
@@ -7430,6 +7714,16 @@ class $$BoardGamesTableOrderingComposer
 
   ColumnOrderings<String> get recommendedPlayerCount => $composableBuilder(
     column: $table.recommendedPlayerCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get recommendedPlayerCountMin => $composableBuilder(
+    column: $table.recommendedPlayerCountMin,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get recommendedPlayerCountMax => $composableBuilder(
+    column: $table.recommendedPlayerCountMax,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -7543,6 +7837,16 @@ class $$BoardGamesTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<int> get bestPlayerCountMin => $composableBuilder(
+    column: $table.bestPlayerCountMin,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get bestPlayerCountMax => $composableBuilder(
+    column: $table.bestPlayerCountMax,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get suggestedPlayerAge => $composableBuilder(
     column: $table.suggestedPlayerAge,
     builder: (column) => column,
@@ -7550,6 +7854,16 @@ class $$BoardGamesTableAnnotationComposer
 
   GeneratedColumn<String> get recommendedPlayerCount => $composableBuilder(
     column: $table.recommendedPlayerCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get recommendedPlayerCountMin => $composableBuilder(
+    column: $table.recommendedPlayerCountMin,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get recommendedPlayerCountMax => $composableBuilder(
+    column: $table.recommendedPlayerCountMax,
     builder: (column) => column,
   );
 
@@ -7662,8 +7976,12 @@ class $$BoardGamesTableTableManager
                 Value<String?> description = const Value.absent(),
                 Value<String?> languageDependenceLevel = const Value.absent(),
                 Value<String?> bestPlayerCount = const Value.absent(),
+                Value<int?> bestPlayerCountMin = const Value.absent(),
+                Value<int?> bestPlayerCountMax = const Value.absent(),
                 Value<String?> suggestedPlayerAge = const Value.absent(),
                 Value<String?> recommendedPlayerCount = const Value.absent(),
+                Value<int?> recommendedPlayerCountMin = const Value.absent(),
+                Value<int?> recommendedPlayerCountMax = const Value.absent(),
                 Value<int?> detailsUpdatedAt = const Value.absent(),
               }) => BoardGamesCompanion(
                 id: id,
@@ -7687,8 +8005,12 @@ class $$BoardGamesTableTableManager
                 description: description,
                 languageDependenceLevel: languageDependenceLevel,
                 bestPlayerCount: bestPlayerCount,
+                bestPlayerCountMin: bestPlayerCountMin,
+                bestPlayerCountMax: bestPlayerCountMax,
                 suggestedPlayerAge: suggestedPlayerAge,
                 recommendedPlayerCount: recommendedPlayerCount,
+                recommendedPlayerCountMin: recommendedPlayerCountMin,
+                recommendedPlayerCountMax: recommendedPlayerCountMax,
                 detailsUpdatedAt: detailsUpdatedAt,
               ),
           createCompanionCallback:
@@ -7714,8 +8036,12 @@ class $$BoardGamesTableTableManager
                 Value<String?> description = const Value.absent(),
                 Value<String?> languageDependenceLevel = const Value.absent(),
                 Value<String?> bestPlayerCount = const Value.absent(),
+                Value<int?> bestPlayerCountMin = const Value.absent(),
+                Value<int?> bestPlayerCountMax = const Value.absent(),
                 Value<String?> suggestedPlayerAge = const Value.absent(),
                 Value<String?> recommendedPlayerCount = const Value.absent(),
+                Value<int?> recommendedPlayerCountMin = const Value.absent(),
+                Value<int?> recommendedPlayerCountMax = const Value.absent(),
                 Value<int?> detailsUpdatedAt = const Value.absent(),
               }) => BoardGamesCompanion.insert(
                 id: id,
@@ -7739,8 +8065,12 @@ class $$BoardGamesTableTableManager
                 description: description,
                 languageDependenceLevel: languageDependenceLevel,
                 bestPlayerCount: bestPlayerCount,
+                bestPlayerCountMin: bestPlayerCountMin,
+                bestPlayerCountMax: bestPlayerCountMax,
                 suggestedPlayerAge: suggestedPlayerAge,
                 recommendedPlayerCount: recommendedPlayerCount,
+                recommendedPlayerCountMin: recommendedPlayerCountMin,
+                recommendedPlayerCountMax: recommendedPlayerCountMax,
                 detailsUpdatedAt: detailsUpdatedAt,
               ),
           withReferenceMapper: (p0) => p0

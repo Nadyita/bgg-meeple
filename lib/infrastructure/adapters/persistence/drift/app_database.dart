@@ -26,7 +26,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 10;
+  int get schemaVersion => 11;
 
   @override
   MigrationStrategy get migration {
@@ -44,6 +44,11 @@ class AppDatabase extends _$AppDatabase {
             await m.deleteTable(table.actualTableName);
           }
           await m.createAll();
+        } else if (from < 11) {
+          await m.addColumn(boardGames, boardGames.bestPlayerCountMin);
+          await m.addColumn(boardGames, boardGames.bestPlayerCountMax);
+          await m.addColumn(boardGames, boardGames.recommendedPlayerCountMin);
+          await m.addColumn(boardGames, boardGames.recommendedPlayerCountMax);
         }
       },
     );
@@ -130,8 +135,12 @@ class BoardGames extends Table {
   TextColumn get description => text().nullable()();
   TextColumn get languageDependenceLevel => text().nullable()();
   TextColumn get bestPlayerCount => text().nullable()();
+  IntColumn get bestPlayerCountMin => integer().nullable()();
+  IntColumn get bestPlayerCountMax => integer().nullable()();
   TextColumn get suggestedPlayerAge => text().nullable()();
   TextColumn get recommendedPlayerCount => text().nullable()();
+  IntColumn get recommendedPlayerCountMin => integer().nullable()();
+  IntColumn get recommendedPlayerCountMax => integer().nullable()();
   IntColumn get detailsUpdatedAt => integer().nullable()();
 
   @override

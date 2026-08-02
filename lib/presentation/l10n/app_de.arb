@@ -297,6 +297,8 @@
   "detailVersion": "Version",
   "detailPlays": "Partien",
   "detailUserCount": "Bewertungen",
+  "detailRecommendedLabel": "Empfohlen",
+  "detailBestLabel": "Beste",
   "detailNotAvailable": "–",
   "detailGameNotFound": "Spiel nicht gefunden"
 }

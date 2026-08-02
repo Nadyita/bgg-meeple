@@ -440,6 +440,55 @@ void main() {
       expect(foundLabels, expectedOrder);
     });
 
+    testWidgets(
+      'shows combined player count with best and recommended ranges',
+      (tester) async {
+        const item = CollectionItem(
+          thingId: 1,
+          collId: 1,
+          names: [
+            LocalizedName(value: 'Catan', language: null, isPrimary: true),
+          ],
+          minPlayers: 2,
+          maxPlayers: 7,
+        );
+        const game = BoardGame(
+          id: 1,
+          names: [
+            LocalizedName(value: 'Catan', language: null, isPrimary: true),
+          ],
+          bestPlayerCount: '4-5',
+          bestPlayerCountMin: 4,
+          bestPlayerCountMax: 5,
+          recommendedPlayerCount: '3-6',
+          recommendedPlayerCountMin: 3,
+          recommendedPlayerCountMax: 6,
+        );
+
+        when(() => loadGameDetails.call(1, 1)).thenAnswer(
+          (_) async => const GameDetails(collectionItem: item, boardGame: game),
+        );
+
+        await tester.pumpWidget(
+          _buildApp(
+            home: GameDetailPage(
+              thingId: 1,
+              collId: 1,
+              loadGameDetails: loadGameDetails,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.textContaining('2 - 7 Players'), findsOneWidget);
+        expect(
+          find.textContaining('Recommended: 3 - 6 Players'),
+          findsOneWidget,
+        );
+        expect(find.textContaining('Best: 4 - 5 Players'), findsOneWidget);
+      },
+    );
+
     testWidgets('tapping alternate names toggle reveals names', (tester) async {
       const item = CollectionItem(
         thingId: 1,

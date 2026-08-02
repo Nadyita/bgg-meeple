@@ -12,9 +12,9 @@ void main() {
       await db.close();
     });
 
-    test('schema version is 10', () {
+    test('schema version is 11', () {
       db = AppDatabase(NativeDatabase.memory());
-      expect(db.schemaVersion, 10);
+      expect(db.schemaVersion, 11);
     });
 
     test('migration strategy is configured', () {
@@ -104,5 +104,50 @@ void main() {
         expect(row.description, 'A great game.');
       },
     );
+
+    test('upgrade from v10 to v11 adds player count range columns', () async {
+      db = AppDatabase(NativeDatabase.memory());
+      final migrator = db.createMigrator();
+
+      // The in-memory database is auto-created with the latest schema. Drop
+      // the v11 player-count range columns to simulate a v10 database before
+      // running the upgrade.
+      await db.customStatement(
+        'ALTER TABLE board_games DROP COLUMN best_player_count_min',
+      );
+      await db.customStatement(
+        'ALTER TABLE board_games DROP COLUMN best_player_count_max',
+      );
+      await db.customStatement(
+        'ALTER TABLE board_games DROP COLUMN recommended_player_count_min',
+      );
+      await db.customStatement(
+        'ALTER TABLE board_games DROP COLUMN recommended_player_count_max',
+      );
+
+      await db.migration.onUpgrade(migrator, 10, 11);
+
+      await db
+          .into(db.boardGames)
+          .insert(
+            const BoardGamesCompanion(
+              id: Value(1),
+              bestPlayerCount: Value('4-5'),
+              bestPlayerCountMin: Value(4),
+              bestPlayerCountMax: Value(5),
+              recommendedPlayerCount: Value('3-7'),
+              recommendedPlayerCountMin: Value(3),
+              recommendedPlayerCountMax: Value(7),
+            ),
+          );
+
+      final row = await db.select(db.boardGames).getSingle();
+      expect(row.id, 1);
+      expect(row.bestPlayerCount, '4-5');
+      expect(row.bestPlayerCountMin, 4);
+      expect(row.bestPlayerCountMax, 5);
+      expect(row.recommendedPlayerCountMin, 3);
+      expect(row.recommendedPlayerCountMax, 7);
+    });
   });
 }

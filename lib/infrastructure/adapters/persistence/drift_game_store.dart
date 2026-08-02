@@ -134,8 +134,12 @@ class DriftGameStore implements GameStore {
       description: Value(game.description),
       languageDependenceLevel: Value(game.languageDependenceLevel),
       bestPlayerCount: Value(game.bestPlayerCount),
+      bestPlayerCountMin: Value(game.bestPlayerCountMin),
+      bestPlayerCountMax: Value(game.bestPlayerCountMax),
       suggestedPlayerAge: Value(game.suggestedPlayerAge),
       recommendedPlayerCount: Value(game.recommendedPlayerCount),
+      recommendedPlayerCountMin: Value(game.recommendedPlayerCountMin),
+      recommendedPlayerCountMax: Value(game.recommendedPlayerCountMax),
       detailsUpdatedAt: Value(game.detailsUpdatedAt),
     );
   }
@@ -194,8 +198,12 @@ class DriftGameStore implements GameStore {
       links: links,
       languageDependenceLevel: row.languageDependenceLevel,
       bestPlayerCount: row.bestPlayerCount,
+      bestPlayerCountMin: row.bestPlayerCountMin,
+      bestPlayerCountMax: row.bestPlayerCountMax,
       suggestedPlayerAge: row.suggestedPlayerAge,
       recommendedPlayerCount: row.recommendedPlayerCount,
+      recommendedPlayerCountMin: row.recommendedPlayerCountMin,
+      recommendedPlayerCountMax: row.recommendedPlayerCountMax,
       detailsUpdatedAt: row.detailsUpdatedAt,
     );
   }

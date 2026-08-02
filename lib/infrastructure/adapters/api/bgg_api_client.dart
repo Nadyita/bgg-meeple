@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math' as math;
 
 import 'package:collection/collection.dart';
 import 'package:http/http.dart' as http;
@@ -35,6 +36,14 @@ class BggSessionExpiredException implements Exception {
 /// This adapter implements both [BggApi] and [AuthenticationService] so that the
 /// same instance owns the authenticated session and shares it across login tests
 /// and sync calls.
+class _PlayerCountRange {
+  const _PlayerCountRange({this.min, this.max, this.display});
+
+  final int? min;
+  final int? max;
+  final String? display;
+}
+
 class BggApiClient implements BggApi, AuthenticationService {
   BggApiClient({
     http.Client? httpClient,
@@ -69,9 +78,6 @@ class BggApiClient implements BggApi, AuthenticationService {
       }),
     );
 
-    // ignore: avoid_print
-    print('[BggApiClient] Login response status: ${response.statusCode}');
-
     if (response.statusCode == 400) {
       final message = _extractLoginError(response.body);
       throw Exception('BGG authentication failed: $message');
@@ -85,10 +91,6 @@ class BggApiClient implements BggApi, AuthenticationService {
 
     final cookies = _extractCookies(response.headers['set-cookie']);
     final token = _extractApiToken(response.body);
-    // ignore: avoid_print
-    print(
-      '[BggApiClient] Extracted token: ${token != null ? 'yes (length ${token.length})' : 'no'}',
-    );
     _session = BggSession(
       sessionCookies: cookies.sessionCookies,
       apiToken: token,
@@ -216,12 +218,6 @@ class BggApiClient implements BggApi, AuthenticationService {
     if (ids.isEmpty) return [];
 
     final session = _session;
-    // ignore: avoid_print
-    print('[BggApiClient] fetchGames called for ${ids.length} ids');
-    // ignore: avoid_print
-    print(
-      '[BggApiClient] session has cookies: ${session?.hasCookies}, has token: ${session?.hasApiToken}',
-    );
 
     if (session == null || !session.hasApiToken) {
       return [];
@@ -607,6 +603,9 @@ class BggApiClient implements BggApi, AuthenticationService {
     final minPlayers = _childInt(item, 'minplayers');
     final maxPlayers = _childInt(item, 'maxplayers');
     final minPlayTime = _childInt(item, 'minplaytime');
+
+    final bestRange = _bestPlayerCountRange(item);
+    final recommendedRange = _recommendedPlayerCountRange(item);
     final maxPlayTime = _childInt(item, 'maxplaytime');
     final playingTime = _childInt(item, 'playingtime');
     final minAge = _childInt(item, 'minage');
@@ -635,9 +634,13 @@ class BggApiClient implements BggApi, AuthenticationService {
       description: description,
       links: _parseGameLinks(item),
       languageDependenceLevel: _languageDependenceLevel(item),
-      bestPlayerCount: _bestPlayerCount(item),
+      bestPlayerCount: bestRange.display,
+      bestPlayerCountMin: bestRange.min,
+      bestPlayerCountMax: bestRange.max,
       suggestedPlayerAge: _suggestedPlayerAge(item),
-      recommendedPlayerCount: _recommendedPlayerCount(item),
+      recommendedPlayerCount: recommendedRange.display,
+      recommendedPlayerCountMin: recommendedRange.min,
+      recommendedPlayerCountMax: recommendedRange.max,
     );
   }
 
@@ -736,33 +739,35 @@ class BggApiClient implements BggApi, AuthenticationService {
     return links;
   }
 
-  String? _bestPlayerCount(XmlElement item) {
+  _PlayerCountRange _bestPlayerCountRange(XmlElement item) {
     final summary = item
         .findElements('poll-summary')
         .firstWhereOrNull(
           (p) => p.getAttribute('name') == 'suggested_numplayers',
         );
-    if (summary == null) return _legacyBestPlayerCount(item);
+    if (summary != null) {
+      final bestWith = summary
+          .findElements('result')
+          .firstWhereOrNull((r) => r.getAttribute('name') == 'bestwith');
+      final value = bestWith?.getAttribute('value');
+      if (value != null && value.isNotEmpty) {
+        final range = _parsePlayerCountRange(value);
+        if (range != null) return range;
+      }
+    }
 
-    final bestWith = summary
-        .findElements('result')
-        .firstWhereOrNull((r) => r.getAttribute('name') == 'bestwith');
-    final value = bestWith?.getAttribute('value');
-    if (value == null || value.isEmpty) return _legacyBestPlayerCount(item);
-
-    final match = RegExp(r'\d+\+?').firstMatch(value);
-    return match?.group(0);
+    return _legacyBestPlayerCountRange(item);
   }
 
-  String? _legacyBestPlayerCount(XmlElement item) {
+  _PlayerCountRange _legacyBestPlayerCountRange(XmlElement item) {
     final poll = item
         .findElements('poll')
         .firstWhereOrNull(
           (p) => p.getAttribute('name') == 'suggested_numplayers',
         );
-    if (poll == null) return null;
+    if (poll == null) return const _PlayerCountRange();
 
-    XmlElement? winner;
+    final winners = <String>[];
     var winnerVotes = -1;
     for (final results in poll.findElements('results')) {
       final numPlayers = results.getAttribute('numplayers');
@@ -773,23 +778,50 @@ class BggApiClient implements BggApi, AuthenticationService {
         if (value != 'Best') continue;
         final votesText = result.getAttribute('numvotes');
         final votes = int.tryParse(votesText ?? '');
-        if (votes != null && votes > winnerVotes) {
+        if (votes == null) continue;
+        if (votes > winnerVotes) {
           winnerVotes = votes;
-          winner = results;
+          winners.clear();
+          winners.add(numPlayers);
+        } else if (votes == winnerVotes) {
+          winners.add(numPlayers);
         }
       }
     }
 
-    return winner?.getAttribute('numplayers');
+    if (winners.isEmpty) return const _PlayerCountRange();
+    return _playerCountRangeFromValues(winners);
   }
 
-  String? _recommendedPlayerCount(XmlElement item) {
+  _PlayerCountRange _recommendedPlayerCountRange(XmlElement item) {
+    final summary = item
+        .findElements('poll-summary')
+        .firstWhereOrNull(
+          (p) => p.getAttribute('name') == 'suggested_numplayers',
+        );
+    if (summary != null) {
+      final recommendedWith = summary
+          .findElements('result')
+          .firstWhereOrNull(
+            (r) => r.getAttribute('name') == 'recommmendedwith',
+          );
+      final value = recommendedWith?.getAttribute('value');
+      if (value != null && value.isNotEmpty) {
+        final range = _parsePlayerCountRange(value);
+        if (range != null) return range;
+      }
+    }
+
+    return _legacyRecommendedPlayerCountRange(item);
+  }
+
+  _PlayerCountRange _legacyRecommendedPlayerCountRange(XmlElement item) {
     final poll = item
         .findElements('poll')
         .firstWhereOrNull(
           (p) => p.getAttribute('name') == 'suggested_numplayers',
         );
-    if (poll == null) return null;
+    if (poll == null) return const _PlayerCountRange();
 
     final recommended = <String>[];
     for (final results in poll.findElements('results')) {
@@ -813,8 +845,94 @@ class BggApiClient implements BggApi, AuthenticationService {
       }
     }
 
-    if (recommended.isEmpty) return null;
-    return recommended.join(', ');
+    if (recommended.isEmpty) return const _PlayerCountRange();
+    return _playerCountRangeFromConsecutiveValues(recommended);
+  }
+
+  _PlayerCountRange? _parsePlayerCountRange(String text) {
+    // Normalize dashes: en-dash, em-dash, hyphen-minus all become '-'
+    final normalized = text.replaceAll('–', '-').replaceAll('—', '-');
+
+    final match = RegExp(
+      r'(?<min>\d+)\s*(?:-\s*(?<max>\d+))?\s*(?<plus>\+)?',
+    ).firstMatch(normalized);
+    if (match == null) return null;
+
+    final minText = match.namedGroup('min');
+    final maxText = match.namedGroup('max');
+    final hasPlus = match.namedGroup('plus') != null;
+    final min = int.tryParse(minText ?? '');
+    if (min == null) return null;
+
+    int? max;
+    if (maxText != null) {
+      max = int.tryParse(maxText);
+    } else if (!hasPlus) {
+      max = min;
+    }
+    if (hasPlus) {
+      max = null;
+    }
+
+    final display = _formatPlayerCountRange(min, max);
+    return _PlayerCountRange(min: min, max: max, display: display);
+  }
+
+  String _formatPlayerCountRange(int min, int? max) {
+    if (max == null) return '$min+';
+    if (min == max) return '$min';
+    return '$min-$max';
+  }
+
+  _PlayerCountRange _playerCountRangeFromValues(List<String> values) {
+    final numbers = values
+        .map(_parsePlayerCountValue)
+        .whereType<int>()
+        .toList();
+    if (numbers.isEmpty) return const _PlayerCountRange();
+    final min = numbers.reduce(math.min);
+    final max = numbers.reduce(math.max);
+    return _PlayerCountRange(
+      min: min,
+      max: max,
+      display: _formatPlayerCountRange(min, max),
+    );
+  }
+
+  _PlayerCountRange _playerCountRangeFromConsecutiveValues(
+    List<String> values,
+  ) {
+    final numbers = values.map(_parsePlayerCountValue).whereType<int>().toList()
+      ..sort();
+    if (numbers.isEmpty) return const _PlayerCountRange();
+
+    var bestStart = 0;
+    var bestEnd = 0;
+    var currentStart = 0;
+    for (var i = 1; i < numbers.length; i++) {
+      if (numbers[i] == numbers[i - 1] + 1) {
+        if (i - currentStart > bestEnd - bestStart) {
+          bestStart = currentStart;
+          bestEnd = i;
+        }
+      } else {
+        currentStart = i;
+      }
+    }
+
+    final min = numbers[bestStart];
+    final max = numbers[bestEnd];
+    return _PlayerCountRange(
+      min: min,
+      max: min == max ? min : max,
+      display: _formatPlayerCountRange(min, min == max ? min : max),
+    );
+  }
+
+  int? _parsePlayerCountValue(String value) {
+    final match = RegExp(r'^\d+').firstMatch(value);
+    if (match == null) return null;
+    return int.tryParse(match.group(0)!);
   }
 
   double? _ratingValue(XmlElement? ratings, String tag) {

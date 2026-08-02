@@ -181,9 +181,13 @@ void main() {
           ],
           description: 'A great game.',
           bestPlayerCount: '3',
+          bestPlayerCountMin: 3,
+          bestPlayerCountMax: 4,
           suggestedPlayerAge: '10.5',
           languageDependenceLevel: '2',
           recommendedPlayerCount: '3–4',
+          recommendedPlayerCountMin: 3,
+          recommendedPlayerCountMax: 4,
           detailsUpdatedAt: 123456789,
         ),
       ];
@@ -194,9 +198,13 @@ void main() {
       final game = loaded.first;
       expect(game.description, 'A great game.');
       expect(game.bestPlayerCount, '3');
+      expect(game.bestPlayerCountMin, 3);
+      expect(game.bestPlayerCountMax, 4);
       expect(game.suggestedPlayerAge, '10.5');
       expect(game.languageDependenceLevel, '2');
       expect(game.recommendedPlayerCount, '3–4');
+      expect(game.recommendedPlayerCountMin, 3);
+      expect(game.recommendedPlayerCountMax, 4);
       expect(game.detailsUpdatedAt, 123456789);
     });
   });
