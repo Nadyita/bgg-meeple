@@ -70,12 +70,24 @@ class AppDatabase extends _$AppDatabase {
 }
 
 Future<Directory> _databaseDirectory() async {
-  final dir = await getApplicationDocumentsDirectory();
-  final dbDir = Directory(p.join(dir.path, 'databases'));
+  final baseDir = Platform.isLinux
+      ? _linuxDataDirectory()
+      : await getApplicationDocumentsDirectory();
+  final dbDir = Directory(p.join(baseDir.path, 'databases'));
   if (!dbDir.existsSync()) {
     dbDir.createSync(recursive: true);
   }
   return dbDir;
+}
+
+Directory _linuxDataDirectory() {
+  final xdgDataHome = Platform.environment['XDG_DATA_HOME'];
+  final dataDir = xdgDataHome != null && xdgDataHome.isNotEmpty
+      ? Directory(xdgDataHome)
+      : Directory(
+          p.join(Platform.environment['HOME'] ?? '', '.local', 'share'),
+        );
+  return Directory(p.join(dataDir.path, 'com.bggmeeple.bgg_meeple'));
 }
 
 /// Local cache for a single collection item.
