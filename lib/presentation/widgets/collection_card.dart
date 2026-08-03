@@ -105,7 +105,12 @@ class CollectionCard extends StatelessWidget {
     for (final field in effectiveConfig.fieldOrder) {
       if (!effectiveConfig.isEnabled(field)) continue;
 
-      final line = _metadataLineFor(field, effectiveConfig, localizations);
+      final line = _metadataLineFor(
+        field,
+        effectiveConfig,
+        localizations,
+        context,
+      );
       if (line == null) continue;
 
       if (lastAdded) {
@@ -122,6 +127,7 @@ class CollectionCard extends StatelessWidget {
     CardField field,
     CardLayoutConfig effectiveConfig,
     AppLocalizations localizations,
+    BuildContext context,
   ) {
     return switch (field) {
       CardField.playerCount => _playerCountLine(effectiveConfig, localizations),
@@ -132,7 +138,7 @@ class CollectionCard extends StatelessWidget {
       CardField.plays => _playsLine(effectiveConfig, localizations),
       CardField.ownRating => _ownRatingLine(localizations),
       CardField.geekRating => _geekRatingLine(effectiveConfig, localizations),
-      CardField.minAge => _minAgeLine(localizations),
+      CardField.minAge => _minAgeLine(context, localizations),
       CardField.bggRank => _bggRankLine(localizations),
       CardField.inventoryLocation => _inventoryLocationLine(localizations),
     };
@@ -168,12 +174,35 @@ class CollectionCard extends StatelessWidget {
     return _MetadataLine(icon: Icons.star, text: text);
   }
 
-  Widget? _minAgeLine(AppLocalizations localizations) {
+  Widget? _minAgeLine(BuildContext context, AppLocalizations localizations) {
     final age = item.minAge;
     if (age == null) return null;
-    return _MetadataLine(
-      icon: Icons.child_care,
-      text: localizations.cardMinAgeLabel(age),
+
+    final suggested = item.suggestedPlayerAge;
+    final iconColor = Theme.of(context).colorScheme.onSurfaceVariant;
+    final style = Theme.of(context).textTheme.bodySmall;
+
+    return Row(
+      children: [
+        Icon(Icons.child_care, size: 16, color: iconColor),
+        const SizedBox(width: 4),
+        Expanded(
+          child: Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              Text(localizations.cardMinAgeLabel(age), style: style),
+              if (suggested != null && suggested.isNotEmpty) ...[
+                const SizedBox(width: 4),
+                Text('·', style: style),
+                const SizedBox(width: 4),
+                Icon(Icons.thumb_up, size: 14, color: iconColor),
+                const SizedBox(width: 2),
+                Text(suggested, style: style),
+              ],
+            ],
+          ),
+        ),
+      ],
     );
   }
 

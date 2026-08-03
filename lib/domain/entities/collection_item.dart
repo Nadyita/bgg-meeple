@@ -31,6 +31,7 @@ class CollectionItem {
     this.recommendedPlayerCount,
     this.recommendedPlayerCountMin,
     this.recommendedPlayerCountMax,
+    this.suggestedPlayerAge,
     this.isOwned = false,
     this.isPreordered = false,
     this.isWishlisted = false,
@@ -71,6 +72,7 @@ class CollectionItem {
   final String? recommendedPlayerCount;
   final int? recommendedPlayerCountMin;
   final int? recommendedPlayerCountMax;
+  final String? suggestedPlayerAge;
   final bool isOwned;
   final bool isPreordered;
   final bool isWishlisted;
@@ -167,6 +169,7 @@ class CollectionItem {
     String? recommendedPlayerCount,
     int? recommendedPlayerCountMin,
     int? recommendedPlayerCountMax,
+    String? suggestedPlayerAge,
     bool? isOwned,
     bool? isPreordered,
     bool? isWishlisted,
@@ -210,6 +213,7 @@ class CollectionItem {
           recommendedPlayerCountMin ?? this.recommendedPlayerCountMin,
       recommendedPlayerCountMax:
           recommendedPlayerCountMax ?? this.recommendedPlayerCountMax,
+      suggestedPlayerAge: suggestedPlayerAge ?? this.suggestedPlayerAge,
       isOwned: isOwned ?? this.isOwned,
       isPreordered: isPreordered ?? this.isPreordered,
       isWishlisted: isWishlisted ?? this.isWishlisted,

@@ -153,6 +153,7 @@ void main() {
       expect(game.recommendedPlayerCountMax, 5);
       expect(game.suggestedPlayerAge, '9.5');
       expect(game.languageDependenceLevel, '2');
+      expect(game.minAge, 10);
 
       final families = game.links.where((l) => l.type == 'family').toList();
       expect(families, hasLength(2));

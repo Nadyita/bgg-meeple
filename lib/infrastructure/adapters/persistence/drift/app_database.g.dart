@@ -588,6 +588,17 @@ class $CollectionItemsTable extends CollectionItems
         type: DriftSqlType.int,
         requiredDuringInsert: false,
       );
+  static const VerificationMeta _suggestedPlayerAgeMeta =
+      const VerificationMeta('suggestedPlayerAge');
+  @override
+  late final GeneratedColumn<String> suggestedPlayerAge =
+      GeneratedColumn<String>(
+        'suggested_player_age',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
   static const VerificationMeta _isOwnedMeta = const VerificationMeta(
     'isOwned',
   );
@@ -793,6 +804,7 @@ class $CollectionItemsTable extends CollectionItems
     recommendedPlayerCount,
     recommendedPlayerCountMin,
     recommendedPlayerCountMax,
+    suggestedPlayerAge,
     isOwned,
     isPreordered,
     isWishlisted,
@@ -1026,6 +1038,15 @@ class $CollectionItemsTable extends CollectionItems
         ),
       );
     }
+    if (data.containsKey('suggested_player_age')) {
+      context.handle(
+        _suggestedPlayerAgeMeta,
+        suggestedPlayerAge.isAcceptableOrUnknown(
+          data['suggested_player_age']!,
+          _suggestedPlayerAgeMeta,
+        ),
+      );
+    }
     if (data.containsKey('is_owned')) {
       context.handle(
         _isOwnedMeta,
@@ -1232,6 +1253,10 @@ class $CollectionItemsTable extends CollectionItems
         DriftSqlType.int,
         data['${effectivePrefix}recommended_player_count_max'],
       ),
+      suggestedPlayerAge: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}suggested_player_age'],
+      ),
       isOwned: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
         data['${effectivePrefix}is_owned'],
@@ -1316,6 +1341,7 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
   final String? recommendedPlayerCount;
   final int? recommendedPlayerCountMin;
   final int? recommendedPlayerCountMax;
+  final String? suggestedPlayerAge;
   final bool isOwned;
   final bool isPreordered;
   final bool isWishlisted;
@@ -1355,6 +1381,7 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
     this.recommendedPlayerCount,
     this.recommendedPlayerCountMin,
     this.recommendedPlayerCountMax,
+    this.suggestedPlayerAge,
     required this.isOwned,
     required this.isPreordered,
     required this.isWishlisted,
@@ -1451,6 +1478,9 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
         recommendedPlayerCountMax,
       );
     }
+    if (!nullToAbsent || suggestedPlayerAge != null) {
+      map['suggested_player_age'] = Variable<String>(suggestedPlayerAge);
+    }
     map['is_owned'] = Variable<bool>(isOwned);
     map['is_preordered'] = Variable<bool>(isPreordered);
     map['is_wishlisted'] = Variable<bool>(isWishlisted);
@@ -1546,6 +1576,9 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
           recommendedPlayerCountMax == null && nullToAbsent
           ? const Value.absent()
           : Value(recommendedPlayerCountMax),
+      suggestedPlayerAge: suggestedPlayerAge == null && nullToAbsent
+          ? const Value.absent()
+          : Value(suggestedPlayerAge),
       isOwned: Value(isOwned),
       isPreordered: Value(isPreordered),
       isWishlisted: Value(isWishlisted),
@@ -1607,6 +1640,9 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
       recommendedPlayerCountMax: serializer.fromJson<int?>(
         json['recommendedPlayerCountMax'],
       ),
+      suggestedPlayerAge: serializer.fromJson<String?>(
+        json['suggestedPlayerAge'],
+      ),
       isOwned: serializer.fromJson<bool>(json['isOwned']),
       isPreordered: serializer.fromJson<bool>(json['isPreordered']),
       isWishlisted: serializer.fromJson<bool>(json['isWishlisted']),
@@ -1657,6 +1693,7 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
       'recommendedPlayerCountMax': serializer.toJson<int?>(
         recommendedPlayerCountMax,
       ),
+      'suggestedPlayerAge': serializer.toJson<String?>(suggestedPlayerAge),
       'isOwned': serializer.toJson<bool>(isOwned),
       'isPreordered': serializer.toJson<bool>(isPreordered),
       'isWishlisted': serializer.toJson<bool>(isWishlisted),
@@ -1699,6 +1736,7 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
     Value<String?> recommendedPlayerCount = const Value.absent(),
     Value<int?> recommendedPlayerCountMin = const Value.absent(),
     Value<int?> recommendedPlayerCountMax = const Value.absent(),
+    Value<String?> suggestedPlayerAge = const Value.absent(),
     bool? isOwned,
     bool? isPreordered,
     bool? isWishlisted,
@@ -1760,6 +1798,9 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
     recommendedPlayerCountMax: recommendedPlayerCountMax.present
         ? recommendedPlayerCountMax.value
         : this.recommendedPlayerCountMax,
+    suggestedPlayerAge: suggestedPlayerAge.present
+        ? suggestedPlayerAge.value
+        : this.suggestedPlayerAge,
     isOwned: isOwned ?? this.isOwned,
     isPreordered: isPreordered ?? this.isPreordered,
     isWishlisted: isWishlisted ?? this.isWishlisted,
@@ -1839,6 +1880,9 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
       recommendedPlayerCountMax: data.recommendedPlayerCountMax.present
           ? data.recommendedPlayerCountMax.value
           : this.recommendedPlayerCountMax,
+      suggestedPlayerAge: data.suggestedPlayerAge.present
+          ? data.suggestedPlayerAge.value
+          : this.suggestedPlayerAge,
       isOwned: data.isOwned.present ? data.isOwned.value : this.isOwned,
       isPreordered: data.isPreordered.present
           ? data.isPreordered.value
@@ -1899,6 +1943,7 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
           ..write('recommendedPlayerCount: $recommendedPlayerCount, ')
           ..write('recommendedPlayerCountMin: $recommendedPlayerCountMin, ')
           ..write('recommendedPlayerCountMax: $recommendedPlayerCountMax, ')
+          ..write('suggestedPlayerAge: $suggestedPlayerAge, ')
           ..write('isOwned: $isOwned, ')
           ..write('isPreordered: $isPreordered, ')
           ..write('isWishlisted: $isWishlisted, ')
@@ -1943,6 +1988,7 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
     recommendedPlayerCount,
     recommendedPlayerCountMin,
     recommendedPlayerCountMax,
+    suggestedPlayerAge,
     isOwned,
     isPreordered,
     isWishlisted,
@@ -1986,6 +2032,7 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
           other.recommendedPlayerCount == this.recommendedPlayerCount &&
           other.recommendedPlayerCountMin == this.recommendedPlayerCountMin &&
           other.recommendedPlayerCountMax == this.recommendedPlayerCountMax &&
+          other.suggestedPlayerAge == this.suggestedPlayerAge &&
           other.isOwned == this.isOwned &&
           other.isPreordered == this.isPreordered &&
           other.isWishlisted == this.isWishlisted &&
@@ -2027,6 +2074,7 @@ class CollectionItemsCompanion extends UpdateCompanion<CollectionItem> {
   final Value<String?> recommendedPlayerCount;
   final Value<int?> recommendedPlayerCountMin;
   final Value<int?> recommendedPlayerCountMax;
+  final Value<String?> suggestedPlayerAge;
   final Value<bool> isOwned;
   final Value<bool> isPreordered;
   final Value<bool> isWishlisted;
@@ -2067,6 +2115,7 @@ class CollectionItemsCompanion extends UpdateCompanion<CollectionItem> {
     this.recommendedPlayerCount = const Value.absent(),
     this.recommendedPlayerCountMin = const Value.absent(),
     this.recommendedPlayerCountMax = const Value.absent(),
+    this.suggestedPlayerAge = const Value.absent(),
     this.isOwned = const Value.absent(),
     this.isPreordered = const Value.absent(),
     this.isWishlisted = const Value.absent(),
@@ -2108,6 +2157,7 @@ class CollectionItemsCompanion extends UpdateCompanion<CollectionItem> {
     this.recommendedPlayerCount = const Value.absent(),
     this.recommendedPlayerCountMin = const Value.absent(),
     this.recommendedPlayerCountMax = const Value.absent(),
+    this.suggestedPlayerAge = const Value.absent(),
     this.isOwned = const Value.absent(),
     this.isPreordered = const Value.absent(),
     this.isWishlisted = const Value.absent(),
@@ -2150,6 +2200,7 @@ class CollectionItemsCompanion extends UpdateCompanion<CollectionItem> {
     Expression<String>? recommendedPlayerCount,
     Expression<int>? recommendedPlayerCountMin,
     Expression<int>? recommendedPlayerCountMax,
+    Expression<String>? suggestedPlayerAge,
     Expression<bool>? isOwned,
     Expression<bool>? isPreordered,
     Expression<bool>? isWishlisted,
@@ -2198,6 +2249,8 @@ class CollectionItemsCompanion extends UpdateCompanion<CollectionItem> {
         'recommended_player_count_min': recommendedPlayerCountMin,
       if (recommendedPlayerCountMax != null)
         'recommended_player_count_max': recommendedPlayerCountMax,
+      if (suggestedPlayerAge != null)
+        'suggested_player_age': suggestedPlayerAge,
       if (isOwned != null) 'is_owned': isOwned,
       if (isPreordered != null) 'is_preordered': isPreordered,
       if (isWishlisted != null) 'is_wishlisted': isWishlisted,
@@ -2241,6 +2294,7 @@ class CollectionItemsCompanion extends UpdateCompanion<CollectionItem> {
     Value<String?>? recommendedPlayerCount,
     Value<int?>? recommendedPlayerCountMin,
     Value<int?>? recommendedPlayerCountMax,
+    Value<String?>? suggestedPlayerAge,
     Value<bool>? isOwned,
     Value<bool>? isPreordered,
     Value<bool>? isWishlisted,
@@ -2285,6 +2339,7 @@ class CollectionItemsCompanion extends UpdateCompanion<CollectionItem> {
           recommendedPlayerCountMin ?? this.recommendedPlayerCountMin,
       recommendedPlayerCountMax:
           recommendedPlayerCountMax ?? this.recommendedPlayerCountMax,
+      suggestedPlayerAge: suggestedPlayerAge ?? this.suggestedPlayerAge,
       isOwned: isOwned ?? this.isOwned,
       isPreordered: isPreordered ?? this.isPreordered,
       isWishlisted: isWishlisted ?? this.isWishlisted,
@@ -2388,6 +2443,9 @@ class CollectionItemsCompanion extends UpdateCompanion<CollectionItem> {
         recommendedPlayerCountMax.value,
       );
     }
+    if (suggestedPlayerAge.present) {
+      map['suggested_player_age'] = Variable<String>(suggestedPlayerAge.value);
+    }
     if (isOwned.present) {
       map['is_owned'] = Variable<bool>(isOwned.value);
     }
@@ -2459,6 +2517,7 @@ class CollectionItemsCompanion extends UpdateCompanion<CollectionItem> {
           ..write('recommendedPlayerCount: $recommendedPlayerCount, ')
           ..write('recommendedPlayerCountMin: $recommendedPlayerCountMin, ')
           ..write('recommendedPlayerCountMax: $recommendedPlayerCountMax, ')
+          ..write('suggestedPlayerAge: $suggestedPlayerAge, ')
           ..write('isOwned: $isOwned, ')
           ..write('isPreordered: $isPreordered, ')
           ..write('isWishlisted: $isWishlisted, ')
@@ -6783,6 +6842,7 @@ typedef $$CollectionItemsTableCreateCompanionBuilder =
       Value<String?> recommendedPlayerCount,
       Value<int?> recommendedPlayerCountMin,
       Value<int?> recommendedPlayerCountMax,
+      Value<String?> suggestedPlayerAge,
       Value<bool> isOwned,
       Value<bool> isPreordered,
       Value<bool> isWishlisted,
@@ -6825,6 +6885,7 @@ typedef $$CollectionItemsTableUpdateCompanionBuilder =
       Value<String?> recommendedPlayerCount,
       Value<int?> recommendedPlayerCountMin,
       Value<int?> recommendedPlayerCountMax,
+      Value<String?> suggestedPlayerAge,
       Value<bool> isOwned,
       Value<bool> isPreordered,
       Value<bool> isWishlisted,
@@ -7005,6 +7066,11 @@ class $$CollectionItemsTableFilterComposer
 
   ColumnFilters<int> get recommendedPlayerCountMax => $composableBuilder(
     column: $table.recommendedPlayerCountMax,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get suggestedPlayerAge => $composableBuilder(
+    column: $table.suggestedPlayerAge,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -7226,6 +7292,11 @@ class $$CollectionItemsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get suggestedPlayerAge => $composableBuilder(
+    column: $table.suggestedPlayerAge,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<bool> get isOwned => $composableBuilder(
     column: $table.isOwned,
     builder: (column) => ColumnOrderings(column),
@@ -7430,6 +7501,11 @@ class $$CollectionItemsTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<String> get suggestedPlayerAge => $composableBuilder(
+    column: $table.suggestedPlayerAge,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<bool> get isOwned =>
       $composableBuilder(column: $table.isOwned, builder: (column) => column);
 
@@ -7559,6 +7635,7 @@ class $$CollectionItemsTableTableManager
                 Value<String?> recommendedPlayerCount = const Value.absent(),
                 Value<int?> recommendedPlayerCountMin = const Value.absent(),
                 Value<int?> recommendedPlayerCountMax = const Value.absent(),
+                Value<String?> suggestedPlayerAge = const Value.absent(),
                 Value<bool> isOwned = const Value.absent(),
                 Value<bool> isPreordered = const Value.absent(),
                 Value<bool> isWishlisted = const Value.absent(),
@@ -7599,6 +7676,7 @@ class $$CollectionItemsTableTableManager
                 recommendedPlayerCount: recommendedPlayerCount,
                 recommendedPlayerCountMin: recommendedPlayerCountMin,
                 recommendedPlayerCountMax: recommendedPlayerCountMax,
+                suggestedPlayerAge: suggestedPlayerAge,
                 isOwned: isOwned,
                 isPreordered: isPreordered,
                 isWishlisted: isWishlisted,
@@ -7641,6 +7719,7 @@ class $$CollectionItemsTableTableManager
                 Value<String?> recommendedPlayerCount = const Value.absent(),
                 Value<int?> recommendedPlayerCountMin = const Value.absent(),
                 Value<int?> recommendedPlayerCountMax = const Value.absent(),
+                Value<String?> suggestedPlayerAge = const Value.absent(),
                 Value<bool> isOwned = const Value.absent(),
                 Value<bool> isPreordered = const Value.absent(),
                 Value<bool> isWishlisted = const Value.absent(),
@@ -7681,6 +7760,7 @@ class $$CollectionItemsTableTableManager
                 recommendedPlayerCount: recommendedPlayerCount,
                 recommendedPlayerCountMin: recommendedPlayerCountMin,
                 recommendedPlayerCountMax: recommendedPlayerCountMax,
+                suggestedPlayerAge: suggestedPlayerAge,
                 isOwned: isOwned,
                 isPreordered: isPreordered,
                 isWishlisted: isWishlisted,

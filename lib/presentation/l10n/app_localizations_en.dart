@@ -448,4 +448,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get detailGameNotFound => 'Game not found';
+
+  @override
+  String get detailMinAgeLabel => 'Min age';
+
+  @override
+  String get detailLanguageDependenceLabel => 'Language';
+
+  @override
+  String get detailLanguageDependenceLevel1 => 'No necessary in-game text';
+
+  @override
+  String get detailLanguageDependenceLevel2 =>
+      'Some necessary text - easily memorized or small crib sheet';
+
+  @override
+  String get detailLanguageDependenceLevel3 =>
+      'Moderate in-game text - needs crib sheet or paste ups';
+
+  @override
+  String get detailLanguageDependenceLevel4 =>
+      'Extensive use of text - massive conversion needed to be playable';
+
+  @override
+  String get detailLanguageDependenceLevel5 => 'Unplayable in another language';
 }

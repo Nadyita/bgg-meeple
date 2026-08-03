@@ -323,5 +323,15 @@
     }
   },
   "detailNotAvailable": "–",
-  "detailGameNotFound": "Game not found"
+  "detailGameNotFound": "Game not found",
+  "detailMinAgeLabel": "Min age",
+  "@detailMinAgeLabel": {
+    "description": "Label for the minimum age row on the game detail screen"
+  },
+  "detailLanguageDependenceLabel": "Language",
+  "detailLanguageDependenceLevel1": "No necessary in-game text",
+  "detailLanguageDependenceLevel2": "Some necessary text - easily memorized or small crib sheet",
+  "detailLanguageDependenceLevel3": "Moderate in-game text - needs crib sheet or paste ups",
+  "detailLanguageDependenceLevel4": "Extensive use of text - massive conversion needed to be playable",
+  "detailLanguageDependenceLevel5": "Unplayable in another language"
 }

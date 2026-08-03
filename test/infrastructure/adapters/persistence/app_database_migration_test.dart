@@ -12,9 +12,9 @@ void main() {
       await db.close();
     });
 
-    test('schema version is 13', () {
+    test('schema version is 14', () {
       db = AppDatabase(NativeDatabase.memory());
-      expect(db.schemaVersion, 13);
+      expect(db.schemaVersion, 14);
     });
 
     test('migration strategy is configured', () {
@@ -166,6 +166,36 @@ void main() {
         final row = await db.select(db.boardGames).getSingle();
         expect(row.id, 1);
         expect(row.detailsUpdatedAt, isNull);
+      },
+    );
+
+    test(
+      'upgrade from v13 to v14 adds suggestedPlayerAge column to collection items',
+      () async {
+        db = AppDatabase(NativeDatabase.memory());
+        final migrator = db.createMigrator();
+        await db.migration.onCreate(migrator);
+
+        // Simulate the v13 schema by dropping the column added in v14.
+        await db.customStatement(
+          'ALTER TABLE collection_items DROP COLUMN suggested_player_age',
+        );
+
+        await db.migration.onUpgrade(migrator, 13, 14);
+
+        await db
+            .into(db.collectionItems)
+            .insert(
+              const CollectionItemsCompanion(
+                thingId: Value(1),
+                collId: Value(1),
+                suggestedPlayerAge: Value('10.0'),
+              ),
+            );
+
+        final row = await db.select(db.collectionItems).getSingle();
+        expect(row.thingId, 1);
+        expect(row.suggestedPlayerAge, '10.0');
       },
     );
 

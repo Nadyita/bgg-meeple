@@ -323,5 +323,15 @@
     }
   },
   "detailNotAvailable": "–",
-  "detailGameNotFound": "Spiel nicht gefunden"
+  "detailGameNotFound": "Spiel nicht gefunden",
+  "detailMinAgeLabel": "Mindestalter",
+  "@detailMinAgeLabel": {
+    "description": "Bezeichnung für die Mindestalter-Zeile auf der Spieldetailseite"
+  },
+  "detailLanguageDependenceLabel": "Sprache",
+  "detailLanguageDependenceLevel1": "Kein notwendiger Spieltext",
+  "detailLanguageDependenceLevel2": "Wenig notwendiger Text - leicht zu merken oder kleine Spickzettel",
+  "detailLanguageDependenceLevel3": "Mittlerer Spieltext - Spickzettel oder Ergänzungen nötig",
+  "detailLanguageDependenceLevel4": "Umfangreicher Text - große Anpassungen nötig, um spielbar zu sein",
+  "detailLanguageDependenceLevel5": "In anderer Sprache unspielbar"
 }

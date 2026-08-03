@@ -54,43 +54,59 @@ void main() {
       verifyNever(() => gameStore.loadByIds(any()));
     });
 
-    test('backfills missing player counts from cached board games', () async {
-      const items = [
-        CollectionItem(thingId: 1, names: [], minPlayers: 3, maxPlayers: 16),
-        CollectionItem(
-          thingId: 2,
-          names: [],
-          minPlayers: 1,
-          maxPlayers: 4,
-          recommendedPlayerCount: '2 - 3',
-        ),
-      ];
-      final games = [
-        const BoardGame(
-          id: 1,
-          names: [
-            LocalizedName(value: 'Activity', language: null, isPrimary: true),
-          ],
-          recommendedPlayerCount: '4, 6-10, 12',
-          recommendedPlayerCountMin: 4,
-          recommendedPlayerCountMax: 12,
-          bestPlayerCount: '6, 8',
-          bestPlayerCountMin: 6,
-          bestPlayerCountMax: 8,
-        ),
-      ];
-      when(collectionStore.loadAll).thenAnswer((_) async => items);
-      when(() => gameStore.loadByIds([1, 2])).thenAnswer((_) async => games);
+    test(
+      'backfills missing player counts, min age and suggested age from cached board games',
+      () async {
+        const items = [
+          CollectionItem(thingId: 1, names: [], minPlayers: 3, maxPlayers: 16),
+          CollectionItem(
+            thingId: 2,
+            names: [],
+            minPlayers: 1,
+            maxPlayers: 4,
+            recommendedPlayerCount: '2 - 3',
+            minAge: 8,
+          ),
+        ];
+        final games = [
+          const BoardGame(
+            id: 1,
+            names: [
+              LocalizedName(value: 'Activity', language: null, isPrimary: true),
+            ],
+            recommendedPlayerCount: '4, 6-10, 12',
+            recommendedPlayerCountMin: 4,
+            recommendedPlayerCountMax: 12,
+            bestPlayerCount: '6, 8',
+            bestPlayerCountMin: 6,
+            bestPlayerCountMax: 8,
+            minAge: 10,
+            suggestedPlayerAge: '12.0',
+          ),
+          const BoardGame(
+            id: 2,
+            names: [],
+            minAge: 14,
+            suggestedPlayerAge: '16.0',
+          ),
+        ];
+        when(collectionStore.loadAll).thenAnswer((_) async => items);
+        when(() => gameStore.loadByIds([1, 2])).thenAnswer((_) async => games);
 
-      final result = await useCase();
+        final result = await useCase();
 
-      expect(result.length, 2);
-      final first = result.firstWhere((i) => i.thingId == 1);
-      expect(first.recommendedPlayerCount, '4, 6-10, 12');
-      expect(first.bestPlayerCount, '6, 8');
-      final second = result.firstWhere((i) => i.thingId == 2);
-      expect(second.recommendedPlayerCount, '2 - 3');
-      expect(second.bestPlayerCount, isNull);
-    });
+        expect(result.length, 2);
+        final first = result.firstWhere((i) => i.thingId == 1);
+        expect(first.recommendedPlayerCount, '4, 6-10, 12');
+        expect(first.bestPlayerCount, '6, 8');
+        expect(first.minAge, 10);
+        expect(first.suggestedPlayerAge, '12.0');
+        final second = result.firstWhere((i) => i.thingId == 2);
+        expect(second.recommendedPlayerCount, '2 - 3');
+        expect(second.bestPlayerCount, isNull);
+        expect(second.minAge, 8);
+        expect(second.suggestedPlayerAge, '16.0');
+      },
+    );
   });
 }
