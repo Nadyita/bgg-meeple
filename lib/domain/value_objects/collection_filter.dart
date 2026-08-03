@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 
 import 'collection_sub_type.dart';
 import 'inventory_location_filter.dart';
+import 'player_count_filter_mode.dart';
 import 'player_participation_filter.dart';
 
 /// Filter criteria for the collection list.
@@ -23,6 +24,7 @@ class CollectionFilter extends Equatable {
     this.maxPlays,
     this.playerParticipation = const {},
     this.inventoryLocationFilters = const {},
+    this.playerCountFilterMode = PlayerCountFilterMode.publisher,
   });
 
   final List<CollectionSubType> selectedSubTypes;
@@ -34,6 +36,7 @@ class CollectionFilter extends Equatable {
   final double? maxRating;
   final int? minPlays;
   final int? maxPlays;
+  final PlayerCountFilterMode playerCountFilterMode;
 
   /// Per-player participation filter.
   ///
@@ -82,6 +85,7 @@ class CollectionFilter extends Equatable {
     int? maxPlays,
     Map<String, PlayerParticipationFilter>? playerParticipation,
     Map<String, InventoryLocationFilter>? inventoryLocationFilters,
+    PlayerCountFilterMode? playerCountFilterMode,
     bool clearMinPlayers = false,
     bool clearMaxPlayers = false,
     bool clearMinPlayTime = false,
@@ -104,6 +108,8 @@ class CollectionFilter extends Equatable {
       playerParticipation: playerParticipation ?? this.playerParticipation,
       inventoryLocationFilters:
           inventoryLocationFilters ?? this.inventoryLocationFilters,
+      playerCountFilterMode:
+          playerCountFilterMode ?? this.playerCountFilterMode,
     );
   }
 
@@ -169,6 +175,8 @@ class CollectionFilter extends Equatable {
           for (final entry in inventoryLocationFilters.entries)
             entry.key: entry.value.name,
         },
+      if (playerCountFilterMode != PlayerCountFilterMode.publisher)
+        'playerCountFilterMode': playerCountFilterMode.name,
     };
   }
 
@@ -234,7 +242,18 @@ class CollectionFilter extends Equatable {
       maxPlays: jsonInt(json['maxPlays']),
       playerParticipation: playerParticipation,
       inventoryLocationFilters: inventoryLocationFilters,
+      playerCountFilterMode: _parsePlayerCountFilterMode(
+        json['playerCountFilterMode'],
+      ),
     );
+  }
+
+  static PlayerCountFilterMode _parsePlayerCountFilterMode(dynamic value) {
+    if (value is! String) return PlayerCountFilterMode.publisher;
+    return PlayerCountFilterMode.values
+            .where((e) => e.name == value)
+            .firstOrNull ??
+        PlayerCountFilterMode.publisher;
   }
 
   static PlayerParticipationFilter? _parseParticipationFilter(dynamic value) {
@@ -264,5 +283,6 @@ class CollectionFilter extends Equatable {
     maxPlays,
     playerParticipation,
     inventoryLocationFilters,
+    playerCountFilterMode,
   ];
 }

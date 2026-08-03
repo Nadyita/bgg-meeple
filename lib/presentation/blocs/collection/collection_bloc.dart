@@ -16,6 +16,7 @@ import '../../../domain/value_objects/collection_sort.dart';
 import '../../../domain/value_objects/collection_sub_type.dart';
 import '../../../domain/value_objects/collection_view.dart';
 import '../../../domain/value_objects/inventory_location_filter.dart';
+import '../../../domain/value_objects/player_count_filter_mode.dart';
 import '../../../domain/value_objects/player_participation_filter.dart';
 import '../../../domain/value_objects/plays_info.dart';
 import 'collection_event.dart';
@@ -343,6 +344,7 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
     Emitter<CollectionState> emit,
   ) {
     final clearedFilter = CollectionFilter(
+      playerCountFilterMode: state.filter.playerCountFilterMode,
       inventoryLocationFilters: {
         for (final key in state.filter.inventoryLocationFilters.keys)
           key: InventoryLocationFilter.any,
@@ -470,14 +472,7 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
       }
     }
 
-    final itemMinPlayers = item.minPlayers ?? 1;
-    final itemMaxPlayers = item.maxPlayers;
-    if (filter.minPlayers != null &&
-        itemMaxPlayers != null &&
-        itemMaxPlayers < filter.minPlayers!) {
-      return false;
-    }
-    if (filter.maxPlayers != null && itemMinPlayers > filter.maxPlayers!) {
+    if (!_matchesPlayerCount(item, filter)) {
       return false;
     }
 
@@ -546,6 +541,53 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
     }
 
     return true;
+  }
+
+  bool _matchesPlayerCount(CollectionItem item, CollectionFilter filter) {
+    final (itemMin, itemMax) = switch (filter.playerCountFilterMode) {
+      PlayerCountFilterMode.publisher => (
+        item.minPlayers ?? 1,
+        item.maxPlayers,
+      ),
+      PlayerCountFilterMode.recommended => _effectiveRecommendedRange(item),
+      PlayerCountFilterMode.best => _effectiveBestRange(item),
+    };
+
+    if (filter.minPlayers != null &&
+        itemMax != null &&
+        itemMax < filter.minPlayers!) {
+      return false;
+    }
+    if (filter.maxPlayers != null && itemMin > filter.maxPlayers!) {
+      return false;
+    }
+
+    return true;
+  }
+
+  (int, int?) _effectiveRecommendedRange(CollectionItem item) {
+    final recommendedMin = item.recommendedPlayerCountMin;
+    final recommendedMax = item.recommendedPlayerCountMax;
+    if (recommendedMin != null || recommendedMax != null) {
+      return (recommendedMin ?? 1, recommendedMax);
+    }
+    return (item.minPlayers ?? 1, item.maxPlayers);
+  }
+
+  (int, int?) _effectiveBestRange(CollectionItem item) {
+    final bestMin = item.bestPlayerCountMin;
+    final bestMax = item.bestPlayerCountMax;
+    if (bestMin != null || bestMax != null) {
+      return (bestMin ?? 1, bestMax);
+    }
+
+    final recommendedMin = item.recommendedPlayerCountMin;
+    final recommendedMax = item.recommendedPlayerCountMax;
+    if (recommendedMin != null || recommendedMax != null) {
+      return (recommendedMin ?? 1, recommendedMax);
+    }
+
+    return (item.minPlayers ?? 1, item.maxPlayers);
   }
 
   int _effectivePlayCount(
