@@ -241,6 +241,10 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
         updated = current.copyWith(showGeekRatingUserCount: event.value);
       case CardLayoutToggle.showPlayerNamesOnPlays:
         updated = current.copyWith(showPlayerNamesOnPlays: event.value);
+      case CardLayoutToggle.showRecommendedPlayerNumbers:
+        updated = current.copyWith(showRecommendedPlayerNumbers: event.value);
+      case CardLayoutToggle.showBestPlayerNumbers:
+        updated = current.copyWith(showBestPlayerNumbers: event.value);
     }
 
     await _saveAndEmitCardLayout(updated, emit);

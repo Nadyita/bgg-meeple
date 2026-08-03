@@ -25,6 +25,12 @@ class CollectionItem {
     this.numPlays,
     this.bggRank,
     this.inventoryLocation,
+    this.bestPlayerCount,
+    this.bestPlayerCountMin,
+    this.bestPlayerCountMax,
+    this.recommendedPlayerCount,
+    this.recommendedPlayerCountMin,
+    this.recommendedPlayerCountMax,
     this.isOwned = false,
     this.isPreordered = false,
     this.isWishlisted = false,
@@ -59,6 +65,12 @@ class CollectionItem {
   final int? numPlays;
   final int? bggRank;
   final String? inventoryLocation;
+  final String? bestPlayerCount;
+  final int? bestPlayerCountMin;
+  final int? bestPlayerCountMax;
+  final String? recommendedPlayerCount;
+  final int? recommendedPlayerCountMin;
+  final int? recommendedPlayerCountMax;
   final bool isOwned;
   final bool isPreordered;
   final bool isWishlisted;
@@ -149,6 +161,12 @@ class CollectionItem {
     int? numPlays,
     int? bggRank,
     String? inventoryLocation,
+    String? bestPlayerCount,
+    int? bestPlayerCountMin,
+    int? bestPlayerCountMax,
+    String? recommendedPlayerCount,
+    int? recommendedPlayerCountMin,
+    int? recommendedPlayerCountMax,
     bool? isOwned,
     bool? isPreordered,
     bool? isWishlisted,
@@ -183,6 +201,15 @@ class CollectionItem {
       numPlays: numPlays ?? this.numPlays,
       bggRank: bggRank ?? this.bggRank,
       inventoryLocation: inventoryLocation ?? this.inventoryLocation,
+      bestPlayerCount: bestPlayerCount ?? this.bestPlayerCount,
+      bestPlayerCountMin: bestPlayerCountMin ?? this.bestPlayerCountMin,
+      bestPlayerCountMax: bestPlayerCountMax ?? this.bestPlayerCountMax,
+      recommendedPlayerCount:
+          recommendedPlayerCount ?? this.recommendedPlayerCount,
+      recommendedPlayerCountMin:
+          recommendedPlayerCountMin ?? this.recommendedPlayerCountMin,
+      recommendedPlayerCountMax:
+          recommendedPlayerCountMax ?? this.recommendedPlayerCountMax,
       isOwned: isOwned ?? this.isOwned,
       isPreordered: isPreordered ?? this.isPreordered,
       isWishlisted: isWishlisted ?? this.isWishlisted,

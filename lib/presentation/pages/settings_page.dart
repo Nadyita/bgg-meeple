@@ -301,6 +301,26 @@ class _CardLayoutSectionState extends State<_CardLayoutSection> {
             ),
           ),
         ),
+        SwitchListTile(
+          title: Text(localizations.settingsShowRecommendedPlayerNumbers),
+          value: config.showRecommendedPlayerNumbers,
+          onChanged: (value) => bloc.add(
+            SettingsCardLayoutToggled(
+              toggle: CardLayoutToggle.showRecommendedPlayerNumbers,
+              value: value,
+            ),
+          ),
+        ),
+        SwitchListTile(
+          title: Text(localizations.settingsShowBestPlayerNumbers),
+          value: config.showBestPlayerNumbers,
+          onChanged: (value) => bloc.add(
+            SettingsCardLayoutToggled(
+              toggle: CardLayoutToggle.showBestPlayerNumbers,
+              value: value,
+            ),
+          ),
+        ),
         const SizedBox(height: 16),
         Text(
           localizations.settingsVisibleFieldsHint,

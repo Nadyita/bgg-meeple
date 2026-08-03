@@ -823,18 +823,29 @@ class _DetailFields extends StatelessWidget {
     final recommendedMin = game?.recommendedPlayerCountMin;
     final recommendedMax = game?.recommendedPlayerCountMax;
 
-    final bestSameAsBase = _rangesEqual(min, max, bestMin, bestMax);
+    final bestSameAsBase = _rangesEqual(
+      min,
+      max,
+      null,
+      bestMin,
+      bestMax,
+      bestDisplay,
+    );
     final recommendedSameAsBase = _rangesEqual(
       min,
       max,
+      null,
       recommendedMin,
       recommendedMax,
+      recommendedDisplay,
     );
     final recommendedSameAsBest = _rangesEqual(
       bestMin,
       bestMax,
+      bestDisplay,
       recommendedMin,
       recommendedMax,
+      recommendedDisplay,
     );
 
     if (bestSameAsBase && recommendedSameAsBase) {
@@ -848,11 +859,20 @@ class _DetailFields extends StatelessWidget {
         ? localizations.detailRecommendedValue(recommendedDisplay)
         : null;
 
-    final showBest = best != null && !_rangesEqual(min, max, bestMin, bestMax);
+    final showBest =
+        best != null &&
+        !_rangesEqual(min, max, null, bestMin, bestMax, bestDisplay);
     final showRecommended =
         recommended != null &&
         !recommendedSameAsBest &&
-        !_rangesEqual(min, max, recommendedMin, recommendedMax);
+        !_rangesEqual(
+          min,
+          max,
+          null,
+          recommendedMin,
+          recommendedMax,
+          recommendedDisplay,
+        );
 
     if (!showBest && !showRecommended) {
       return base;
@@ -888,8 +908,40 @@ class _DetailFields extends StatelessWidget {
     return localizations.cardPlayerCountRange(min, max);
   }
 
-  bool _rangesEqual(int? minA, int? maxA, int? minB, int? maxB) {
-    return minA == minB && maxA == maxB;
+  bool _rangesEqual(
+    int? minA,
+    int? maxA,
+    String? textA,
+    int? minB,
+    int? maxB,
+    String? textB,
+  ) {
+    final hasNumericA = minA != null || maxA != null;
+    final hasNumericB = minB != null || maxB != null;
+    if (hasNumericA && hasNumericB) {
+      return minA == minB && maxA == maxB;
+    }
+    if (!hasNumericA && !hasNumericB) {
+      return _playerCountTextEqual(textA, textB);
+    }
+    // Mixed: one side has numeric bounds, the other does not. Prefer numeric
+    // comparison when possible, but fall back to textual equality so identical
+    // display strings are still deduplicated.
+    return _playerCountTextEqual(textA, textB);
+  }
+
+  bool _playerCountTextEqual(String? a, String? b) {
+    if (a == null || b == null) return false;
+    return _normalizePlayerCountText(a) == _normalizePlayerCountText(b);
+  }
+
+  String _normalizePlayerCountText(String text) {
+    return text
+        .toLowerCase()
+        .replaceAll(' ', '')
+        .replaceAll('–', '-')
+        .replaceAll('—', '-')
+        .trim();
   }
 
   String? _formatPlayTime(

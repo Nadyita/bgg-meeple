@@ -12,9 +12,9 @@ void main() {
       await db.close();
     });
 
-    test('schema version is 12', () {
+    test('schema version is 13', () {
       db = AppDatabase(NativeDatabase.memory());
-      expect(db.schemaVersion, 12);
+      expect(db.schemaVersion, 13);
     });
 
     test('migration strategy is configured', () {
@@ -166,6 +166,61 @@ void main() {
         final row = await db.select(db.boardGames).getSingle();
         expect(row.id, 1);
         expect(row.detailsUpdatedAt, isNull);
+      },
+    );
+
+    test(
+      'upgrade from v12 to v13 adds best and recommended player count columns to collection items',
+      () async {
+        db = AppDatabase(NativeDatabase.memory());
+        final migrator = db.createMigrator();
+        await db.migration.onCreate(migrator);
+
+        // Simulate the v12 schema by dropping the columns added in v13.
+        await db.customStatement(
+          'ALTER TABLE collection_items DROP COLUMN best_player_count',
+        );
+        await db.customStatement(
+          'ALTER TABLE collection_items DROP COLUMN best_player_count_min',
+        );
+        await db.customStatement(
+          'ALTER TABLE collection_items DROP COLUMN best_player_count_max',
+        );
+        await db.customStatement(
+          'ALTER TABLE collection_items DROP COLUMN recommended_player_count',
+        );
+        await db.customStatement(
+          'ALTER TABLE collection_items DROP COLUMN recommended_player_count_min',
+        );
+        await db.customStatement(
+          'ALTER TABLE collection_items DROP COLUMN recommended_player_count_max',
+        );
+
+        await db.migration.onUpgrade(migrator, 12, 13);
+
+        await db
+            .into(db.collectionItems)
+            .insert(
+              const CollectionItemsCompanion(
+                thingId: Value(1),
+                collId: Value(1),
+                bestPlayerCount: Value('3'),
+                bestPlayerCountMin: Value(3),
+                bestPlayerCountMax: Value(3),
+                recommendedPlayerCount: Value('3 - 4'),
+                recommendedPlayerCountMin: Value(3),
+                recommendedPlayerCountMax: Value(4),
+              ),
+            );
+
+        final row = await db.select(db.collectionItems).getSingle();
+        expect(row.thingId, 1);
+        expect(row.bestPlayerCount, '3');
+        expect(row.bestPlayerCountMin, 3);
+        expect(row.bestPlayerCountMax, 3);
+        expect(row.recommendedPlayerCount, '3 - 4');
+        expect(row.recommendedPlayerCountMin, 3);
+        expect(row.recommendedPlayerCountMax, 4);
       },
     );
   });

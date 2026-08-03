@@ -45,6 +45,8 @@ class SharedPreferencesCardLayoutStore implements CardLayoutStore {
       'hidePlaysOnZero': config.hidePlaysOnZero,
       'showGeekRatingUserCount': config.showGeekRatingUserCount,
       'showPlayerNamesOnPlays': config.showPlayerNamesOnPlays,
+      'showRecommendedPlayerNumbers': config.showRecommendedPlayerNumbers,
+      'showBestPlayerNumbers': config.showBestPlayerNumbers,
     };
   }
 
@@ -83,6 +85,9 @@ class SharedPreferencesCardLayoutStore implements CardLayoutStore {
       hidePlaysOnZero: map['hidePlaysOnZero'] as bool? ?? true,
       showGeekRatingUserCount: map['showGeekRatingUserCount'] as bool? ?? false,
       showPlayerNamesOnPlays: map['showPlayerNamesOnPlays'] as bool? ?? false,
+      showRecommendedPlayerNumbers:
+          map['showRecommendedPlayerNumbers'] as bool? ?? false,
+      showBestPlayerNumbers: map['showBestPlayerNumbers'] as bool? ?? false,
     );
   }
 }

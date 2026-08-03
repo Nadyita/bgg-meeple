@@ -265,6 +265,44 @@ void main() {
     );
 
     blocTest<SettingsBloc, SettingsState>(
+      'toggles recommended player numbers',
+      build: () => bloc,
+      seed: () => const SettingsState(),
+      act: (bloc) => bloc.add(
+        const SettingsCardLayoutToggled(
+          toggle: CardLayoutToggle.showRecommendedPlayerNumbers,
+          value: true,
+        ),
+      ),
+      expect: () => [
+        predicate<SettingsState>(
+          (s) => s.cardLayout.showRecommendedPlayerNumbers,
+        ),
+      ],
+      verify: (_) {
+        verify(() => saveCardLayout.call(any())).called(1);
+      },
+    );
+
+    blocTest<SettingsBloc, SettingsState>(
+      'toggles best player numbers',
+      build: () => bloc,
+      seed: () => const SettingsState(),
+      act: (bloc) => bloc.add(
+        const SettingsCardLayoutToggled(
+          toggle: CardLayoutToggle.showBestPlayerNumbers,
+          value: true,
+        ),
+      ),
+      expect: () => [
+        predicate<SettingsState>((s) => s.cardLayout.showBestPlayerNumbers),
+      ],
+      verify: (_) {
+        verify(() => saveCardLayout.call(any())).called(1);
+      },
+    );
+
+    blocTest<SettingsBloc, SettingsState>(
       'toggles a card field',
       build: () => bloc,
       seed: () => const SettingsState(),

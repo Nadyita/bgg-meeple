@@ -524,6 +524,70 @@ class $CollectionItemsTable extends CollectionItems
         type: DriftSqlType.string,
         requiredDuringInsert: false,
       );
+  static const VerificationMeta _bestPlayerCountMeta = const VerificationMeta(
+    'bestPlayerCount',
+  );
+  @override
+  late final GeneratedColumn<String> bestPlayerCount = GeneratedColumn<String>(
+    'best_player_count',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _bestPlayerCountMinMeta =
+      const VerificationMeta('bestPlayerCountMin');
+  @override
+  late final GeneratedColumn<int> bestPlayerCountMin = GeneratedColumn<int>(
+    'best_player_count_min',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _bestPlayerCountMaxMeta =
+      const VerificationMeta('bestPlayerCountMax');
+  @override
+  late final GeneratedColumn<int> bestPlayerCountMax = GeneratedColumn<int>(
+    'best_player_count_max',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _recommendedPlayerCountMeta =
+      const VerificationMeta('recommendedPlayerCount');
+  @override
+  late final GeneratedColumn<String> recommendedPlayerCount =
+      GeneratedColumn<String>(
+        'recommended_player_count',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _recommendedPlayerCountMinMeta =
+      const VerificationMeta('recommendedPlayerCountMin');
+  @override
+  late final GeneratedColumn<int> recommendedPlayerCountMin =
+      GeneratedColumn<int>(
+        'recommended_player_count_min',
+        aliasedName,
+        true,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _recommendedPlayerCountMaxMeta =
+      const VerificationMeta('recommendedPlayerCountMax');
+  @override
+  late final GeneratedColumn<int> recommendedPlayerCountMax =
+      GeneratedColumn<int>(
+        'recommended_player_count_max',
+        aliasedName,
+        true,
+        type: DriftSqlType.int,
+        requiredDuringInsert: false,
+      );
   static const VerificationMeta _isOwnedMeta = const VerificationMeta(
     'isOwned',
   );
@@ -723,6 +787,12 @@ class $CollectionItemsTable extends CollectionItems
     bggRank,
     geekRatingUserCount,
     inventoryLocation,
+    bestPlayerCount,
+    bestPlayerCountMin,
+    bestPlayerCountMax,
+    recommendedPlayerCount,
+    recommendedPlayerCountMin,
+    recommendedPlayerCountMax,
     isOwned,
     isPreordered,
     isWishlisted,
@@ -899,6 +969,60 @@ class $CollectionItemsTable extends CollectionItems
         inventoryLocation.isAcceptableOrUnknown(
           data['inventory_location']!,
           _inventoryLocationMeta,
+        ),
+      );
+    }
+    if (data.containsKey('best_player_count')) {
+      context.handle(
+        _bestPlayerCountMeta,
+        bestPlayerCount.isAcceptableOrUnknown(
+          data['best_player_count']!,
+          _bestPlayerCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('best_player_count_min')) {
+      context.handle(
+        _bestPlayerCountMinMeta,
+        bestPlayerCountMin.isAcceptableOrUnknown(
+          data['best_player_count_min']!,
+          _bestPlayerCountMinMeta,
+        ),
+      );
+    }
+    if (data.containsKey('best_player_count_max')) {
+      context.handle(
+        _bestPlayerCountMaxMeta,
+        bestPlayerCountMax.isAcceptableOrUnknown(
+          data['best_player_count_max']!,
+          _bestPlayerCountMaxMeta,
+        ),
+      );
+    }
+    if (data.containsKey('recommended_player_count')) {
+      context.handle(
+        _recommendedPlayerCountMeta,
+        recommendedPlayerCount.isAcceptableOrUnknown(
+          data['recommended_player_count']!,
+          _recommendedPlayerCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('recommended_player_count_min')) {
+      context.handle(
+        _recommendedPlayerCountMinMeta,
+        recommendedPlayerCountMin.isAcceptableOrUnknown(
+          data['recommended_player_count_min']!,
+          _recommendedPlayerCountMinMeta,
+        ),
+      );
+    }
+    if (data.containsKey('recommended_player_count_max')) {
+      context.handle(
+        _recommendedPlayerCountMaxMeta,
+        recommendedPlayerCountMax.isAcceptableOrUnknown(
+          data['recommended_player_count_max']!,
+          _recommendedPlayerCountMaxMeta,
         ),
       );
     }
@@ -1084,6 +1208,30 @@ class $CollectionItemsTable extends CollectionItems
         DriftSqlType.string,
         data['${effectivePrefix}inventory_location'],
       ),
+      bestPlayerCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}best_player_count'],
+      ),
+      bestPlayerCountMin: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}best_player_count_min'],
+      ),
+      bestPlayerCountMax: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}best_player_count_max'],
+      ),
+      recommendedPlayerCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}recommended_player_count'],
+      ),
+      recommendedPlayerCountMin: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}recommended_player_count_min'],
+      ),
+      recommendedPlayerCountMax: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}recommended_player_count_max'],
+      ),
       isOwned: attachedDatabase.typeMapping.read(
         DriftSqlType.bool,
         data['${effectivePrefix}is_owned'],
@@ -1162,6 +1310,12 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
   final int? bggRank;
   final int? geekRatingUserCount;
   final String? inventoryLocation;
+  final String? bestPlayerCount;
+  final int? bestPlayerCountMin;
+  final int? bestPlayerCountMax;
+  final String? recommendedPlayerCount;
+  final int? recommendedPlayerCountMin;
+  final int? recommendedPlayerCountMax;
   final bool isOwned;
   final bool isPreordered;
   final bool isWishlisted;
@@ -1195,6 +1349,12 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
     this.bggRank,
     this.geekRatingUserCount,
     this.inventoryLocation,
+    this.bestPlayerCount,
+    this.bestPlayerCountMin,
+    this.bestPlayerCountMax,
+    this.recommendedPlayerCount,
+    this.recommendedPlayerCountMin,
+    this.recommendedPlayerCountMax,
     required this.isOwned,
     required this.isPreordered,
     required this.isWishlisted,
@@ -1266,6 +1426,30 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
     }
     if (!nullToAbsent || inventoryLocation != null) {
       map['inventory_location'] = Variable<String>(inventoryLocation);
+    }
+    if (!nullToAbsent || bestPlayerCount != null) {
+      map['best_player_count'] = Variable<String>(bestPlayerCount);
+    }
+    if (!nullToAbsent || bestPlayerCountMin != null) {
+      map['best_player_count_min'] = Variable<int>(bestPlayerCountMin);
+    }
+    if (!nullToAbsent || bestPlayerCountMax != null) {
+      map['best_player_count_max'] = Variable<int>(bestPlayerCountMax);
+    }
+    if (!nullToAbsent || recommendedPlayerCount != null) {
+      map['recommended_player_count'] = Variable<String>(
+        recommendedPlayerCount,
+      );
+    }
+    if (!nullToAbsent || recommendedPlayerCountMin != null) {
+      map['recommended_player_count_min'] = Variable<int>(
+        recommendedPlayerCountMin,
+      );
+    }
+    if (!nullToAbsent || recommendedPlayerCountMax != null) {
+      map['recommended_player_count_max'] = Variable<int>(
+        recommendedPlayerCountMax,
+      );
     }
     map['is_owned'] = Variable<bool>(isOwned);
     map['is_preordered'] = Variable<bool>(isPreordered);
@@ -1342,6 +1526,26 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
       inventoryLocation: inventoryLocation == null && nullToAbsent
           ? const Value.absent()
           : Value(inventoryLocation),
+      bestPlayerCount: bestPlayerCount == null && nullToAbsent
+          ? const Value.absent()
+          : Value(bestPlayerCount),
+      bestPlayerCountMin: bestPlayerCountMin == null && nullToAbsent
+          ? const Value.absent()
+          : Value(bestPlayerCountMin),
+      bestPlayerCountMax: bestPlayerCountMax == null && nullToAbsent
+          ? const Value.absent()
+          : Value(bestPlayerCountMax),
+      recommendedPlayerCount: recommendedPlayerCount == null && nullToAbsent
+          ? const Value.absent()
+          : Value(recommendedPlayerCount),
+      recommendedPlayerCountMin:
+          recommendedPlayerCountMin == null && nullToAbsent
+          ? const Value.absent()
+          : Value(recommendedPlayerCountMin),
+      recommendedPlayerCountMax:
+          recommendedPlayerCountMax == null && nullToAbsent
+          ? const Value.absent()
+          : Value(recommendedPlayerCountMax),
       isOwned: Value(isOwned),
       isPreordered: Value(isPreordered),
       isWishlisted: Value(isWishlisted),
@@ -1391,6 +1595,18 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
       inventoryLocation: serializer.fromJson<String?>(
         json['inventoryLocation'],
       ),
+      bestPlayerCount: serializer.fromJson<String?>(json['bestPlayerCount']),
+      bestPlayerCountMin: serializer.fromJson<int?>(json['bestPlayerCountMin']),
+      bestPlayerCountMax: serializer.fromJson<int?>(json['bestPlayerCountMax']),
+      recommendedPlayerCount: serializer.fromJson<String?>(
+        json['recommendedPlayerCount'],
+      ),
+      recommendedPlayerCountMin: serializer.fromJson<int?>(
+        json['recommendedPlayerCountMin'],
+      ),
+      recommendedPlayerCountMax: serializer.fromJson<int?>(
+        json['recommendedPlayerCountMax'],
+      ),
       isOwned: serializer.fromJson<bool>(json['isOwned']),
       isPreordered: serializer.fromJson<bool>(json['isPreordered']),
       isWishlisted: serializer.fromJson<bool>(json['isWishlisted']),
@@ -1429,6 +1645,18 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
       'bggRank': serializer.toJson<int?>(bggRank),
       'geekRatingUserCount': serializer.toJson<int?>(geekRatingUserCount),
       'inventoryLocation': serializer.toJson<String?>(inventoryLocation),
+      'bestPlayerCount': serializer.toJson<String?>(bestPlayerCount),
+      'bestPlayerCountMin': serializer.toJson<int?>(bestPlayerCountMin),
+      'bestPlayerCountMax': serializer.toJson<int?>(bestPlayerCountMax),
+      'recommendedPlayerCount': serializer.toJson<String?>(
+        recommendedPlayerCount,
+      ),
+      'recommendedPlayerCountMin': serializer.toJson<int?>(
+        recommendedPlayerCountMin,
+      ),
+      'recommendedPlayerCountMax': serializer.toJson<int?>(
+        recommendedPlayerCountMax,
+      ),
       'isOwned': serializer.toJson<bool>(isOwned),
       'isPreordered': serializer.toJson<bool>(isPreordered),
       'isWishlisted': serializer.toJson<bool>(isWishlisted),
@@ -1465,6 +1693,12 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
     Value<int?> bggRank = const Value.absent(),
     Value<int?> geekRatingUserCount = const Value.absent(),
     Value<String?> inventoryLocation = const Value.absent(),
+    Value<String?> bestPlayerCount = const Value.absent(),
+    Value<int?> bestPlayerCountMin = const Value.absent(),
+    Value<int?> bestPlayerCountMax = const Value.absent(),
+    Value<String?> recommendedPlayerCount = const Value.absent(),
+    Value<int?> recommendedPlayerCountMin = const Value.absent(),
+    Value<int?> recommendedPlayerCountMax = const Value.absent(),
     bool? isOwned,
     bool? isPreordered,
     bool? isWishlisted,
@@ -1508,6 +1742,24 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
     inventoryLocation: inventoryLocation.present
         ? inventoryLocation.value
         : this.inventoryLocation,
+    bestPlayerCount: bestPlayerCount.present
+        ? bestPlayerCount.value
+        : this.bestPlayerCount,
+    bestPlayerCountMin: bestPlayerCountMin.present
+        ? bestPlayerCountMin.value
+        : this.bestPlayerCountMin,
+    bestPlayerCountMax: bestPlayerCountMax.present
+        ? bestPlayerCountMax.value
+        : this.bestPlayerCountMax,
+    recommendedPlayerCount: recommendedPlayerCount.present
+        ? recommendedPlayerCount.value
+        : this.recommendedPlayerCount,
+    recommendedPlayerCountMin: recommendedPlayerCountMin.present
+        ? recommendedPlayerCountMin.value
+        : this.recommendedPlayerCountMin,
+    recommendedPlayerCountMax: recommendedPlayerCountMax.present
+        ? recommendedPlayerCountMax.value
+        : this.recommendedPlayerCountMax,
     isOwned: isOwned ?? this.isOwned,
     isPreordered: isPreordered ?? this.isPreordered,
     isWishlisted: isWishlisted ?? this.isWishlisted,
@@ -1569,6 +1821,24 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
       inventoryLocation: data.inventoryLocation.present
           ? data.inventoryLocation.value
           : this.inventoryLocation,
+      bestPlayerCount: data.bestPlayerCount.present
+          ? data.bestPlayerCount.value
+          : this.bestPlayerCount,
+      bestPlayerCountMin: data.bestPlayerCountMin.present
+          ? data.bestPlayerCountMin.value
+          : this.bestPlayerCountMin,
+      bestPlayerCountMax: data.bestPlayerCountMax.present
+          ? data.bestPlayerCountMax.value
+          : this.bestPlayerCountMax,
+      recommendedPlayerCount: data.recommendedPlayerCount.present
+          ? data.recommendedPlayerCount.value
+          : this.recommendedPlayerCount,
+      recommendedPlayerCountMin: data.recommendedPlayerCountMin.present
+          ? data.recommendedPlayerCountMin.value
+          : this.recommendedPlayerCountMin,
+      recommendedPlayerCountMax: data.recommendedPlayerCountMax.present
+          ? data.recommendedPlayerCountMax.value
+          : this.recommendedPlayerCountMax,
       isOwned: data.isOwned.present ? data.isOwned.value : this.isOwned,
       isPreordered: data.isPreordered.present
           ? data.isPreordered.value
@@ -1623,6 +1893,12 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
           ..write('bggRank: $bggRank, ')
           ..write('geekRatingUserCount: $geekRatingUserCount, ')
           ..write('inventoryLocation: $inventoryLocation, ')
+          ..write('bestPlayerCount: $bestPlayerCount, ')
+          ..write('bestPlayerCountMin: $bestPlayerCountMin, ')
+          ..write('bestPlayerCountMax: $bestPlayerCountMax, ')
+          ..write('recommendedPlayerCount: $recommendedPlayerCount, ')
+          ..write('recommendedPlayerCountMin: $recommendedPlayerCountMin, ')
+          ..write('recommendedPlayerCountMax: $recommendedPlayerCountMax, ')
           ..write('isOwned: $isOwned, ')
           ..write('isPreordered: $isPreordered, ')
           ..write('isWishlisted: $isWishlisted, ')
@@ -1661,6 +1937,12 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
     bggRank,
     geekRatingUserCount,
     inventoryLocation,
+    bestPlayerCount,
+    bestPlayerCountMin,
+    bestPlayerCountMax,
+    recommendedPlayerCount,
+    recommendedPlayerCountMin,
+    recommendedPlayerCountMax,
     isOwned,
     isPreordered,
     isWishlisted,
@@ -1698,6 +1980,12 @@ class CollectionItem extends DataClass implements Insertable<CollectionItem> {
           other.bggRank == this.bggRank &&
           other.geekRatingUserCount == this.geekRatingUserCount &&
           other.inventoryLocation == this.inventoryLocation &&
+          other.bestPlayerCount == this.bestPlayerCount &&
+          other.bestPlayerCountMin == this.bestPlayerCountMin &&
+          other.bestPlayerCountMax == this.bestPlayerCountMax &&
+          other.recommendedPlayerCount == this.recommendedPlayerCount &&
+          other.recommendedPlayerCountMin == this.recommendedPlayerCountMin &&
+          other.recommendedPlayerCountMax == this.recommendedPlayerCountMax &&
           other.isOwned == this.isOwned &&
           other.isPreordered == this.isPreordered &&
           other.isWishlisted == this.isWishlisted &&
@@ -1733,6 +2021,12 @@ class CollectionItemsCompanion extends UpdateCompanion<CollectionItem> {
   final Value<int?> bggRank;
   final Value<int?> geekRatingUserCount;
   final Value<String?> inventoryLocation;
+  final Value<String?> bestPlayerCount;
+  final Value<int?> bestPlayerCountMin;
+  final Value<int?> bestPlayerCountMax;
+  final Value<String?> recommendedPlayerCount;
+  final Value<int?> recommendedPlayerCountMin;
+  final Value<int?> recommendedPlayerCountMax;
   final Value<bool> isOwned;
   final Value<bool> isPreordered;
   final Value<bool> isWishlisted;
@@ -1767,6 +2061,12 @@ class CollectionItemsCompanion extends UpdateCompanion<CollectionItem> {
     this.bggRank = const Value.absent(),
     this.geekRatingUserCount = const Value.absent(),
     this.inventoryLocation = const Value.absent(),
+    this.bestPlayerCount = const Value.absent(),
+    this.bestPlayerCountMin = const Value.absent(),
+    this.bestPlayerCountMax = const Value.absent(),
+    this.recommendedPlayerCount = const Value.absent(),
+    this.recommendedPlayerCountMin = const Value.absent(),
+    this.recommendedPlayerCountMax = const Value.absent(),
     this.isOwned = const Value.absent(),
     this.isPreordered = const Value.absent(),
     this.isWishlisted = const Value.absent(),
@@ -1802,6 +2102,12 @@ class CollectionItemsCompanion extends UpdateCompanion<CollectionItem> {
     this.bggRank = const Value.absent(),
     this.geekRatingUserCount = const Value.absent(),
     this.inventoryLocation = const Value.absent(),
+    this.bestPlayerCount = const Value.absent(),
+    this.bestPlayerCountMin = const Value.absent(),
+    this.bestPlayerCountMax = const Value.absent(),
+    this.recommendedPlayerCount = const Value.absent(),
+    this.recommendedPlayerCountMin = const Value.absent(),
+    this.recommendedPlayerCountMax = const Value.absent(),
     this.isOwned = const Value.absent(),
     this.isPreordered = const Value.absent(),
     this.isWishlisted = const Value.absent(),
@@ -1838,6 +2144,12 @@ class CollectionItemsCompanion extends UpdateCompanion<CollectionItem> {
     Expression<int>? bggRank,
     Expression<int>? geekRatingUserCount,
     Expression<String>? inventoryLocation,
+    Expression<String>? bestPlayerCount,
+    Expression<int>? bestPlayerCountMin,
+    Expression<int>? bestPlayerCountMax,
+    Expression<String>? recommendedPlayerCount,
+    Expression<int>? recommendedPlayerCountMin,
+    Expression<int>? recommendedPlayerCountMax,
     Expression<bool>? isOwned,
     Expression<bool>? isPreordered,
     Expression<bool>? isWishlisted,
@@ -1875,6 +2187,17 @@ class CollectionItemsCompanion extends UpdateCompanion<CollectionItem> {
       if (geekRatingUserCount != null)
         'geek_rating_user_count': geekRatingUserCount,
       if (inventoryLocation != null) 'inventory_location': inventoryLocation,
+      if (bestPlayerCount != null) 'best_player_count': bestPlayerCount,
+      if (bestPlayerCountMin != null)
+        'best_player_count_min': bestPlayerCountMin,
+      if (bestPlayerCountMax != null)
+        'best_player_count_max': bestPlayerCountMax,
+      if (recommendedPlayerCount != null)
+        'recommended_player_count': recommendedPlayerCount,
+      if (recommendedPlayerCountMin != null)
+        'recommended_player_count_min': recommendedPlayerCountMin,
+      if (recommendedPlayerCountMax != null)
+        'recommended_player_count_max': recommendedPlayerCountMax,
       if (isOwned != null) 'is_owned': isOwned,
       if (isPreordered != null) 'is_preordered': isPreordered,
       if (isWishlisted != null) 'is_wishlisted': isWishlisted,
@@ -1912,6 +2235,12 @@ class CollectionItemsCompanion extends UpdateCompanion<CollectionItem> {
     Value<int?>? bggRank,
     Value<int?>? geekRatingUserCount,
     Value<String?>? inventoryLocation,
+    Value<String?>? bestPlayerCount,
+    Value<int?>? bestPlayerCountMin,
+    Value<int?>? bestPlayerCountMax,
+    Value<String?>? recommendedPlayerCount,
+    Value<int?>? recommendedPlayerCountMin,
+    Value<int?>? recommendedPlayerCountMax,
     Value<bool>? isOwned,
     Value<bool>? isPreordered,
     Value<bool>? isWishlisted,
@@ -1947,6 +2276,15 @@ class CollectionItemsCompanion extends UpdateCompanion<CollectionItem> {
       bggRank: bggRank ?? this.bggRank,
       geekRatingUserCount: geekRatingUserCount ?? this.geekRatingUserCount,
       inventoryLocation: inventoryLocation ?? this.inventoryLocation,
+      bestPlayerCount: bestPlayerCount ?? this.bestPlayerCount,
+      bestPlayerCountMin: bestPlayerCountMin ?? this.bestPlayerCountMin,
+      bestPlayerCountMax: bestPlayerCountMax ?? this.bestPlayerCountMax,
+      recommendedPlayerCount:
+          recommendedPlayerCount ?? this.recommendedPlayerCount,
+      recommendedPlayerCountMin:
+          recommendedPlayerCountMin ?? this.recommendedPlayerCountMin,
+      recommendedPlayerCountMax:
+          recommendedPlayerCountMax ?? this.recommendedPlayerCountMax,
       isOwned: isOwned ?? this.isOwned,
       isPreordered: isPreordered ?? this.isPreordered,
       isWishlisted: isWishlisted ?? this.isWishlisted,
@@ -2026,6 +2364,30 @@ class CollectionItemsCompanion extends UpdateCompanion<CollectionItem> {
     if (inventoryLocation.present) {
       map['inventory_location'] = Variable<String>(inventoryLocation.value);
     }
+    if (bestPlayerCount.present) {
+      map['best_player_count'] = Variable<String>(bestPlayerCount.value);
+    }
+    if (bestPlayerCountMin.present) {
+      map['best_player_count_min'] = Variable<int>(bestPlayerCountMin.value);
+    }
+    if (bestPlayerCountMax.present) {
+      map['best_player_count_max'] = Variable<int>(bestPlayerCountMax.value);
+    }
+    if (recommendedPlayerCount.present) {
+      map['recommended_player_count'] = Variable<String>(
+        recommendedPlayerCount.value,
+      );
+    }
+    if (recommendedPlayerCountMin.present) {
+      map['recommended_player_count_min'] = Variable<int>(
+        recommendedPlayerCountMin.value,
+      );
+    }
+    if (recommendedPlayerCountMax.present) {
+      map['recommended_player_count_max'] = Variable<int>(
+        recommendedPlayerCountMax.value,
+      );
+    }
     if (isOwned.present) {
       map['is_owned'] = Variable<bool>(isOwned.value);
     }
@@ -2091,6 +2453,12 @@ class CollectionItemsCompanion extends UpdateCompanion<CollectionItem> {
           ..write('bggRank: $bggRank, ')
           ..write('geekRatingUserCount: $geekRatingUserCount, ')
           ..write('inventoryLocation: $inventoryLocation, ')
+          ..write('bestPlayerCount: $bestPlayerCount, ')
+          ..write('bestPlayerCountMin: $bestPlayerCountMin, ')
+          ..write('bestPlayerCountMax: $bestPlayerCountMax, ')
+          ..write('recommendedPlayerCount: $recommendedPlayerCount, ')
+          ..write('recommendedPlayerCountMin: $recommendedPlayerCountMin, ')
+          ..write('recommendedPlayerCountMax: $recommendedPlayerCountMax, ')
           ..write('isOwned: $isOwned, ')
           ..write('isPreordered: $isPreordered, ')
           ..write('isWishlisted: $isWishlisted, ')
@@ -6409,6 +6777,12 @@ typedef $$CollectionItemsTableCreateCompanionBuilder =
       Value<int?> bggRank,
       Value<int?> geekRatingUserCount,
       Value<String?> inventoryLocation,
+      Value<String?> bestPlayerCount,
+      Value<int?> bestPlayerCountMin,
+      Value<int?> bestPlayerCountMax,
+      Value<String?> recommendedPlayerCount,
+      Value<int?> recommendedPlayerCountMin,
+      Value<int?> recommendedPlayerCountMax,
       Value<bool> isOwned,
       Value<bool> isPreordered,
       Value<bool> isWishlisted,
@@ -6445,6 +6819,12 @@ typedef $$CollectionItemsTableUpdateCompanionBuilder =
       Value<int?> bggRank,
       Value<int?> geekRatingUserCount,
       Value<String?> inventoryLocation,
+      Value<String?> bestPlayerCount,
+      Value<int?> bestPlayerCountMin,
+      Value<int?> bestPlayerCountMax,
+      Value<String?> recommendedPlayerCount,
+      Value<int?> recommendedPlayerCountMin,
+      Value<int?> recommendedPlayerCountMax,
       Value<bool> isOwned,
       Value<bool> isPreordered,
       Value<bool> isWishlisted,
@@ -6595,6 +6975,36 @@ class $$CollectionItemsTableFilterComposer
 
   ColumnFilters<String> get inventoryLocation => $composableBuilder(
     column: $table.inventoryLocation,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get bestPlayerCount => $composableBuilder(
+    column: $table.bestPlayerCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get bestPlayerCountMin => $composableBuilder(
+    column: $table.bestPlayerCountMin,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get bestPlayerCountMax => $composableBuilder(
+    column: $table.bestPlayerCountMax,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get recommendedPlayerCount => $composableBuilder(
+    column: $table.recommendedPlayerCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get recommendedPlayerCountMin => $composableBuilder(
+    column: $table.recommendedPlayerCountMin,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get recommendedPlayerCountMax => $composableBuilder(
+    column: $table.recommendedPlayerCountMax,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -6786,6 +7196,36 @@ class $$CollectionItemsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get bestPlayerCount => $composableBuilder(
+    column: $table.bestPlayerCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get bestPlayerCountMin => $composableBuilder(
+    column: $table.bestPlayerCountMin,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get bestPlayerCountMax => $composableBuilder(
+    column: $table.bestPlayerCountMax,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get recommendedPlayerCount => $composableBuilder(
+    column: $table.recommendedPlayerCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get recommendedPlayerCountMin => $composableBuilder(
+    column: $table.recommendedPlayerCountMin,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get recommendedPlayerCountMax => $composableBuilder(
+    column: $table.recommendedPlayerCountMax,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<bool> get isOwned => $composableBuilder(
     column: $table.isOwned,
     builder: (column) => ColumnOrderings(column),
@@ -6960,6 +7400,36 @@ class $$CollectionItemsTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<String> get bestPlayerCount => $composableBuilder(
+    column: $table.bestPlayerCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get bestPlayerCountMin => $composableBuilder(
+    column: $table.bestPlayerCountMin,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get bestPlayerCountMax => $composableBuilder(
+    column: $table.bestPlayerCountMax,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get recommendedPlayerCount => $composableBuilder(
+    column: $table.recommendedPlayerCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get recommendedPlayerCountMin => $composableBuilder(
+    column: $table.recommendedPlayerCountMin,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get recommendedPlayerCountMax => $composableBuilder(
+    column: $table.recommendedPlayerCountMax,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<bool> get isOwned =>
       $composableBuilder(column: $table.isOwned, builder: (column) => column);
 
@@ -7083,6 +7553,12 @@ class $$CollectionItemsTableTableManager
                 Value<int?> bggRank = const Value.absent(),
                 Value<int?> geekRatingUserCount = const Value.absent(),
                 Value<String?> inventoryLocation = const Value.absent(),
+                Value<String?> bestPlayerCount = const Value.absent(),
+                Value<int?> bestPlayerCountMin = const Value.absent(),
+                Value<int?> bestPlayerCountMax = const Value.absent(),
+                Value<String?> recommendedPlayerCount = const Value.absent(),
+                Value<int?> recommendedPlayerCountMin = const Value.absent(),
+                Value<int?> recommendedPlayerCountMax = const Value.absent(),
                 Value<bool> isOwned = const Value.absent(),
                 Value<bool> isPreordered = const Value.absent(),
                 Value<bool> isWishlisted = const Value.absent(),
@@ -7117,6 +7593,12 @@ class $$CollectionItemsTableTableManager
                 bggRank: bggRank,
                 geekRatingUserCount: geekRatingUserCount,
                 inventoryLocation: inventoryLocation,
+                bestPlayerCount: bestPlayerCount,
+                bestPlayerCountMin: bestPlayerCountMin,
+                bestPlayerCountMax: bestPlayerCountMax,
+                recommendedPlayerCount: recommendedPlayerCount,
+                recommendedPlayerCountMin: recommendedPlayerCountMin,
+                recommendedPlayerCountMax: recommendedPlayerCountMax,
                 isOwned: isOwned,
                 isPreordered: isPreordered,
                 isWishlisted: isWishlisted,
@@ -7153,6 +7635,12 @@ class $$CollectionItemsTableTableManager
                 Value<int?> bggRank = const Value.absent(),
                 Value<int?> geekRatingUserCount = const Value.absent(),
                 Value<String?> inventoryLocation = const Value.absent(),
+                Value<String?> bestPlayerCount = const Value.absent(),
+                Value<int?> bestPlayerCountMin = const Value.absent(),
+                Value<int?> bestPlayerCountMax = const Value.absent(),
+                Value<String?> recommendedPlayerCount = const Value.absent(),
+                Value<int?> recommendedPlayerCountMin = const Value.absent(),
+                Value<int?> recommendedPlayerCountMax = const Value.absent(),
                 Value<bool> isOwned = const Value.absent(),
                 Value<bool> isPreordered = const Value.absent(),
                 Value<bool> isWishlisted = const Value.absent(),
@@ -7187,6 +7675,12 @@ class $$CollectionItemsTableTableManager
                 bggRank: bggRank,
                 geekRatingUserCount: geekRatingUserCount,
                 inventoryLocation: inventoryLocation,
+                bestPlayerCount: bestPlayerCount,
+                bestPlayerCountMin: bestPlayerCountMin,
+                bestPlayerCountMax: bestPlayerCountMax,
+                recommendedPlayerCount: recommendedPlayerCount,
+                recommendedPlayerCountMin: recommendedPlayerCountMin,
+                recommendedPlayerCountMax: recommendedPlayerCountMax,
                 isOwned: isOwned,
                 isPreordered: isPreordered,
                 isWishlisted: isWishlisted,

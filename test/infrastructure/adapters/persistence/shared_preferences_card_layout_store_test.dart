@@ -137,6 +137,8 @@ void main() {
           ],
           hidePlaysOnZero: false,
           showGeekRatingUserCount: true,
+          showRecommendedPlayerNumbers: true,
+          showBestPlayerNumbers: true,
         );
 
         await store.save(config);
@@ -148,6 +150,11 @@ void main() {
         expect(loaded.hidePlaysOnZero, config.hidePlaysOnZero);
         expect(loaded.showGeekRatingUserCount, config.showGeekRatingUserCount);
         expect(loaded.showPlayerNamesOnPlays, config.showPlayerNamesOnPlays);
+        expect(
+          loaded.showRecommendedPlayerNumbers,
+          config.showRecommendedPlayerNumbers,
+        );
+        expect(loaded.showBestPlayerNumbers, config.showBestPlayerNumbers);
         expect(
           loaded.fieldOrder.sublist(0, config.fieldOrder.length),
           config.fieldOrder,

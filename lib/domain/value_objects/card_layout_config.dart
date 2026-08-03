@@ -32,6 +32,8 @@ class CardLayoutConfig extends Equatable {
     this.hidePlaysOnZero = true,
     this.showGeekRatingUserCount = false,
     this.showPlayerNamesOnPlays = false,
+    this.showRecommendedPlayerNumbers = false,
+    this.showBestPlayerNumbers = false,
   });
 
   final bool showThumbnail;
@@ -41,6 +43,8 @@ class CardLayoutConfig extends Equatable {
   final bool hidePlaysOnZero;
   final bool showGeekRatingUserCount;
   final bool showPlayerNamesOnPlays;
+  final bool showRecommendedPlayerNumbers;
+  final bool showBestPlayerNumbers;
 
   bool isEnabled(CardField field) => enabledFields.contains(field);
 
@@ -52,6 +56,8 @@ class CardLayoutConfig extends Equatable {
     bool? hidePlaysOnZero,
     bool? showGeekRatingUserCount,
     bool? showPlayerNamesOnPlays,
+    bool? showRecommendedPlayerNumbers,
+    bool? showBestPlayerNumbers,
   }) {
     return CardLayoutConfig(
       showThumbnail: showThumbnail ?? this.showThumbnail,
@@ -63,6 +69,10 @@ class CardLayoutConfig extends Equatable {
           showGeekRatingUserCount ?? this.showGeekRatingUserCount,
       showPlayerNamesOnPlays:
           showPlayerNamesOnPlays ?? this.showPlayerNamesOnPlays,
+      showRecommendedPlayerNumbers:
+          showRecommendedPlayerNumbers ?? this.showRecommendedPlayerNumbers,
+      showBestPlayerNumbers:
+          showBestPlayerNumbers ?? this.showBestPlayerNumbers,
     );
   }
 
@@ -75,5 +85,7 @@ class CardLayoutConfig extends Equatable {
     hidePlaysOnZero,
     showGeekRatingUserCount,
     showPlayerNamesOnPlays,
+    showRecommendedPlayerNumbers,
+    showBestPlayerNumbers,
   ];
 }
