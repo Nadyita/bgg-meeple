@@ -63,6 +63,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get playerCountLabel => 'Players';
 
   @override
+  String get playerCountFilterModePublisher => 'Players';
+
+  @override
+  String get playerCountFilterModeRecommended => 'Recommended';
+
+  @override
+  String get playerCountFilterModeBest => 'Best';
+
+  @override
   String get playTimeLabel => 'Time (min)';
 
   @override
@@ -163,6 +172,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get settingsShowGeekRatingUserCount =>
       'Show number of ratings for geek rating';
+
+  @override
+  String get settingsShowRecommendedPlayerNumbers =>
+      'Show recommended player count';
+
+  @override
+  String get settingsShowBestPlayerNumbers => 'Show best player count';
 
   @override
   String get settingsShowPlayerNamesOnPlays => 'Show player names';

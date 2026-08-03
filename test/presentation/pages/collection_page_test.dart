@@ -14,6 +14,7 @@ import 'package:bgg_meeple/domain/value_objects/collection_sort.dart';
 import 'package:bgg_meeple/domain/value_objects/collection_view.dart';
 import 'package:bgg_meeple/domain/value_objects/inventory_location_filter.dart';
 import 'package:bgg_meeple/domain/value_objects/localized_name.dart';
+import 'package:bgg_meeple/domain/value_objects/player_count_filter_mode.dart';
 import 'package:bgg_meeple/application/use_cases/load_theme_config_use_case.dart';
 import 'package:bgg_meeple/application/use_cases/save_theme_config_use_case.dart';
 import 'package:bgg_meeple/domain/value_objects/theme_config.dart';
@@ -589,6 +590,88 @@ void main() {
       expect(find.text('Catan'), findsOneWidget);
       expect(find.text('Carcassonne'), findsOneWidget);
     });
+
+    testWidgets(
+      'player count mode segmented button persists mode when clearing filters',
+      (tester) async {
+        when(loadCollection.call).thenAnswer(
+          (_) async => const [
+            CollectionItem(
+              thingId: 1,
+              names: [
+                LocalizedName(value: 'Catan', language: null, isPrimary: true),
+              ],
+              minPlayers: 1,
+              maxPlayers: 6,
+              recommendedPlayerCountMin: 3,
+              recommendedPlayerCountMax: 4,
+            ),
+            CollectionItem(
+              thingId: 2,
+              names: [
+                LocalizedName(
+                  value: 'Carcassonne',
+                  language: null,
+                  isPrimary: true,
+                ),
+              ],
+              minPlayers: 2,
+              maxPlayers: 5,
+              recommendedPlayerCountMin: 4,
+              recommendedPlayerCountMax: 5,
+            ),
+          ],
+        );
+
+        await tester.pumpWidget(
+          _buildApp(
+            home: CollectionPage(
+              loadCollection: loadCollection,
+              loadGameDetails: loadGameDetails,
+              loadCardLayout: loadCardLayout,
+              loadCollectionView: loadCollectionView,
+              saveCollectionView: saveCollectionView,
+              loadCredentials: loadCredentials,
+              loadPlaysInfo: loadPlaysInfo,
+              syncCollection: syncCollection,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.byIcon(Icons.filter_list));
+        await tester.pumpAndSettle();
+
+        expect(find.text('Spieleranzahl'), findsOneWidget);
+        expect(find.text('Empfohlen'), findsOneWidget);
+        expect(find.text('Beste'), findsOneWidget);
+        expect(find.byIcon(Icons.thumb_up), findsOneWidget);
+        expect(find.byIcon(Icons.emoji_events), findsOneWidget);
+
+        await tester.tap(find.text('Empfohlen'));
+        await tester.pumpAndSettle();
+
+        await tester.ensureVisible(find.text('Zurücksetzen'));
+        await tester.tap(find.text('Zurücksetzen'));
+        await tester.pumpAndSettle();
+
+        final captured = verify(
+          () => saveCollectionView.call(captureAny()),
+        ).captured.cast<CollectionView>();
+
+        expect(captured.length, 2);
+        expect(
+          captured.first.filter.playerCountFilterMode,
+          PlayerCountFilterMode.recommended,
+        );
+        expect(captured.last.filter.minPlayers, isNull);
+        expect(captured.last.filter.maxPlayers, isNull);
+        expect(
+          captured.last.filter.playerCountFilterMode,
+          PlayerCountFilterMode.recommended,
+        );
+      },
+    );
 
     testWidgets('play count slider is hidden when all numPlays are zero', (
       tester,
