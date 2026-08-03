@@ -19,7 +19,6 @@ import '../../domain/value_objects/collection_sub_type.dart';
 import '../../domain/value_objects/inventory_location_filter.dart';
 import '../../domain/value_objects/play_time_steps.dart';
 import '../../domain/value_objects/player_count_range.dart';
-import '../../domain/value_objects/player_count_filter_mode.dart';
 import '../../domain/value_objects/player_participation_filter.dart';
 import '../../domain/value_objects/rating_steps.dart';
 import '../../infrastructure/di/service_locator.dart';
@@ -495,35 +494,8 @@ class _FilterPanel extends StatelessWidget {
               }).toList(),
             ),
             const SizedBox(height: 12),
-            SegmentedButton<PlayerCountFilterMode>(
-              segments: [
-                ButtonSegment(
-                  value: PlayerCountFilterMode.publisher,
-                  label: Text(localizations.playerCountFilterModePublisher),
-                  icon: const Icon(Icons.people),
-                ),
-                ButtonSegment(
-                  value: PlayerCountFilterMode.recommended,
-                  label: Text(localizations.playerCountFilterModeRecommended),
-                  icon: const Icon(Icons.thumb_up),
-                ),
-                ButtonSegment(
-                  value: PlayerCountFilterMode.best,
-                  label: Text(localizations.playerCountFilterModeBest),
-                  icon: const Icon(Icons.emoji_events),
-                ),
-              ],
-              selected: {filter.playerCountFilterMode},
-              onSelectionChanged: (selected) {
-                if (selected.isNotEmpty) {
-                  onFilterChanged(
-                    filter.copyWith(playerCountFilterMode: selected.first),
-                  );
-                }
-              },
-              showSelectedIcon: false,
-            ),
             _PlayerCountRangeSlider(
+              label: localizations.playerCountLabel,
               minPlayers: filter.minPlayers,
               maxPlayers: filter.maxPlayers,
               onChanged: (min, max) => onFilterChanged(
@@ -1023,11 +995,13 @@ class _PlayerChip extends StatelessWidget {
 
 class _PlayerCountRangeSlider extends StatelessWidget {
   const _PlayerCountRangeSlider({
+    required this.label,
     required this.minPlayers,
     required this.maxPlayers,
     required this.onChanged,
   });
 
+  final String label;
   final int? minPlayers;
   final int? maxPlayers;
   final void Function(int? min, int? max) onChanged;
@@ -1044,6 +1018,7 @@ class _PlayerCountRangeSlider extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Text(label),
         RangeSlider(
           values: RangeValues(start, end),
           min: min,

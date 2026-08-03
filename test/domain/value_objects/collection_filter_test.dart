@@ -1,7 +1,6 @@
 import 'package:bgg_meeple/domain/value_objects/collection_filter.dart';
 import 'package:bgg_meeple/domain/value_objects/collection_sub_type.dart';
 import 'package:bgg_meeple/domain/value_objects/inventory_location_filter.dart';
-import 'package:bgg_meeple/domain/value_objects/player_count_filter_mode.dart';
 import 'package:bgg_meeple/domain/value_objects/player_participation_filter.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -124,42 +123,7 @@ void main() {
     });
   });
 
-  group('CollectionFilter.playerCountFilterMode', () {
-    test('defaults to publisher', () {
-      expect(
-        const CollectionFilter().playerCountFilterMode,
-        PlayerCountFilterMode.publisher,
-      );
-    });
-
-    test('updates via copyWith', () {
-      const base = CollectionFilter();
-      final updated = base.copyWith(
-        playerCountFilterMode: PlayerCountFilterMode.recommended,
-      );
-      expect(updated.playerCountFilterMode, PlayerCountFilterMode.recommended);
-      expect(updated.minPlayers, isNull);
-    });
-
-    test('preserves mode when only slider values are cleared', () {
-      const base = CollectionFilter(
-        minPlayers: 2,
-        maxPlayers: 4,
-        playerCountFilterMode: PlayerCountFilterMode.best,
-      );
-      final updated = base.copyWith(
-        minPlayers: null,
-        maxPlayers: null,
-        clearMinPlayers: true,
-        clearMaxPlayers: true,
-      );
-      expect(updated.playerCountFilterMode, PlayerCountFilterMode.best);
-      expect(updated.minPlayers, isNull);
-      expect(updated.maxPlayers, isNull);
-    });
-  });
-
-  group('CollectionFilter JSON with player count mode', () {
+  group('CollectionFilter JSON', () {
     test('serializes only non-default values', () {
       const filter = CollectionFilter(
         minPlayers: 2,
@@ -264,46 +228,6 @@ void main() {
         'Markus': PlayerParticipationFilter.played,
         'Tom': PlayerParticipationFilter.notPlayed,
       });
-    });
-    test('does not serialize default publisher mode', () {
-      const filter = CollectionFilter(minPlayers: 2);
-      final json = filter.toJson();
-
-      expect(json, containsPair('minPlayers', 2));
-      expect(json, isNot(contains('playerCountFilterMode')));
-    });
-
-    test('serializes non-default mode', () {
-      const filter = CollectionFilter(
-        playerCountFilterMode: PlayerCountFilterMode.best,
-      );
-      final json = filter.toJson();
-
-      expect(json, containsPair('playerCountFilterMode', 'best'));
-    });
-
-    test('fromJson restores mode', () {
-      final restored = CollectionFilter.fromJson({
-        'playerCountFilterMode': 'recommended',
-        'minPlayers': 3,
-      });
-
-      expect(restored.playerCountFilterMode, PlayerCountFilterMode.recommended);
-      expect(restored.minPlayers, 3);
-    });
-
-    test('fromJson defaults to publisher when mode is missing', () {
-      final restored = CollectionFilter.fromJson({'minPlayers': 3});
-
-      expect(restored.playerCountFilterMode, PlayerCountFilterMode.publisher);
-    });
-
-    test('fromJson defaults to publisher for unknown mode values', () {
-      final restored = CollectionFilter.fromJson({
-        'playerCountFilterMode': 'unknown',
-      });
-
-      expect(restored.playerCountFilterMode, PlayerCountFilterMode.publisher);
     });
   });
 

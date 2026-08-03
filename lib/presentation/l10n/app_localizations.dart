@@ -206,24 +206,6 @@ abstract class AppLocalizations {
   /// **'Players'**
   String get playerCountLabel;
 
-  /// No description provided for @playerCountFilterModePublisher.
-  ///
-  /// In en, this message translates to:
-  /// **'Players'**
-  String get playerCountFilterModePublisher;
-
-  /// No description provided for @playerCountFilterModeRecommended.
-  ///
-  /// In en, this message translates to:
-  /// **'Recommended'**
-  String get playerCountFilterModeRecommended;
-
-  /// No description provided for @playerCountFilterModeBest.
-  ///
-  /// In en, this message translates to:
-  /// **'Best'**
-  String get playerCountFilterModeBest;
-
   /// No description provided for @playTimeLabel.
   ///
   /// In en, this message translates to:
@@ -421,18 +403,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show number of ratings for geek rating'**
   String get settingsShowGeekRatingUserCount;
-
-  /// No description provided for @settingsShowRecommendedPlayerNumbers.
-  ///
-  /// In en, this message translates to:
-  /// **'Show recommended player count'**
-  String get settingsShowRecommendedPlayerNumbers;
-
-  /// No description provided for @settingsShowBestPlayerNumbers.
-  ///
-  /// In en, this message translates to:
-  /// **'Show best player count'**
-  String get settingsShowBestPlayerNumbers;
 
   /// No description provided for @settingsShowPlayerNamesOnPlays.
   ///
