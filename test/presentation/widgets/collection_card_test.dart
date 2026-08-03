@@ -691,6 +691,77 @@ void main() {
       });
     });
 
+    group('CollectionCard age line', () {
+      testWidgets('shows min age without suffix when suggested age is absent', (
+        tester,
+      ) async {
+        const item = CollectionItem(
+          thingId: 20,
+          names: [
+            LocalizedName(value: 'Catan', language: null, isPrimary: true),
+          ],
+          minAge: 10,
+        );
+
+        await tester.pumpWidget(
+          _localizedApp(home: const CollectionCard(item: item)),
+        );
+
+        expect(find.text('Min age: 10'), findsOneWidget);
+        expect(find.byIcon(Icons.thumb_up), findsNothing);
+      });
+
+      testWidgets('shows min age and suggested age inline', (tester) async {
+        const item = CollectionItem(
+          thingId: 21,
+          names: [
+            LocalizedName(value: 'Catan', language: null, isPrimary: true),
+          ],
+          minAge: 8,
+          suggestedPlayerAge: '10.0',
+        );
+
+        await tester.pumpWidget(
+          _localizedApp(home: const CollectionCard(item: item)),
+        );
+
+        expect(
+          find.byWidgetPredicate(
+            (widget) =>
+                widget is RichText &&
+                widget.text.toPlainText().contains('Min age: 8'),
+          ),
+          findsOneWidget,
+        );
+        expect(find.text('10.0'), findsOneWidget);
+        expect(find.byIcon(Icons.thumb_up), findsOneWidget);
+        expect(
+          find.byWidgetPredicate(
+            (widget) =>
+                widget is RichText && widget.text.toPlainText().contains('·'),
+          ),
+          findsOneWidget,
+        );
+      });
+
+      testWidgets('hides age line when min age is missing', (tester) async {
+        const item = CollectionItem(
+          thingId: 22,
+          names: [
+            LocalizedName(value: 'Catan', language: null, isPrimary: true),
+          ],
+          suggestedPlayerAge: '10.0',
+        );
+
+        await tester.pumpWidget(
+          _localizedApp(home: const CollectionCard(item: item)),
+        );
+
+        expect(find.textContaining('Min age'), findsNothing);
+        expect(find.byIcon(Icons.thumb_up), findsNothing);
+      });
+    });
+
     testWidgets('hides inventory location when enabled but empty', (
       tester,
     ) async {

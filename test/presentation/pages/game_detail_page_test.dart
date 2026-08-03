@@ -160,7 +160,6 @@ void main() {
         thingId: 1,
         collId: 1,
         names: [LocalizedName(value: 'Catan', language: null, isPrimary: true)],
-        minAge: 10,
         ownRating: 8.5,
         bayesAverage: 7.35,
       );
@@ -178,7 +177,6 @@ void main() {
         ],
         averageRating: 7.1,
         averageWeight: 2.5,
-        languageDependenceLevel: '3',
         bestPlayerCount: '3',
         recommendedPlayerCount: '3–4',
       );
@@ -206,12 +204,155 @@ void main() {
       expect(find.text('Artist'), findsNothing);
       expect(find.text('Publisher'), findsNothing);
       expect(find.textContaining('Minimum age'), findsNothing);
+      expect(find.textContaining('Min age'), findsNothing);
       expect(find.textContaining('Your rating'), findsNothing);
       expect(find.textContaining('Average rating'), findsNothing);
       expect(find.textContaining('Weight'), findsNothing);
       expect(find.textContaining('Language dependence'), findsNothing);
+      expect(find.textContaining('Language:'), findsNothing);
       expect(find.textContaining('Best with'), findsNothing);
       expect(find.textContaining('Recommended with'), findsNothing);
+    });
+
+    testWidgets('shows min age and suggested age with thumbs-up icon', (
+      tester,
+    ) async {
+      const item = CollectionItem(
+        thingId: 1,
+        collId: 1,
+        names: [LocalizedName(value: 'Catan', language: null, isPrimary: true)],
+        minAge: 8,
+      );
+      const game = BoardGame(
+        id: 1,
+        names: [LocalizedName(value: 'Catan', language: null, isPrimary: true)],
+        suggestedPlayerAge: '10.0',
+      );
+
+      when(() => loadGameDetails.call(1, 1)).thenAnswer(
+        (_) async => const GameDetails(collectionItem: item, boardGame: game),
+      );
+
+      await tester.pumpWidget(
+        _buildApp(
+          home: GameDetailPage(
+            thingId: 1,
+            collId: 1,
+            loadGameDetails: loadGameDetails,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Min age:'), findsOneWidget);
+      expect(find.text('8'), findsOneWidget);
+      expect(find.text('10.0'), findsOneWidget);
+      expect(find.byIcon(Icons.thumb_up), findsOneWidget);
+      expect(find.text('·'), findsOneWidget);
+    });
+
+    testWidgets('shows min age without suffix when suggested age is absent', (
+      tester,
+    ) async {
+      const item = CollectionItem(
+        thingId: 1,
+        collId: 1,
+        names: [LocalizedName(value: 'Catan', language: null, isPrimary: true)],
+        minAge: 8,
+      );
+      const game = BoardGame(
+        id: 1,
+        names: [LocalizedName(value: 'Catan', language: null, isPrimary: true)],
+      );
+
+      when(() => loadGameDetails.call(1, 1)).thenAnswer(
+        (_) async => const GameDetails(collectionItem: item, boardGame: game),
+      );
+
+      await tester.pumpWidget(
+        _buildApp(
+          home: GameDetailPage(
+            thingId: 1,
+            collId: 1,
+            loadGameDetails: loadGameDetails,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Min age:'), findsOneWidget);
+      expect(find.text('8'), findsOneWidget);
+      expect(find.byIcon(Icons.thumb_up), findsNothing);
+    });
+
+    testWidgets('shows language dependence label on detail screen', (
+      tester,
+    ) async {
+      const item = CollectionItem(
+        thingId: 1,
+        collId: 1,
+        names: [LocalizedName(value: 'Catan', language: null, isPrimary: true)],
+      );
+      const game = BoardGame(
+        id: 1,
+        names: [LocalizedName(value: 'Catan', language: null, isPrimary: true)],
+        languageDependenceLevel: '3',
+      );
+
+      when(() => loadGameDetails.call(1, 1)).thenAnswer(
+        (_) async => const GameDetails(collectionItem: item, boardGame: game),
+      );
+
+      await tester.pumpWidget(
+        _buildApp(
+          home: GameDetailPage(
+            thingId: 1,
+            collId: 1,
+            loadGameDetails: loadGameDetails,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Language:'), findsOneWidget);
+      expect(
+        find.text('Moderate in-game text - needs crib sheet or paste ups'),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('shows German language dependence label', (tester) async {
+      const item = CollectionItem(
+        thingId: 1,
+        collId: 1,
+        names: [LocalizedName(value: 'Catan', language: null, isPrimary: true)],
+      );
+      const game = BoardGame(
+        id: 1,
+        names: [LocalizedName(value: 'Catan', language: null, isPrimary: true)],
+        languageDependenceLevel: '1',
+      );
+
+      when(() => loadGameDetails.call(1, 1)).thenAnswer(
+        (_) async => const GameDetails(collectionItem: item, boardGame: game),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: const Locale('de'),
+          home: GameDetailPage(
+            thingId: 1,
+            collId: 1,
+            loadGameDetails: loadGameDetails,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Sprache:'), findsOneWidget);
+      expect(find.text('Kein notwendiger Spieltext'), findsOneWidget);
     });
 
     testWidgets('shows status chips next to the game name', (tester) async {
@@ -390,6 +531,7 @@ void main() {
         maxPlayers: 4,
         minPlayTime: 60,
         maxPlayTime: 120,
+        minAge: 10,
         bayesAverage: 7.35,
         geekRatingUserCount: 1234,
         bggRank: 42,
@@ -399,6 +541,7 @@ void main() {
       const game = BoardGame(
         id: 1,
         names: [LocalizedName(value: 'Catan', language: null, isPrimary: true)],
+        languageDependenceLevel: '1',
       );
 
       when(() => loadGameDetails.call(1, 1)).thenAnswer(
@@ -425,6 +568,8 @@ void main() {
         'Rating:',
         'Rank:',
         'Plays:',
+        'Min age:',
+        'Language:',
       ];
 
       final labelFinder = find.byWidgetPredicate((widget) {
@@ -481,10 +626,10 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.textContaining('2 - 7 Players'), findsOneWidget);
-        expect(
-          find.textContaining('Recommended: 3-6 Players, Best: 4-5 Players'),
-          findsOneWidget,
-        );
+        expect(find.text('3-6'), findsOneWidget);
+        expect(find.text('4-5'), findsOneWidget);
+        expect(find.byIcon(Icons.thumb_up), findsOneWidget);
+        expect(find.byIcon(Icons.emoji_events), findsOneWidget);
       },
     );
 
@@ -529,12 +674,10 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.textContaining('1 - 12 Players'), findsOneWidget);
-        expect(
-          find.textContaining(
-            'Recommended: 4, 6-10, 12 Players, Best: 6, 8 Players',
-          ),
-          findsOneWidget,
-        );
+        expect(find.text('4, 6-10, 12'), findsOneWidget);
+        expect(find.text('6, 8'), findsOneWidget);
+        expect(find.byIcon(Icons.thumb_up), findsOneWidget);
+        expect(find.byIcon(Icons.emoji_events), findsOneWidget);
       },
     );
 
@@ -578,12 +721,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.textContaining('1 - 12 Spieler'), findsOneWidget);
-      expect(
-        find.textContaining(
-          'Empfohlen: 4, 6-10, 12 Spieler, Beste: 6, 8 Spieler',
-        ),
-        findsOneWidget,
-      );
+      expect(find.text('4, 6-10, 12'), findsOneWidget);
+      expect(find.text('6, 8'), findsOneWidget);
+      expect(find.byIcon(Icons.thumb_up), findsOneWidget);
+      expect(find.byIcon(Icons.emoji_events), findsOneWidget);
     });
 
     testWidgets(

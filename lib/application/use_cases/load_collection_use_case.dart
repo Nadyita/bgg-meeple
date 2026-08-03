@@ -24,15 +24,29 @@ class LoadCollectionUseCase {
 
     return items.map((item) {
       final game = gamesById[item.thingId];
-      if (game == null || _hasPlayerCounts(item)) return item;
-      return item.copyWith(
-        bestPlayerCount: game.bestPlayerCount,
-        bestPlayerCountMin: game.bestPlayerCountMin,
-        bestPlayerCountMax: game.bestPlayerCountMax,
-        recommendedPlayerCount: game.recommendedPlayerCount,
-        recommendedPlayerCountMin: game.recommendedPlayerCountMin,
-        recommendedPlayerCountMax: game.recommendedPlayerCountMax,
-      );
+      if (game == null) return item;
+
+      var result = item;
+      if (!_hasPlayerCounts(item)) {
+        result = result.copyWith(
+          bestPlayerCount: game.bestPlayerCount,
+          bestPlayerCountMin: game.bestPlayerCountMin,
+          bestPlayerCountMax: game.bestPlayerCountMax,
+          recommendedPlayerCount: game.recommendedPlayerCount,
+          recommendedPlayerCountMin: game.recommendedPlayerCountMin,
+          recommendedPlayerCountMax: game.recommendedPlayerCountMax,
+        );
+      }
+
+      if (result.minAge == null && game.minAge != null) {
+        result = result.copyWith(minAge: game.minAge);
+      }
+      if (result.suggestedPlayerAge == null &&
+          game.suggestedPlayerAge != null) {
+        result = result.copyWith(suggestedPlayerAge: game.suggestedPlayerAge);
+      }
+
+      return result;
     }).toList();
   }
 

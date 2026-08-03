@@ -174,6 +174,10 @@ class SyncCollectionUseCase {
           game.recommendedPlayerCountMin == null) {
         return true;
       }
+      // The publisher minimum age and community-suggested age are used on the
+      // collection card; refresh cached details that lack them.
+      if (game.minAge == null) return true;
+      if (game.suggestedPlayerAge.isEmptyOrNull) return true;
       return false;
     }).toList();
 
@@ -200,6 +204,8 @@ class SyncCollectionUseCase {
   ) {
     if (game == null) return item;
     return item.copyWith(
+      minAge: item.minAge ?? game.minAge,
+      suggestedPlayerAge: item.suggestedPlayerAge ?? game.suggestedPlayerAge,
       bestPlayerCount: game.bestPlayerCount,
       bestPlayerCountMin: game.bestPlayerCountMin,
       bestPlayerCountMax: game.bestPlayerCountMax,

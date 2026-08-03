@@ -611,7 +611,7 @@ class BggApiClient implements BggApi, AuthenticationService {
     final recommendedRange = _recommendedPlayerCountRange(item);
     final maxPlayTime = _childInt(item, 'maxplaytime');
     final playingTime = _childInt(item, 'playingtime');
-    final minAge = _childInt(item, 'minage');
+    final minAge = _firstIntInSubtree(item, 'minage');
     final yearPublished = _childInt(item, 'yearpublished');
 
     return BoardGame(

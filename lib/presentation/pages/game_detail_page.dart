@@ -732,10 +732,16 @@ class _DetailFields extends StatelessWidget {
         '${version.name}$yearSuffix',
       );
     }
+    final playerCountSuffix = _buildPlayerCountSuffix(
+      localizations,
+      item,
+      game,
+    );
     _addValueField(
       fields,
       localizations.detailPlayerCount,
       _formatPlayerCount(localizations, item, game),
+      suffix: playerCountSuffix,
     );
     _addValueField(
       fields,
@@ -756,6 +762,20 @@ class _DetailFields extends StatelessWidget {
       fields,
       localizations.detailPlays,
       _formatNullable(item.numPlays),
+    );
+    final minAge = item.minAge ?? game?.minAge;
+    if (minAge != null) {
+      _addValueField(
+        fields,
+        localizations.detailMinAgeLabel,
+        minAge.toString(),
+        suffix: _AgeSuffix(age: game?.suggestedPlayerAge),
+      );
+    }
+    _addValueField(
+      fields,
+      localizations.detailLanguageDependenceLabel,
+      _languageDependenceLabel(localizations, game?.languageDependenceLevel),
     );
 
     if (fields.isEmpty) {
@@ -793,9 +813,14 @@ class _DetailFields extends StatelessWidget {
     return buffer.toString();
   }
 
-  void _addValueField(List<Widget> fields, String label, String? value) {
-    if (value == null || value.isEmpty) return;
-    fields.add(_KeyValueRow(label: label, value: value));
+  void _addValueField(
+    List<Widget> fields,
+    String label,
+    String? value, {
+    Widget? suffix,
+  }) {
+    if (value == null || (value.isEmpty && suffix == null)) return;
+    fields.add(_KeyValueRow(label: label, value: value, suffix: suffix));
   }
 
   String? _formatNullable(dynamic value) {
@@ -812,8 +837,16 @@ class _DetailFields extends StatelessWidget {
     final max = _readInt(item, game, 'maxPlayers');
     if (min == null && max == null) return null;
 
-    final base = _formatPlayerCountRange(localizations, min, max);
-    if (base == null) return null;
+    return _formatPlayerCountRange(localizations, min, max);
+  }
+
+  Widget? _buildPlayerCountSuffix(
+    AppLocalizations localizations,
+    CollectionItem item,
+    BoardGame? game,
+  ) {
+    final min = _readInt(item, game, 'minPlayers');
+    final max = _readInt(item, game, 'maxPlayers');
 
     final bestDisplay = game?.bestPlayerCount;
     final recommendedDisplay = game?.recommendedPlayerCount;
@@ -823,22 +856,6 @@ class _DetailFields extends StatelessWidget {
     final recommendedMin = game?.recommendedPlayerCountMin;
     final recommendedMax = game?.recommendedPlayerCountMax;
 
-    final bestSameAsBase = _rangesEqual(
-      min,
-      max,
-      null,
-      bestMin,
-      bestMax,
-      bestDisplay,
-    );
-    final recommendedSameAsBase = _rangesEqual(
-      min,
-      max,
-      null,
-      recommendedMin,
-      recommendedMax,
-      recommendedDisplay,
-    );
     final recommendedSameAsBest = _rangesEqual(
       bestMin,
       bestMax,
@@ -848,22 +865,11 @@ class _DetailFields extends StatelessWidget {
       recommendedDisplay,
     );
 
-    if (bestSameAsBase && recommendedSameAsBase) {
-      return base;
-    }
-
-    final best = bestDisplay != null
-        ? localizations.detailBestValue(bestDisplay)
-        : null;
-    final recommended = recommendedDisplay != null
-        ? localizations.detailRecommendedValue(recommendedDisplay)
-        : null;
-
     final showBest =
-        best != null &&
+        bestDisplay != null &&
         !_rangesEqual(min, max, null, bestMin, bestMax, bestDisplay);
     final showRecommended =
-        recommended != null &&
+        recommendedDisplay != null &&
         !recommendedSameAsBest &&
         !_rangesEqual(
           min,
@@ -874,26 +880,12 @@ class _DetailFields extends StatelessWidget {
           recommendedDisplay,
         );
 
-    if (!showBest && !showRecommended) {
-      return base;
-    }
+    if (!showBest && !showRecommended) return null;
 
-    final buffer = StringBuffer(base);
-    buffer.write(' (');
-
-    if (showRecommended) {
-      buffer.write('${localizations.detailRecommendedLabel}: $recommended');
-      if (showBest) {
-        buffer.write(', ');
-      }
-    }
-
-    if (showBest) {
-      buffer.write('${localizations.detailBestLabel}: $best');
-    }
-
-    buffer.write(')');
-    return buffer.toString();
+    return _PlayerCountSuffix(
+      recommended: showRecommended ? recommendedDisplay : null,
+      best: showBest ? bestDisplay : null,
+    );
   }
 
   String? _formatPlayerCountRange(
@@ -958,6 +950,21 @@ class _DetailFields extends StatelessWidget {
     return localizations.cardPlayTimeRange(min, max);
   }
 
+  String? _languageDependenceLabel(
+    AppLocalizations localizations,
+    String? level,
+  ) {
+    return switch (level) {
+      '1' => localizations.detailLanguageDependenceLevel1,
+      '2' => localizations.detailLanguageDependenceLevel2,
+      '3' => localizations.detailLanguageDependenceLevel3,
+      '4' => localizations.detailLanguageDependenceLevel4,
+      '5' => localizations.detailLanguageDependenceLevel5,
+      null || '' => null,
+      _ => level,
+    };
+  }
+
   int? _readInt(CollectionItem item, BoardGame? game, String property) {
     final itemValue = switch (property) {
       'minPlayers' => item.minPlayers,
@@ -980,10 +987,11 @@ class _DetailFields extends StatelessWidget {
 }
 
 class _KeyValueRow extends StatelessWidget {
-  const _KeyValueRow({required this.label, required this.value});
+  const _KeyValueRow({required this.label, required this.value, this.suffix});
 
   final String label;
   final String value;
+  final Widget? suffix;
 
   @override
   Widget build(BuildContext context) {
@@ -1002,10 +1010,99 @@ class _KeyValueRow extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: Text(value, style: Theme.of(context).textTheme.bodyMedium),
+            child: Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Text(value, style: Theme.of(context).textTheme.bodyMedium),
+                if (suffix != null) ...[
+                  const SizedBox(width: 4),
+                  Text(
+                    '·',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  suffix!,
+                ],
+              ],
+            ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _AgeSuffix extends StatelessWidget {
+  const _AgeSuffix({this.age});
+
+  final String? age;
+
+  @override
+  Widget build(BuildContext context) {
+    final ageText = age;
+    if (ageText == null || ageText.isEmpty) return const SizedBox.shrink();
+
+    return _IconValueSuffix(icon: Icons.thumb_up, value: ageText);
+  }
+}
+
+class _PlayerCountSuffix extends StatelessWidget {
+  const _PlayerCountSuffix({this.recommended, this.best});
+
+  final String? recommended;
+  final String? best;
+
+  @override
+  Widget build(BuildContext context) {
+    final children = <Widget>[];
+
+    final recommendedText = recommended;
+    if (recommendedText != null && recommendedText.isNotEmpty) {
+      children.add(
+        _IconValueSuffix(icon: Icons.thumb_up, value: recommendedText),
+      );
+    }
+
+    final bestText = best;
+    if (bestText != null && bestText.isNotEmpty) {
+      if (children.isNotEmpty) {
+        children.add(
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Text(
+              '·',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+        );
+      }
+      children.add(_IconValueSuffix(icon: Icons.emoji_events, value: bestText));
+    }
+
+    return Row(mainAxisSize: MainAxisSize.min, children: children);
+  }
+}
+
+class _IconValueSuffix extends StatelessWidget {
+  const _IconValueSuffix({required this.icon, required this.value});
+
+  final IconData icon;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 16, color: theme.colorScheme.onSurfaceVariant),
+        const SizedBox(width: 2),
+        Text(value, style: theme.textTheme.bodyMedium),
+      ],
     );
   }
 }

@@ -859,6 +859,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Game not found'**
   String get detailGameNotFound;
+
+  /// Label for the minimum age row on the game detail screen
+  ///
+  /// In en, this message translates to:
+  /// **'Min age'**
+  String get detailMinAgeLabel;
+
+  /// No description provided for @detailLanguageDependenceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get detailLanguageDependenceLabel;
+
+  /// No description provided for @detailLanguageDependenceLevel1.
+  ///
+  /// In en, this message translates to:
+  /// **'No necessary in-game text'**
+  String get detailLanguageDependenceLevel1;
+
+  /// No description provided for @detailLanguageDependenceLevel2.
+  ///
+  /// In en, this message translates to:
+  /// **'Some necessary text - easily memorized or small crib sheet'**
+  String get detailLanguageDependenceLevel2;
+
+  /// No description provided for @detailLanguageDependenceLevel3.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderate in-game text - needs crib sheet or paste ups'**
+  String get detailLanguageDependenceLevel3;
+
+  /// No description provided for @detailLanguageDependenceLevel4.
+  ///
+  /// In en, this message translates to:
+  /// **'Extensive use of text - massive conversion needed to be playable'**
+  String get detailLanguageDependenceLevel4;
+
+  /// No description provided for @detailLanguageDependenceLevel5.
+  ///
+  /// In en, this message translates to:
+  /// **'Unplayable in another language'**
+  String get detailLanguageDependenceLevel5;
 }
 
 class _AppLocalizationsDelegate

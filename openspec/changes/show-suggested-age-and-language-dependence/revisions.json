@@ -1,0 +1,61 @@
+{
+  "changeId": "show-suggested-age-and-language-dependence",
+  "revisions": [
+    {
+      "id": "rev-6c55da99",
+      "description": "Extended SyncCollectionUseCase._fetchMissingDetails to also refresh stale cached BoardGame rows when minAge or suggestedPlayerAge is missing. This is required so existing users with old cached details get the age data on the next sync instead of relying only on load-time fallback.",
+      "reason": "The collection endpoint does not always provide minAge, and the load-time fallback from BoardGame does not help when the cached BoardGame itself is missing these fields. Without the refresh condition, old cached rows would stay incomplete forever.",
+      "author": "AI",
+      "createdAt": "2026-08-03T16:40:25.271Z",
+      "metadata": {
+        "type": "behavior",
+        "updateTarget": [
+          "delta-specs",
+          "design"
+        ]
+      }
+    },
+    {
+      "id": "rev-04a18b6b",
+      "description": "Fixed BoardGame.minAge parser: /xmlapi2/thing returns <minage value=\"10\"/> as an attribute, but _parseBoardGame used _childInt which only reads element text. Changed to _firstIntInSubtree to read the value attribute. Added regression test that the Broom Service sample XML yields minAge=10.",
+      "reason": "User confirmed that suggestedPlayerAge and languageDependenceLevel were saved correctly, but minAge was always null in the database despite being present in the thing XML. The root cause was the XML parser looking at element text instead of the value attribute.",
+      "author": "AI",
+      "createdAt": "2026-08-03T19:51:30.700Z",
+      "metadata": {
+        "type": "behavior",
+        "updateTarget": [
+          "delta-specs",
+          "design"
+        ]
+      }
+    },
+    {
+      "id": "rev-89a72c5f",
+      "description": "Added a separator dot (·) between the minimum age and the thumbs-up suggested age suffix on both the collection card and the game detail screen, matching the existing player-count line style.",
+      "reason": "User feedback: the age line looked squeezed without a separator; the player-count line already uses ' · ' as a visual separator.",
+      "author": "AI",
+      "createdAt": "2026-08-03T19:59:17.752Z",
+      "metadata": {
+        "type": "behavior",
+        "updateTarget": [
+          "delta-specs",
+          "design"
+        ]
+      }
+    },
+    {
+      "id": "rev-76b3f24c",
+      "description": "Updated the game detail player-count row to render recommended/best player counts as icon suffixes (thumbs-up for recommended, trophy for best), matching the collection card visual language, instead of text labels like \"Recommended:\" and \"Best:\".",
+      "reason": "User requested the same compact icon representation as on the collection card overview.",
+      "author": "AI",
+      "createdAt": "2026-08-03T20:05:15.693Z",
+      "metadata": {
+        "type": "behavior",
+        "updateTarget": [
+          "delta-specs",
+          "design"
+        ]
+      }
+    }
+  ]
+}

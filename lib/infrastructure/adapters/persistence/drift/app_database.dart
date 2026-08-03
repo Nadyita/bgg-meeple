@@ -26,7 +26,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 13;
+  int get schemaVersion => 14;
 
   @override
   MigrationStrategy get migration {
@@ -79,6 +79,13 @@ class AppDatabase extends _$AppDatabase {
           await m.addColumn(
             collectionItems,
             collectionItems.recommendedPlayerCountMax,
+          );
+        } else if (from < 14) {
+          // Collection items now cache the BGG community-suggested player age
+          // so it can be shown on cards without joining board_games.
+          await m.addColumn(
+            collectionItems,
+            collectionItems.suggestedPlayerAge,
           );
         }
       },
@@ -142,6 +149,7 @@ class CollectionItems extends Table {
   TextColumn get recommendedPlayerCount => text().nullable()();
   IntColumn get recommendedPlayerCountMin => integer().nullable()();
   IntColumn get recommendedPlayerCountMax => integer().nullable()();
+  TextColumn get suggestedPlayerAge => text().nullable()();
   BoolColumn get isOwned => boolean().withDefault(const Constant(false))();
   BoolColumn get isPreordered => boolean().withDefault(const Constant(false))();
   BoolColumn get isWishlisted => boolean().withDefault(const Constant(false))();

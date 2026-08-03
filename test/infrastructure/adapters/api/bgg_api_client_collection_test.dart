@@ -143,6 +143,52 @@ void main() {
       expect(crime.bggRank, isNull);
     });
 
+    test(
+      'parses stats attributes including minAge from collection XML',
+      () async {
+        when(
+          () => client.get(
+            Uri.parse(
+              'https://boardgamegeek.com/xmlapi2/collection?username=stats&version=1&stats=1&showprivate=1',
+            ),
+            headers: any(named: 'headers'),
+          ),
+        ).thenAnswer(
+          (_) async => http.Response('''
+          <?xml version="1.0"?>
+          <items totalitems="1">
+            <item objecttype="thing" objectid="42" subtype="boardgame" collid="100">
+              <name>Stats Game</name>
+              <stats minplayers="2" maxplayers="4" minplaytime="30" maxplaytime="60" minage="8" playingtime="60" numowned="12345">
+                <rating value="N/A">
+                  <usersrated value="100"/>
+                  <average value="7.5"/>
+                  <bayesaverage value="7.25"/>
+                  <ranks>
+                    <rank type="subtype" id="1" name="boardgame" friendlyname="Board Game Rank" value="1000" bayesaverage="7.25"/>
+                  </ranks>
+                </rating>
+              </stats>
+              <numplays>5</numplays>
+              <status own="1" prevowned="0" fortrade="0" want="0" wanttoplay="0" wanttobuy="0" wishlist="0" preordered="0" lastmodified="2026-01-01 00:00:00"/>
+            </item>
+          </items>
+          ''', 200),
+        );
+
+        final items = await apiClient.fetchCollection('stats');
+
+        expect(items.length, 1);
+        final game = items.first;
+        expect(game.thingId, 42);
+        expect(game.minPlayers, 2);
+        expect(game.maxPlayers, 4);
+        expect(game.minPlayTime, 30);
+        expect(game.maxPlayTime, 60);
+        expect(game.minAge, 8);
+      },
+    );
+
     test('returns empty list for empty collection', () async {
       when(
         () => client.get(

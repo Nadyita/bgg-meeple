@@ -251,6 +251,8 @@ void main() {
           names: [LocalizedName(value: 'A', language: null, isPrimary: true)],
           description: 'Already have this.',
           detailsUpdatedAt: 123456789,
+          minAge: 8,
+          suggestedPlayerAge: '10.0',
           bestPlayerCountMin: 2,
           bestPlayerCountMax: 4,
           recommendedPlayerCountMin: 2,
@@ -291,6 +293,96 @@ void main() {
       verifyNever(() => bggApi.fetchGames([1]));
     });
 
+    test(
+      'fetches /thing for cached games missing minAge or suggestedPlayerAge',
+      () async {
+        const credentialsWithToken = BggCredentials(
+          username: 'meepleUser',
+          password: 'secret',
+          apiToken: 'api-token',
+        );
+        final items = <CollectionItem>[
+          const CollectionItem(thingId: 1, names: []),
+          const CollectionItem(thingId: 2, names: []),
+          const CollectionItem(thingId: 3, names: []),
+        ];
+        final cachedGames = [
+          const BoardGame(
+            id: 1,
+            names: [LocalizedName(value: 'A', language: null, isPrimary: true)],
+            description: 'Missing minAge.',
+            detailsUpdatedAt: 123456789,
+            suggestedPlayerAge: '10.0',
+            bestPlayerCountMin: 2,
+            bestPlayerCountMax: 4,
+            recommendedPlayerCountMin: 2,
+            recommendedPlayerCountMax: 4,
+          ),
+          const BoardGame(
+            id: 2,
+            names: [LocalizedName(value: 'B', language: null, isPrimary: true)],
+            description: 'Missing suggestedPlayerAge.',
+            detailsUpdatedAt: 123456789,
+            minAge: 8,
+            bestPlayerCountMin: 2,
+            bestPlayerCountMax: 4,
+            recommendedPlayerCountMin: 2,
+            recommendedPlayerCountMax: 4,
+          ),
+          const BoardGame(
+            id: 3,
+            names: [LocalizedName(value: 'C', language: null, isPrimary: true)],
+            description: 'Complete.',
+            detailsUpdatedAt: 123456789,
+            minAge: 10,
+            suggestedPlayerAge: '12.0',
+            bestPlayerCountMin: 2,
+            bestPlayerCountMax: 4,
+            recommendedPlayerCountMin: 2,
+            recommendedPlayerCountMax: 4,
+          ),
+        ];
+        final fetchedGames = [
+          const BoardGame(
+            id: 1,
+            names: [LocalizedName(value: 'A', language: null, isPrimary: true)],
+            description: 'Refreshed A.',
+            minAge: 8,
+            suggestedPlayerAge: '10.0',
+          ),
+          const BoardGame(
+            id: 2,
+            names: [LocalizedName(value: 'B', language: null, isPrimary: true)],
+            description: 'Refreshed B.',
+            minAge: 8,
+            suggestedPlayerAge: '11.0',
+          ),
+        ];
+
+        when(
+          credentialStore.load,
+        ).thenAnswer((_) async => credentialsWithToken);
+        when(sessionStore.load).thenAnswer((_) async => session);
+        when(
+          () => bggApi.fetchCollection('meepleUser'),
+        ).thenAnswer((_) async => items);
+        when(
+          () => gameStore.loadByIds([1, 2, 3]),
+        ).thenAnswer((_) async => cachedGames);
+        when(
+          () => bggApi.fetchGames([1, 2]),
+        ).thenAnswer((_) async => fetchedGames);
+        when(() => collectionStore.saveAll(any())).thenAnswer((_) async {});
+        when(() => gameStore.saveAll(any())).thenAnswer((_) async {});
+        when(() => thumbnailCache.cache(any())).thenAnswer((_) async => null);
+
+        await useCase();
+
+        verify(() => bggApi.fetchGames([1, 2])).called(1);
+        verifyNever(() => bggApi.fetchGames([3]));
+      },
+    );
+
     test('sets detailsUpdatedAt when /thing games are fetched', () async {
       const credentialsWithToken = BggCredentials(
         username: 'meepleUser',
@@ -329,7 +421,7 @@ void main() {
     });
 
     test(
-      'copies best and recommended player counts to collection items',
+      'copies min age, suggested age, best and recommended player counts to collection items',
       () async {
         const credentialsWithToken = BggCredentials(
           username: 'meepleUser',
@@ -346,6 +438,8 @@ void main() {
             names: [LocalizedName(value: 'A', language: null, isPrimary: true)],
             description: 'Already cached.',
             detailsUpdatedAt: 123456789,
+            minAge: 8,
+            suggestedPlayerAge: '10.0',
             bestPlayerCount: '3',
             bestPlayerCountMin: 3,
             bestPlayerCountMax: 3,
@@ -359,6 +453,8 @@ void main() {
             id: 2,
             names: [LocalizedName(value: 'B', language: null, isPrimary: true)],
             description: 'Fetched from /thing.',
+            minAge: 10,
+            suggestedPlayerAge: '12.0',
             bestPlayerCount: '4',
             bestPlayerCountMin: 4,
             bestPlayerCountMax: 4,
@@ -393,12 +489,16 @@ void main() {
         expect(captured.length, 2);
         final first = captured.firstWhere((i) => i.thingId == 1);
         final second = captured.firstWhere((i) => i.thingId == 2);
+        expect(first.minAge, 8);
+        expect(first.suggestedPlayerAge, '10.0');
         expect(first.bestPlayerCount, '3');
         expect(first.bestPlayerCountMin, 3);
         expect(first.bestPlayerCountMax, 3);
         expect(first.recommendedPlayerCount, '3 - 4');
         expect(first.recommendedPlayerCountMin, 3);
         expect(first.recommendedPlayerCountMax, 4);
+        expect(second.minAge, 10);
+        expect(second.suggestedPlayerAge, '12.0');
         expect(second.bestPlayerCount, '4');
         expect(second.recommendedPlayerCount, '2 - 5');
       },
