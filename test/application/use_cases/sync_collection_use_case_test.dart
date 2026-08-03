@@ -67,6 +67,7 @@ void main() {
 
       when(() => bggApi.fetchGames(any())).thenAnswer((_) async => []);
       when(() => gameStore.saveAll(any())).thenAnswer((_) async {});
+      when(() => gameStore.loadByIds(any())).thenAnswer((_) async => []);
     });
 
     const credentials = BggCredentials(
@@ -326,5 +327,81 @@ void main() {
       expect(captured.length, 1);
       expect(captured.first.detailsUpdatedAt, isNotNull);
     });
+
+    test(
+      'copies best and recommended player counts to collection items',
+      () async {
+        const credentialsWithToken = BggCredentials(
+          username: 'meepleUser',
+          password: 'secret',
+          apiToken: 'api-token',
+        );
+        final items = <CollectionItem>[
+          const CollectionItem(thingId: 1, names: []),
+          const CollectionItem(thingId: 2, names: []),
+        ];
+        final cachedGames = [
+          const BoardGame(
+            id: 1,
+            names: [LocalizedName(value: 'A', language: null, isPrimary: true)],
+            description: 'Already cached.',
+            detailsUpdatedAt: 123456789,
+            bestPlayerCount: '3',
+            bestPlayerCountMin: 3,
+            bestPlayerCountMax: 3,
+            recommendedPlayerCount: '3 - 4',
+            recommendedPlayerCountMin: 3,
+            recommendedPlayerCountMax: 4,
+          ),
+        ];
+        final fetchedGames = [
+          const BoardGame(
+            id: 2,
+            names: [LocalizedName(value: 'B', language: null, isPrimary: true)],
+            description: 'Fetched from /thing.',
+            bestPlayerCount: '4',
+            bestPlayerCountMin: 4,
+            bestPlayerCountMax: 4,
+            recommendedPlayerCount: '2 - 5',
+            recommendedPlayerCountMin: 2,
+            recommendedPlayerCountMax: 5,
+          ),
+        ];
+
+        when(
+          credentialStore.load,
+        ).thenAnswer((_) async => credentialsWithToken);
+        when(sessionStore.load).thenAnswer((_) async => session);
+        when(
+          () => bggApi.fetchCollection('meepleUser'),
+        ).thenAnswer((_) async => items);
+        when(
+          () => gameStore.loadByIds([1, 2]),
+        ).thenAnswer((_) async => cachedGames);
+        when(
+          () => bggApi.fetchGames([2]),
+        ).thenAnswer((_) async => fetchedGames);
+        when(() => collectionStore.saveAll(any())).thenAnswer((_) async {});
+        when(() => gameStore.saveAll(any())).thenAnswer((_) async {});
+        when(() => thumbnailCache.cache(any())).thenAnswer((_) async => null);
+
+        await useCase();
+
+        final captured =
+            verify(() => collectionStore.saveAll(captureAny())).captured.first
+                as List<CollectionItem>;
+        expect(captured.length, 2);
+        final first = captured.firstWhere((i) => i.thingId == 1);
+        final second = captured.firstWhere((i) => i.thingId == 2);
+        expect(first.bestPlayerCount, '3');
+        expect(first.bestPlayerCountMin, 3);
+        expect(first.bestPlayerCountMax, 3);
+        expect(first.recommendedPlayerCount, '3 - 4');
+        expect(first.recommendedPlayerCountMin, 3);
+        expect(first.recommendedPlayerCountMax, 4);
+        expect(second.bestPlayerCount, '4');
+        expect(second.recommendedPlayerCount, '2 - 5');
+      },
+    );
   });
 }

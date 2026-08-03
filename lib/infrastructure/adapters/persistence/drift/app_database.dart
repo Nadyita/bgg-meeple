@@ -26,7 +26,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 12;
+  int get schemaVersion => 13;
 
   @override
   MigrationStrategy get migration {
@@ -55,6 +55,30 @@ class AppDatabase extends _$AppDatabase {
           // new string values and numeric bounds are repopulated on next sync.
           await customStatement(
             'UPDATE board_games SET details_updated_at = NULL',
+          );
+        } else if (from < 13) {
+          // Collection items now cache BGG best/recommended player counts so
+          // they can be shown on cards without joining board_games.
+          await m.addColumn(collectionItems, collectionItems.bestPlayerCount);
+          await m.addColumn(
+            collectionItems,
+            collectionItems.bestPlayerCountMin,
+          );
+          await m.addColumn(
+            collectionItems,
+            collectionItems.bestPlayerCountMax,
+          );
+          await m.addColumn(
+            collectionItems,
+            collectionItems.recommendedPlayerCount,
+          );
+          await m.addColumn(
+            collectionItems,
+            collectionItems.recommendedPlayerCountMin,
+          );
+          await m.addColumn(
+            collectionItems,
+            collectionItems.recommendedPlayerCountMax,
           );
         }
       },
@@ -112,6 +136,12 @@ class CollectionItems extends Table {
   IntColumn get bggRank => integer().nullable()();
   IntColumn get geekRatingUserCount => integer().nullable()();
   TextColumn get inventoryLocation => text().nullable()();
+  TextColumn get bestPlayerCount => text().nullable()();
+  IntColumn get bestPlayerCountMin => integer().nullable()();
+  IntColumn get bestPlayerCountMax => integer().nullable()();
+  TextColumn get recommendedPlayerCount => text().nullable()();
+  IntColumn get recommendedPlayerCountMin => integer().nullable()();
+  IntColumn get recommendedPlayerCountMax => integer().nullable()();
   BoolColumn get isOwned => boolean().withDefault(const Constant(false))();
   BoolColumn get isPreordered => boolean().withDefault(const Constant(false))();
   BoolColumn get isWishlisted => boolean().withDefault(const Constant(false))();

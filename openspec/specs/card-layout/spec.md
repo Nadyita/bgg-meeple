@@ -3,7 +3,6 @@
 ## Purpose
 
 Defines how individual collection cards can be customized: which metadata fields appear, whether they are reorderable, how special hints are shown, how metadata icons are rendered, and the app-wide font size setting.
-
 ## Requirements
 ### Requirement: Card fields are configurable and reorderable
 The settings screen SHALL allow the user to choose which values appear on each collection card. Configurable fields SHALL include thumbnail, version subtitle, player count, play time, plays (with "Hide on 0"), own rating, geek rating (with optional number of ratings), min age, and BGG rank. All fields except title and sub-type chips SHALL be toggleable, and most fields SHALL be reorderable via drag-and-drop.
@@ -32,4 +31,25 @@ The settings screen SHALL offer 5 text size levels where the middle level corres
 #### Scenario: Font size persists
 - **WHEN** the user selects a larger font size and restarts the app
 - **THEN** text is rendered at the selected larger size after restart
+
+### Requirement: Player count filter mode is a view state concern
+
+The player count filter mode SHALL be persisted as part of the collection view state, not as part of the card layout configuration.
+
+#### Scenario: Mode persists with filters and sort
+
+- **GIVEN** the user selected `best` as the player count filter mode
+- **WHEN** the app saves the collection view state
+- **THEN** the mode is stored alongside search text, filters, and sort order
+
+### Requirement: Card layout toggles remain independent of filter mode
+
+The existing settings toggles for showing recommended and best player counts on collection cards SHALL continue to work independently of the player count filter mode.
+
+#### Scenario: Filter mode does not affect card display toggles
+
+- **GIVEN** the user enabled "Show best player count" in settings
+- **AND** the user selected `recommended` in the player count filter
+- **WHEN** the collection list is rendered
+- **THEN** cards still show the best player count inline when the setting is enabled
 

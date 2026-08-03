@@ -104,33 +104,47 @@ class SyncCollectionUseCase {
 
     final uniqueThingIds = items.map((i) => i.thingId).toSet().toList();
 
-    final games = credentials.hasApiToken
-        ? await _fetchMissingDetails(uniqueThingIds)
+    final cachedGames = await _gameStore.loadByIds(uniqueThingIds);
+    final fetchedGames = credentials.hasApiToken
+        ? await _fetchMissingDetails(uniqueThingIds, cachedGames)
         : <domain.BoardGame>[];
+    final gamesByThingId = {
+      for (final game in [...cachedGames, ...fetchedGames]) game.id: game,
+    };
 
     onProgress?.call(
       SyncProgress(
         phase: 'details',
-        loaded: games.length,
+        loaded: cachedGames.length + fetchedGames.length,
         total: uniqueThingIds.length,
       ),
     );
 
-    await _collectionStore.saveAll(items);
-    await _gameStore.saveAll(games);
+    final enrichedItems = items
+        .map(
+          (item) => _mergeGamePlayerCounts(item, gamesByThingId[item.thingId]),
+        )
+        .toList();
 
-    for (var i = 0; i < items.length; i++) {
-      final item = items[i];
+    await _collectionStore.saveAll(enrichedItems);
+    await _gameStore.saveAll(fetchedGames);
+
+    for (var i = 0; i < enrichedItems.length; i++) {
+      final item = enrichedItems[i];
       final localPath = await _thumbnailCache.cache(item.thumbnailUrl);
       if (localPath != null) {
-        items[i] = item.copyWith(thumbnailLocalPath: localPath);
+        enrichedItems[i] = item.copyWith(thumbnailLocalPath: localPath);
       }
       onProgress?.call(
-        SyncProgress(phase: 'thumbnails', loaded: i + 1, total: items.length),
+        SyncProgress(
+          phase: 'thumbnails',
+          loaded: i + 1,
+          total: enrichedItems.length,
+        ),
       );
     }
 
-    await _collectionStore.saveAll(items);
+    await _collectionStore.saveAll(enrichedItems);
 
     final syncPlays = this.syncPlays;
     if (syncPlays != null) {
@@ -138,15 +152,15 @@ class SyncCollectionUseCase {
     }
 
     stopwatch.stop();
-    return SyncResult(items: items, duration: stopwatch.elapsed);
+    return SyncResult(items: enrichedItems, duration: stopwatch.elapsed);
   }
 
   Future<List<domain.BoardGame>> _fetchMissingDetails(
     List<int> uniqueThingIds,
+    List<domain.BoardGame> cachedGames,
   ) async {
     if (uniqueThingIds.isEmpty) return [];
 
-    final cachedGames = await _gameStore.loadByIds(uniqueThingIds);
     final missingIds = uniqueThingIds.where((id) {
       final game = cachedGames.firstWhereOrNull((g) => g.id == id);
       if (game == null) return true;
@@ -178,6 +192,21 @@ class SyncCollectionUseCase {
 
     final newSession = await _bggApi.authenticate(credentials);
     await _sessionStore.save(newSession);
+  }
+
+  CollectionItem _mergeGamePlayerCounts(
+    CollectionItem item,
+    domain.BoardGame? game,
+  ) {
+    if (game == null) return item;
+    return item.copyWith(
+      bestPlayerCount: game.bestPlayerCount,
+      bestPlayerCountMin: game.bestPlayerCountMin,
+      bestPlayerCountMax: game.bestPlayerCountMax,
+      recommendedPlayerCount: game.recommendedPlayerCount,
+      recommendedPlayerCountMin: game.recommendedPlayerCountMin,
+      recommendedPlayerCountMax: game.recommendedPlayerCountMax,
+    );
   }
 }
 

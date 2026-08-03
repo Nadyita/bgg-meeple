@@ -86,4 +86,6 @@ enum CardLayoutToggle {
   hidePlaysOnZero,
   showGeekRatingUserCount,
   showPlayerNamesOnPlays,
+  showRecommendedPlayerNumbers,
+  showBestPlayerNumbers,
 }

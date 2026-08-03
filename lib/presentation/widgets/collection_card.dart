@@ -124,10 +124,7 @@ class CollectionCard extends StatelessWidget {
     AppLocalizations localizations,
   ) {
     return switch (field) {
-      CardField.playerCount => _MetadataLine(
-        icon: Icons.people,
-        text: _playerCountText(localizations),
-      ),
+      CardField.playerCount => _playerCountLine(effectiveConfig, localizations),
       CardField.playTime => _MetadataLine(
         icon: Icons.schedule,
         text: _playTimeText(localizations),
@@ -237,14 +234,82 @@ class CollectionCard extends StatelessWidget {
     return '$versionName ($versionYear)';
   }
 
-  String _playerCountText(AppLocalizations localizations) {
+  Widget? _playerCountLine(
+    CardLayoutConfig config,
+    AppLocalizations localizations,
+  ) {
     final min = item.minPlayers;
     final max = item.maxPlayers;
-    if (min == null && max == null) return localizations.cardPlayerCountMissing;
-    if (min == max) return localizations.cardPlayerCountExact(min!);
-    if (min == null) return localizations.cardPlayerCountRangeMaxOnly(max!);
-    if (max == null) return localizations.cardPlayerCountRangeMinOnly(min);
-    return localizations.cardPlayerCountRange(min, max);
+    String baseText;
+    if (min == null && max == null) {
+      baseText = localizations.cardPlayerCountMissing;
+    } else if (min == max) {
+      baseText = localizations.cardPlayerCountExact(min!);
+    } else if (min == null) {
+      baseText = localizations.cardPlayerCountRangeMaxOnly(max!);
+    } else if (max == null) {
+      baseText = localizations.cardPlayerCountRangeMinOnly(min);
+    } else {
+      baseText = localizations.cardPlayerCountRange(min, max);
+    }
+
+    final recommended = config.showRecommendedPlayerNumbers
+        ? item.recommendedPlayerCount
+        : null;
+    final best = config.showBestPlayerNumbers ? item.bestPlayerCount : null;
+
+    if (recommended == null && best == null) {
+      return _MetadataLine(icon: Icons.people, text: baseText);
+    }
+
+    final baseMin = min;
+    final baseMax = max;
+    final bestMin = item.bestPlayerCountMin;
+    final bestMax = item.bestPlayerCountMax;
+    final recommendedMin = item.recommendedPlayerCountMin;
+    final recommendedMax = item.recommendedPlayerCountMax;
+
+    final bestSameAsBase = _playerCountRangesEqual(
+      baseMin,
+      baseMax,
+      bestMin,
+      bestMax,
+    );
+    final recommendedSameAsBase = _playerCountRangesEqual(
+      baseMin,
+      baseMax,
+      recommendedMin,
+      recommendedMax,
+    );
+    final recommendedSameAsBest = _playerCountRangesEqual(
+      bestMin,
+      bestMax,
+      recommendedMin,
+      recommendedMax,
+    );
+
+    final showBest = best != null && !bestSameAsBase;
+    final showRecommended =
+        recommended != null && !recommendedSameAsBase && !recommendedSameAsBest;
+
+    if (!showBest && !showRecommended) {
+      return _MetadataLine(icon: Icons.people, text: baseText);
+    }
+
+    return _InlinePlayerCountLine(
+      baseText: baseText,
+      recommendedText: showRecommended ? recommended : null,
+      bestText: showBest ? best : null,
+    );
+  }
+
+  bool _playerCountRangesEqual(int? minA, int? maxA, int? minB, int? maxB) {
+    // Without numeric bounds on either side we cannot reliably decide whether
+    // two display strings describe the same range, so we keep both visible.
+    if (minA == null && maxA == null || minB == null && maxB == null) {
+      return false;
+    }
+    return minA == minB && maxA == maxB;
   }
 
   String _playTimeText(AppLocalizations localizations) {
@@ -360,6 +425,62 @@ class _Thumbnail extends StatelessWidget {
       height: 80,
       color: Colors.grey.shade300,
       child: const Icon(Icons.image_not_supported),
+    );
+  }
+}
+
+class _InlinePlayerCountLine extends StatelessWidget {
+  const _InlinePlayerCountLine({
+    required this.baseText,
+    this.recommendedText,
+    this.bestText,
+  });
+
+  final String baseText;
+  final String? recommendedText;
+  final String? bestText;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final children = <InlineSpan>[TextSpan(text: baseText)];
+
+    void addSegment(IconData icon, String text) {
+      children.add(const TextSpan(text: ' · '));
+      children.add(
+        WidgetSpan(
+          alignment: PlaceholderAlignment.middle,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 14, color: theme.colorScheme.onSurfaceVariant),
+              const SizedBox(width: 2),
+              Text(text, style: theme.textTheme.bodySmall),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final recommended = recommendedText;
+    if (recommended != null) addSegment(Icons.thumb_up, recommended);
+    final best = bestText;
+    if (best != null) addSegment(Icons.emoji_events, best);
+
+    return Row(
+      children: [
+        Icon(Icons.people, size: 16, color: theme.colorScheme.onSurfaceVariant),
+        const SizedBox(width: 4),
+        Expanded(
+          child: RichText(
+            overflow: TextOverflow.ellipsis,
+            text: TextSpan(
+              style: theme.textTheme.bodySmall,
+              children: children,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

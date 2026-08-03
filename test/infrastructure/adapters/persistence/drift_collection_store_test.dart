@@ -37,6 +37,12 @@ void main() {
           geekRatingUserCount: 10552,
           bggRank: 30795,
           inventoryLocation: 'Keller',
+          bestPlayerCount: '2',
+          bestPlayerCountMin: 2,
+          bestPlayerCountMax: 2,
+          recommendedPlayerCount: '2 - 4',
+          recommendedPlayerCountMin: 2,
+          recommendedPlayerCountMax: 4,
         ),
       ];
 
@@ -53,6 +59,12 @@ void main() {
       expect(item.geekRatingUserCount, 10552);
       expect(item.bggRank, 30795);
       expect(item.inventoryLocation, 'Keller');
+      expect(item.bestPlayerCount, '2');
+      expect(item.bestPlayerCountMin, 2);
+      expect(item.bestPlayerCountMax, 2);
+      expect(item.recommendedPlayerCount, '2 - 4');
+      expect(item.recommendedPlayerCountMin, 2);
+      expect(item.recommendedPlayerCountMax, 4);
     });
   });
 }

@@ -12,6 +12,8 @@ void main() {
       expect(config.hidePlaysOnZero, isTrue);
       expect(config.showGeekRatingUserCount, isFalse);
       expect(config.showPlayerNamesOnPlays, isFalse);
+      expect(config.showRecommendedPlayerNumbers, isFalse);
+      expect(config.showBestPlayerNumbers, isFalse);
       expect(config.enabledFields, [
         CardField.playerCount,
         CardField.playTime,
@@ -48,6 +50,8 @@ void main() {
         hidePlaysOnZero: false,
         showGeekRatingUserCount: true,
         showPlayerNamesOnPlays: true,
+        showRecommendedPlayerNumbers: true,
+        showBestPlayerNumbers: true,
       );
 
       expect(updated.showThumbnail, isFalse);
@@ -55,6 +59,8 @@ void main() {
       expect(updated.hidePlaysOnZero, isFalse);
       expect(updated.showGeekRatingUserCount, isTrue);
       expect(updated.showPlayerNamesOnPlays, isTrue);
+      expect(updated.showRecommendedPlayerNumbers, isTrue);
+      expect(updated.showBestPlayerNumbers, isTrue);
     });
 
     test('copyWith preserves lists when not provided', () {
@@ -75,8 +81,11 @@ void main() {
     test('different configs are not equal', () {
       const a = CardLayoutConfig();
       final b = a.copyWith(showThumbnail: false);
+      final c = a.copyWith(showRecommendedPlayerNumbers: true);
 
       expect(a, isNot(b));
+      expect(a, isNot(c));
+      expect(b, isNot(c));
     });
   });
 }

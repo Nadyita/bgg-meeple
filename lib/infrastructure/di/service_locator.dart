@@ -87,7 +87,7 @@ class ServiceLocator {
     _themeStore = SharedPreferencesThemeStore();
     _thumbnailCache = FileThumbnailCache();
 
-    loadCollection = LoadCollectionUseCase(_collectionStore);
+    loadCollection = LoadCollectionUseCase(_collectionStore, gameStore);
     loadGameDetails = LoadGameDetailsUseCase(
       _collectionStore,
       gameStore,

@@ -413,6 +413,284 @@ void main() {
       expect(find.text('Location: Keller'), findsOneWidget);
     });
 
+    group('CollectionCard player count extras', () {
+      const playerCountItem = CollectionItem(
+        thingId: 11,
+        names: [LocalizedName(value: 'Rated', language: null, isPrimary: true)],
+        minPlayers: 2,
+        maxPlayers: 4,
+        recommendedPlayerCount: '3 - 4',
+        bestPlayerCount: '3',
+      );
+
+      testWidgets('shows recommended count when enabled', (tester) async {
+        await tester.pumpWidget(
+          _localizedApp(
+            home: const CollectionCard(
+              item: playerCountItem,
+              config: CardLayoutConfig(showRecommendedPlayerNumbers: true),
+            ),
+          ),
+        );
+
+        expect(
+          find.byWidgetPredicate(
+            (widget) =>
+                widget is RichText &&
+                widget.text.toPlainText().contains('2 - 4 Players'),
+          ),
+          findsOneWidget,
+        );
+        expect(find.text('3 - 4'), findsOneWidget);
+        expect(find.byIcon(Icons.thumb_up), findsOneWidget);
+        expect(find.text('3'), findsNothing);
+        expect(find.byIcon(Icons.emoji_events), findsNothing);
+      });
+
+      testWidgets('shows best count when enabled', (tester) async {
+        await tester.pumpWidget(
+          _localizedApp(
+            home: const CollectionCard(
+              item: playerCountItem,
+              config: CardLayoutConfig(showBestPlayerNumbers: true),
+            ),
+          ),
+        );
+
+        expect(
+          find.byWidgetPredicate(
+            (widget) =>
+                widget is RichText &&
+                widget.text.toPlainText().contains('2 - 4 Players'),
+          ),
+          findsOneWidget,
+        );
+        expect(find.text('3'), findsOneWidget);
+        expect(find.byIcon(Icons.emoji_events), findsOneWidget);
+        expect(find.text('3 - 4'), findsNothing);
+        expect(find.byIcon(Icons.thumb_up), findsNothing);
+      });
+
+      testWidgets('shows both counts when both enabled', (tester) async {
+        await tester.pumpWidget(
+          _localizedApp(
+            home: const CollectionCard(
+              item: playerCountItem,
+              config: CardLayoutConfig(
+                showRecommendedPlayerNumbers: true,
+                showBestPlayerNumbers: true,
+              ),
+            ),
+          ),
+        );
+
+        expect(
+          find.byWidgetPredicate(
+            (widget) =>
+                widget is RichText &&
+                widget.text.toPlainText().contains('2 - 4 Players'),
+          ),
+          findsOneWidget,
+        );
+        expect(find.text('3 - 4'), findsOneWidget);
+        expect(find.text('3'), findsOneWidget);
+        expect(find.byIcon(Icons.thumb_up), findsOneWidget);
+        expect(find.byIcon(Icons.emoji_events), findsOneWidget);
+      });
+
+      testWidgets('hides extras when toggles are disabled', (tester) async {
+        await tester.pumpWidget(
+          _localizedApp(
+            home: const CollectionCard(
+              item: playerCountItem,
+              config: CardLayoutConfig(),
+            ),
+          ),
+        );
+
+        expect(find.text('2 - 4 Players'), findsOneWidget);
+        expect(find.text('3 - 4'), findsNothing);
+        expect(find.text('3'), findsNothing);
+        expect(find.byIcon(Icons.thumb_up), findsNothing);
+        expect(find.byIcon(Icons.emoji_events), findsNothing);
+      });
+
+      testWidgets('hides recommended when it equals base player count', (
+        tester,
+      ) async {
+        const item = CollectionItem(
+          thingId: 12,
+          names: [
+            LocalizedName(value: 'Same', language: null, isPrimary: true),
+          ],
+          minPlayers: 2,
+          maxPlayers: 4,
+          recommendedPlayerCount: '2 - 4',
+          recommendedPlayerCountMin: 2,
+          recommendedPlayerCountMax: 4,
+          bestPlayerCount: '3',
+          bestPlayerCountMin: 3,
+          bestPlayerCountMax: 3,
+        );
+
+        await tester.pumpWidget(
+          _localizedApp(
+            home: const CollectionCard(
+              item: item,
+              config: CardLayoutConfig(
+                showRecommendedPlayerNumbers: true,
+                showBestPlayerNumbers: true,
+              ),
+            ),
+          ),
+        );
+
+        expect(
+          find.byWidgetPredicate(
+            (widget) =>
+                widget is RichText &&
+                widget.text.toPlainText().contains('2 - 4 Players'),
+          ),
+          findsOneWidget,
+        );
+        expect(find.text('3'), findsOneWidget);
+        expect(find.text('2 - 4'), findsNothing);
+        expect(find.byIcon(Icons.thumb_up), findsNothing);
+        expect(find.byIcon(Icons.emoji_events), findsOneWidget);
+      });
+
+      testWidgets('hides best when it equals base player count', (
+        tester,
+      ) async {
+        const item = CollectionItem(
+          thingId: 13,
+          names: [
+            LocalizedName(value: 'Same', language: null, isPrimary: true),
+          ],
+          minPlayers: 2,
+          maxPlayers: 4,
+          recommendedPlayerCount: '3 - 4',
+          recommendedPlayerCountMin: 3,
+          recommendedPlayerCountMax: 4,
+          bestPlayerCount: '2 - 4',
+          bestPlayerCountMin: 2,
+          bestPlayerCountMax: 4,
+        );
+
+        await tester.pumpWidget(
+          _localizedApp(
+            home: const CollectionCard(
+              item: item,
+              config: CardLayoutConfig(
+                showRecommendedPlayerNumbers: true,
+                showBestPlayerNumbers: true,
+              ),
+            ),
+          ),
+        );
+
+        expect(find.text('3 - 4'), findsOneWidget);
+        expect(find.byIcon(Icons.thumb_up), findsOneWidget);
+        expect(find.text('2 - 4'), findsNothing);
+        expect(find.byIcon(Icons.emoji_events), findsNothing);
+      });
+
+      testWidgets(
+        'hides recommended when it equals best, even if different from base',
+        (tester) async {
+          const item = CollectionItem(
+            thingId: 14,
+            names: [
+              LocalizedName(value: 'SameBest', language: null, isPrimary: true),
+            ],
+            minPlayers: 1,
+            maxPlayers: 5,
+            recommendedPlayerCount: '3',
+            recommendedPlayerCountMin: 3,
+            recommendedPlayerCountMax: 3,
+            bestPlayerCount: '3',
+            bestPlayerCountMin: 3,
+            bestPlayerCountMax: 3,
+          );
+
+          await tester.pumpWidget(
+            _localizedApp(
+              home: const CollectionCard(
+                item: item,
+                config: CardLayoutConfig(
+                  showRecommendedPlayerNumbers: true,
+                  showBestPlayerNumbers: true,
+                ),
+              ),
+            ),
+          );
+
+          expect(find.text('3'), findsOneWidget);
+          expect(find.byIcon(Icons.emoji_events), findsOneWidget);
+          expect(find.byIcon(Icons.thumb_up), findsNothing);
+        },
+      );
+
+      testWidgets('does not deduplicate when numeric bounds are missing', (
+        tester,
+      ) async {
+        const item = CollectionItem(
+          thingId: 15,
+          names: [
+            LocalizedName(value: 'TextOnly', language: null, isPrimary: true),
+          ],
+          minPlayers: 2,
+          maxPlayers: 4,
+          recommendedPlayerCount: '2 - 4',
+          bestPlayerCount: '3',
+        );
+
+        await tester.pumpWidget(
+          _localizedApp(
+            home: const CollectionCard(
+              item: item,
+              config: CardLayoutConfig(
+                showRecommendedPlayerNumbers: true,
+                showBestPlayerNumbers: true,
+              ),
+            ),
+          ),
+        );
+
+        expect(find.text('3'), findsOneWidget);
+        expect(find.byIcon(Icons.emoji_events), findsOneWidget);
+        expect(find.byIcon(Icons.thumb_up), findsOneWidget);
+      });
+
+      testWidgets('hides extras when player count field is disabled', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          _localizedApp(
+            home: const CollectionCard(
+              item: playerCountItem,
+              config: CardLayoutConfig(
+                enabledFields: [CardField.playTime],
+                showRecommendedPlayerNumbers: true,
+                showBestPlayerNumbers: true,
+              ),
+            ),
+          ),
+        );
+
+        expect(
+          find.byWidgetPredicate(
+            (widget) =>
+                widget is RichText &&
+                widget.text.toPlainText().contains('2 - 4 Players'),
+          ),
+          findsNothing,
+        );
+        expect(find.text('3 - 4'), findsNothing);
+        expect(find.text('3'), findsNothing);
+      });
+    });
+
     testWidgets('hides inventory location when enabled but empty', (
       tester,
     ) async {
