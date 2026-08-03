@@ -1,0 +1,19 @@
+{
+  "changeId": "filter-by-player-count-mode",
+  "revisions": [
+    {
+      "id": "rev-5081cc82",
+      "description": "Changed missing-value handling for player count filter modes from exclusion to fallback chain. Recommended mode now falls back to publisher range; Best mode falls back to recommended, then publisher. Removed redundant 'Players' label above the player count slider because the SegmentedButton already indicates the mode.",
+      "reason": "User requested clearer UI (no duplicate label) and robust fallback behavior so filtering by best/recommended does not hide games that simply lack BGG community data.",
+      "author": "AI",
+      "createdAt": "2026-08-03T13:37:57.418Z"
+    },
+    {
+      "id": "rev-7419b5c3",
+      "description": "Fixed fallback detection for best/recommended ranges: a range is now considered present when either min OR max is non-null (previously required both). This correctly handles open-ended values like '5+' where max is null. Fehlendes min wird dabei auf 1 defaultet.",
+      "reason": "Bug report: searching 'Best 4-4' matched a game whose best value was '5+' because the previous 'both non-null' check treated it as missing and fell back to recommended.",
+      "author": "AI",
+      "createdAt": "2026-08-03T13:43:29.308Z"
+    }
+  ]
+}

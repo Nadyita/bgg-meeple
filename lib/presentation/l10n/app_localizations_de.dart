@@ -63,6 +63,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get playerCountLabel => 'Spieler';
 
   @override
+  String get playerCountFilterModePublisher => 'Spieleranzahl';
+
+  @override
+  String get playerCountFilterModeRecommended => 'Empfohlen';
+
+  @override
+  String get playerCountFilterModeBest => 'Beste';
+
+  @override
   String get playTimeLabel => 'Zeit (Min.)';
 
   @override
@@ -163,6 +172,13 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get settingsShowGeekRatingUserCount =>
       'Anzahl Bewertungen für Geek-Rating anzeigen';
+
+  @override
+  String get settingsShowRecommendedPlayerNumbers =>
+      'Empfohlene Spieleranzahl anzeigen';
+
+  @override
+  String get settingsShowBestPlayerNumbers => 'Beste Spieleranzahl anzeigen';
 
   @override
   String get settingsShowPlayerNamesOnPlays => 'Spielernamen anzeigen';
