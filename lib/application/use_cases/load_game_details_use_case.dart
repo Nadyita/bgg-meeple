@@ -18,8 +18,11 @@ class GameDetails {
   final CollectionItem collectionItem;
   final BoardGame? boardGame;
 
-  /// Best available full-size image URL (from the cached board game details or
-  /// from the collection item). May be `null` if no full image is known.
+  /// Full-size image URL to show on the detail page.
+  ///
+  /// Uses the collection item's own image first, because that image reflects the
+  /// user's edition/language. Falls back to the cached `/thing` image when the
+  /// collection item has no image. May be `null` if no full image is known.
   final String? imageUrl;
 
   /// Local file path of the cached full-size image, or `null` if it has not
@@ -71,7 +74,7 @@ class LoadGameDetailsUseCase {
     final games = await _gameStore.loadByIds([thingId]);
     final boardGame = games.firstOrNull;
 
-    final imageUrl = boardGame?.imageUrl ?? collectionItem.imageUrl;
+    final imageUrl = collectionItem.imageUrl ?? boardGame?.imageUrl;
 
     final localImagePath = await _imageCache.cache(imageUrl);
 
