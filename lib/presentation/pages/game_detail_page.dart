@@ -751,21 +751,6 @@ class _DetailFields extends StatelessWidget {
       localizations.detailPlayingTime,
       _formatPlayTime(localizations, item, game),
     );
-    _addValueField(
-      fields,
-      localizations.detailRating,
-      _formatRating(localizations, item, game),
-    );
-    _addValueField(
-      fields,
-      localizations.detailRank,
-      _formatNullable(item.bggRank),
-    );
-    _addValueField(
-      fields,
-      localizations.detailPlays,
-      _formatNullable(item.numPlays),
-    );
     final minAge = item.minAge ?? game?.minAge;
     final suggestedPlayerAge = game?.suggestedPlayerAge;
     if (minAge != null) {
@@ -782,6 +767,21 @@ class _DetailFields extends StatelessWidget {
       fields,
       localizations.detailLanguageDependenceLabel,
       _languageDependenceLabel(localizations, game?.languageDependenceLevel),
+    );
+    _addValueField(
+      fields,
+      localizations.detailRating,
+      _formatRating(localizations, item, game),
+    );
+    _addValueField(
+      fields,
+      localizations.detailRank,
+      _formatNullable(item.bggRank),
+    );
+    _addValueField(
+      fields,
+      localizations.detailPlays,
+      _formatNullable(item.numPlays),
     );
 
     if (fields.isEmpty) {

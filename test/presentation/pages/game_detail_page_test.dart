@@ -647,11 +647,11 @@ void main() {
         'Version:',
         'Players:',
         'Playing time:',
+        'Min age:',
+        'Language:',
         'Rating:',
         'Rank:',
         'Plays:',
-        'Min age:',
-        'Language:',
       ];
 
       final labelFinder = find.byWidgetPredicate((widget) {
