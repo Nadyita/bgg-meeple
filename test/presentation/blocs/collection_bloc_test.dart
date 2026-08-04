@@ -405,6 +405,63 @@ void main() {
     );
 
     blocTest<CollectionBloc, CollectionState>(
+      'keeps player participation chips but resets them to any on CollectionFilterCleared',
+      build: () {
+        when(loadCollection.call).thenAnswer(
+          (_) async => const [
+            CollectionItem(
+              thingId: 1,
+              names: [
+                LocalizedName(value: 'Catan', language: null, isPrimary: true),
+              ],
+            ),
+          ],
+        );
+        return _buildBloc(
+          loadCollection: loadCollection,
+          loadCardLayout: loadCardLayout,
+          loadCollectionView: loadCollectionView,
+          saveCollectionView: saveCollectionView,
+        );
+      },
+      seed: () => CollectionState(
+        items: const [
+          CollectionItem(
+            thingId: 1,
+            names: [
+              LocalizedName(value: 'Catan', language: null, isPrimary: true),
+            ],
+          ),
+        ],
+        filteredItems: const [
+          CollectionItem(
+            thingId: 1,
+            names: [
+              LocalizedName(value: 'Catan', language: null, isPrimary: true),
+            ],
+          ),
+        ],
+        filter: const CollectionFilter(
+          playerParticipation: {
+            'Markus': PlayerParticipationFilter.played,
+            'Sabine': PlayerParticipationFilter.notPlayed,
+          },
+        ),
+      ),
+      act: (bloc) => bloc.add(const CollectionFilterCleared()),
+      expect: () => [
+        predicate<CollectionState>(
+          (s) =>
+              s.filter.playerParticipation.length == 2 &&
+              s.filter.playerParticipation['Markus'] ==
+                  PlayerParticipationFilter.any &&
+              s.filter.playerParticipation['Sabine'] ==
+                  PlayerParticipationFilter.any,
+        ),
+      ],
+    );
+
+    blocTest<CollectionBloc, CollectionState>(
       'clears only filters on CollectionFilterCleared',
       build: () {
         when(loadCollection.call).thenAnswer(

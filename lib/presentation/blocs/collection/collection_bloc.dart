@@ -349,6 +349,10 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
         for (final key in state.filter.inventoryLocationFilters.keys)
           key: InventoryLocationFilter.any,
       },
+      playerParticipation: {
+        for (final entry in state.filter.playerParticipation.entries)
+          entry.key: PlayerParticipationFilter.any,
+      },
     );
     final newState = state.copyWith(
       filter: clearedFilter,
