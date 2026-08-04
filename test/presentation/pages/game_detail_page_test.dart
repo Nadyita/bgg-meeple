@@ -353,7 +353,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Sprache:'), findsOneWidget);
-      expect(find.text('Kein notwendiger Spieltext'), findsOneWidget);
+      expect(find.text('Kein Text im Spiel'), findsOneWidget);
     });
 
     testWidgets('shows status chips next to the game name', (tester) async {

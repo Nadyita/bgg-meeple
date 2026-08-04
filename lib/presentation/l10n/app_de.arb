@@ -329,9 +329,9 @@
     "description": "Bezeichnung für die Mindestalter-Zeile auf der Spieldetailseite"
   },
   "detailLanguageDependenceLabel": "Sprache",
-  "detailLanguageDependenceLevel1": "Kein notwendiger Spieltext",
-  "detailLanguageDependenceLevel2": "Wenig notwendiger Text - leicht zu merken oder kleine Spickzettel",
-  "detailLanguageDependenceLevel3": "Mittlerer Spieltext - Spickzettel oder Ergänzungen nötig",
-  "detailLanguageDependenceLevel4": "Umfangreicher Text - große Anpassungen nötig, um spielbar zu sein",
-  "detailLanguageDependenceLevel5": "In anderer Sprache unspielbar"
+  "detailLanguageDependenceLevel1": "Kein Text im Spiel",
+  "detailLanguageDependenceLevel2": "Wenig Text im Spiel - leicht zu merken oder kleine Spickzettel",
+  "detailLanguageDependenceLevel3": "Moderate Menge Text im Spiel - Spickzettel oder Ergänzungen nötig",
+  "detailLanguageDependenceLevel4": "Umfangreicher Text im Spiel - große Anpassungen nötig, um spielbar zu sein",
+  "detailLanguageDependenceLevel5": "In anderen Sprachen unspielbar"
 }
