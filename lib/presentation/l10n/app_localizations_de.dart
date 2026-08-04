@@ -63,10 +63,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get playerCountLabel => 'Spieler';
 
   @override
-  String get playerCountFilterModePublisher => 'Spieleranzahl';
+  String get playerCountFilterModePublisher => 'Spieler';
 
   @override
-  String get playerCountFilterModeRecommended => 'Empfohlen';
+  String get playerCountFilterModeRecommended => 'Gut';
 
   @override
   String get playerCountFilterModeBest => 'Beste';

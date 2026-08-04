@@ -683,13 +683,31 @@ void main() {
         await tester.tap(find.byIcon(Icons.filter_list));
         await tester.pumpAndSettle();
 
-        expect(find.text('Spieleranzahl'), findsOneWidget);
-        expect(find.text('Empfohlen'), findsOneWidget);
-        expect(find.text('Beste'), findsOneWidget);
+        expect(
+          find.descendant(
+            of: find.byType(SegmentedButton<PlayerCountFilterMode>),
+            matching: find.text('Spieler'),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: find.byType(SegmentedButton<PlayerCountFilterMode>),
+            matching: find.text('Gut'),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: find.byType(SegmentedButton<PlayerCountFilterMode>),
+            matching: find.text('Beste'),
+          ),
+          findsOneWidget,
+        );
         expect(find.byIcon(Icons.thumb_up), findsOneWidget);
         expect(find.byIcon(Icons.emoji_events), findsOneWidget);
 
-        await tester.tap(find.text('Empfohlen'));
+        await tester.tap(find.text('Gut'));
         await tester.pumpAndSettle();
 
         await tester.ensureVisible(find.text('Zurücksetzen'));
