@@ -38,35 +38,112 @@ void main() {
       expect(result, isNull);
     });
 
-    test('returns details with board game and cached image', () async {
-      const collectionItem = CollectionItem(
-        thingId: 1,
-        collId: 1,
-        names: [LocalizedName(value: 'Catan', language: null, isPrimary: true)],
-        imageUrl: 'https://example.com/image.png',
-      );
-      const boardGame = BoardGame(
-        id: 1,
-        names: [LocalizedName(value: 'Catan', language: null, isPrimary: true)],
-        imageUrl: 'https://example.com/full.png',
-        description: 'A classic game.',
-      );
+    test(
+      'returns details with collection image preferred over board game image',
+      () async {
+        const collectionItem = CollectionItem(
+          thingId: 1,
+          collId: 1,
+          names: [
+            LocalizedName(value: 'Catan', language: null, isPrimary: true),
+          ],
+          imageUrl: 'https://example.com/collection.png',
+        );
+        const boardGame = BoardGame(
+          id: 1,
+          names: [
+            LocalizedName(value: 'Catan', language: null, isPrimary: true),
+          ],
+          imageUrl: 'https://example.com/thing.png',
+          description: 'A classic game.',
+        );
 
-      when(
-        () => collectionStore.loadById(1, 1),
-      ).thenAnswer((_) async => collectionItem);
-      when(() => gameStore.loadByIds([1])).thenAnswer((_) async => [boardGame]);
-      when(
-        () => imageCache.cache('https://example.com/full.png'),
-      ).thenAnswer((_) async => '/cache/full.png');
+        when(
+          () => collectionStore.loadById(1, 1),
+        ).thenAnswer((_) async => collectionItem);
+        when(
+          () => gameStore.loadByIds([1]),
+        ).thenAnswer((_) async => [boardGame]);
+        when(
+          () => imageCache.cache('https://example.com/collection.png'),
+        ).thenAnswer((_) async => '/cache/collection.png');
 
-      final result = await useCase(1, 1);
+        final result = await useCase(1, 1);
 
-      expect(result, isNotNull);
-      expect(result!.collectionItem, collectionItem);
-      expect(result.boardGame, boardGame);
-      expect(result.localImagePath, '/cache/full.png');
-    });
+        expect(result, isNotNull);
+        expect(result!.collectionItem, collectionItem);
+        expect(result.boardGame, boardGame);
+        expect(result.imageUrl, 'https://example.com/collection.png');
+        expect(result.localImagePath, '/cache/collection.png');
+      },
+    );
+
+    test(
+      'falls back to board game image when collection item has none',
+      () async {
+        const collectionItem = CollectionItem(
+          thingId: 1,
+          collId: 1,
+          names: [
+            LocalizedName(value: 'Catan', language: null, isPrimary: true),
+          ],
+        );
+        const boardGame = BoardGame(
+          id: 1,
+          names: [
+            LocalizedName(value: 'Catan', language: null, isPrimary: true),
+          ],
+          imageUrl: 'https://example.com/thing.png',
+          description: 'A classic game.',
+        );
+
+        when(
+          () => collectionStore.loadById(1, 1),
+        ).thenAnswer((_) async => collectionItem);
+        when(
+          () => gameStore.loadByIds([1]),
+        ).thenAnswer((_) async => [boardGame]);
+        when(
+          () => imageCache.cache('https://example.com/thing.png'),
+        ).thenAnswer((_) async => '/cache/thing.png');
+
+        final result = await useCase(1, 1);
+
+        expect(result, isNotNull);
+        expect(result!.imageUrl, 'https://example.com/thing.png');
+        expect(result.localImagePath, '/cache/thing.png');
+      },
+    );
+
+    test(
+      'returns details without full image when no image is available',
+      () async {
+        const collectionItem = CollectionItem(
+          thingId: 1,
+          collId: 1,
+          names: [
+            LocalizedName(value: 'Catan', language: null, isPrimary: true),
+          ],
+          thumbnailUrl: 'https://example.com/thumb.png',
+        );
+
+        when(
+          () => collectionStore.loadById(1, 1),
+        ).thenAnswer((_) async => collectionItem);
+        when(() => gameStore.loadByIds([1])).thenAnswer((_) async => []);
+        when(() => imageCache.cache(null)).thenAnswer((_) async => null);
+
+        final result = await useCase(1, 1);
+
+        expect(result, isNotNull);
+        expect(result!.imageUrl, isNull);
+        expect(result.localImagePath, isNull);
+        expect(
+          result.collectionItem.thumbnailUrl,
+          'https://example.com/thumb.png',
+        );
+      },
+    );
 
     test(
       'triggers background refresh when details are stale and token is present',
