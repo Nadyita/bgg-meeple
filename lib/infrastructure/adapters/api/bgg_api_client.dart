@@ -676,7 +676,7 @@ class BggApiClient implements BggApi, AuthenticationService {
     if (results == null) return null;
 
     XmlElement? winner;
-    var winnerVotes = -1;
+    var winnerVotes = 0;
     for (final result in results.findElements('result')) {
       final votesText = result.getAttribute('numvotes');
       final votes = int.tryParse(votesText ?? '');
@@ -685,6 +685,8 @@ class BggApiClient implements BggApi, AuthenticationService {
         winner = result;
       }
     }
+
+    if (winnerVotes == 0) return null;
 
     return winner?.getAttribute('level');
   }

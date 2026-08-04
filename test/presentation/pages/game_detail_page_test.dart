@@ -286,6 +286,39 @@ void main() {
       expect(find.text('·'), findsNothing);
     });
 
+    testWidgets('hides language dependence row when level is absent', (
+      tester,
+    ) async {
+      const item = CollectionItem(
+        thingId: 1,
+        collId: 1,
+        names: [LocalizedName(value: 'Catan', language: null, isPrimary: true)],
+      );
+      const game = BoardGame(
+        id: 1,
+        names: [LocalizedName(value: 'Catan', language: null, isPrimary: true)],
+      );
+
+      when(() => loadGameDetails.call(1, 1)).thenAnswer(
+        (_) async => const GameDetails(collectionItem: item, boardGame: game),
+      );
+
+      await tester.pumpWidget(
+        _buildApp(
+          home: GameDetailPage(
+            thingId: 1,
+            collId: 1,
+            loadGameDetails: loadGameDetails,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Language:'), findsNothing);
+      expect(find.text('Sprache:'), findsNothing);
+      expect(find.text('Kein Text im Spiel'), findsNothing);
+    });
+
     testWidgets('shows language dependence label on detail screen', (
       tester,
     ) async {

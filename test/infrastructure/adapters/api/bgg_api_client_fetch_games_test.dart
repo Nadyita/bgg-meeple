@@ -198,6 +198,94 @@ void main() {
       ]);
     });
 
+    test(
+      'returns null language dependence level when all votes are zero',
+      () async {
+        when(() => sessionStore.load()).thenAnswer(
+          (_) async => const BggSession(
+            sessionCookies: 'bggusername=u; bggpassword=p; SessionID=s',
+            apiToken: 'my-bearer-token',
+          ),
+        );
+
+        const xml = '''
+<?xml version="1.0" encoding="utf-8"?>
+<items>
+  <item type="boardgame" id="1">
+    <name type="primary" value="Catan"/>
+    <poll name="language_dependence" title="Language Dependence" totalvotes="0">
+      <results>
+        <result level="1" value="No necessary in-game text" numvotes="0"/>
+        <result level="2" value="Some necessary text" numvotes="0"/>
+        <result level="3" value="Moderate in-game text" numvotes="0"/>
+        <result level="4" value="Extensive use of text" numvotes="0"/>
+        <result level="5" value="Unplayable in another language" numvotes="0"/>
+      </results>
+    </poll>
+  </item>
+</items>
+''';
+
+        when(
+          () => client.get(
+            Uri.parse('https://boardgamegeek.com/xmlapi2/thing?id=1&stats=1'),
+            headers: any(named: 'headers'),
+          ),
+        ).thenAnswer(
+          (_) async => http.Response.bytes(
+            utf8.encode(xml),
+            200,
+            headers: {'content-type': 'text/xml; charset=utf-8'},
+          ),
+        );
+
+        final games = await apiClient.fetchGames([1]);
+
+        expect(games, hasLength(1));
+        expect(games.first.languageDependenceLevel, isNull);
+      },
+    );
+
+    test(
+      'returns null language dependence level when poll is absent',
+      () async {
+        when(() => sessionStore.load()).thenAnswer(
+          (_) async => const BggSession(
+            sessionCookies: 'bggusername=u; bggpassword=p; SessionID=s',
+            apiToken: 'my-bearer-token',
+          ),
+        );
+
+        const xml = '''
+<?xml version="1.0" encoding="utf-8"?>
+<items>
+  <item type="boardgame" id="1">
+    <name type="primary" value="Catan"/>
+    <description>A classic game.</description>
+  </item>
+</items>
+''';
+
+        when(
+          () => client.get(
+            Uri.parse('https://boardgamegeek.com/xmlapi2/thing?id=1&stats=1'),
+            headers: any(named: 'headers'),
+          ),
+        ).thenAnswer(
+          (_) async => http.Response.bytes(
+            utf8.encode(xml),
+            200,
+            headers: {'content-type': 'text/xml; charset=utf-8'},
+          ),
+        );
+
+        final games = await apiClient.fetchGames([1]);
+
+        expect(games, hasLength(1));
+        expect(games.first.languageDependenceLevel, isNull);
+      },
+    );
+
     test('parses all player count range forms from poll-summary', () async {
       when(() => sessionStore.load()).thenAnswer(
         (_) async => const BggSession(
