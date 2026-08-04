@@ -764,12 +764,15 @@ class _DetailFields extends StatelessWidget {
       _formatNullable(item.numPlays),
     );
     final minAge = item.minAge ?? game?.minAge;
+    final suggestedPlayerAge = game?.suggestedPlayerAge;
     if (minAge != null) {
       _addValueField(
         fields,
         localizations.detailMinAgeLabel,
         minAge.toString(),
-        suffix: _AgeSuffix(age: game?.suggestedPlayerAge),
+        suffix: suggestedPlayerAge != null && suggestedPlayerAge.isNotEmpty
+            ? _AgeSuffix(age: suggestedPlayerAge)
+            : null,
       );
     }
     _addValueField(

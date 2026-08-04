@@ -283,6 +283,7 @@ void main() {
       expect(find.text('Min age:'), findsOneWidget);
       expect(find.text('8'), findsOneWidget);
       expect(find.byIcon(Icons.thumb_up), findsNothing);
+      expect(find.text('·'), findsNothing);
     });
 
     testWidgets('shows language dependence label on detail screen', (
