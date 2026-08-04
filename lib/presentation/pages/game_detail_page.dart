@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart';
+import 'package:float_column/float_column.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -179,207 +179,41 @@ class _DescriptionAndImage extends StatelessWidget {
   final GameDetails details;
   static final _htmlUnescape = HtmlUnescape();
 
-  @override
-  Widget build(BuildContext context) {
-    final description = _htmlUnescape.convert(details.boardGame!.description!);
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: _DescriptionWithFloatingImage(
-        image: _ImageHeader(details: details),
-        description: description,
-      ),
-    );
-  }
-}
-
-/// Renders [description] with [image] floating in the top-right corner.
-///
-/// The image is sized so that it never exceeds the height of the wrapped
-/// description text, never exceeds half the available width, and is never
-/// smaller than the thumbnail fallback size. The text starts at the top-left,
-/// fills the space beside the image for as many lines as fit into the image's
-/// height, then continues in full width below the image.
-class _DescriptionWithFloatingImage extends StatelessWidget {
-  const _DescriptionWithFloatingImage({
-    required this.image,
-    required this.description,
-  });
-
-  final Widget image;
-  final String description;
-
   static const double _imageMaxWidthFraction = 0.5;
   static const double _minImageHeight = 120;
+  static const double _maxImageHeightFraction = 0.75;
   static const double _gap = 12;
 
   @override
   Widget build(BuildContext context) {
+    final description = _htmlUnescape.convert(details.boardGame!.description!);
     final textStyle = Theme.of(context).textTheme.bodyMedium;
+    final maxImageHeight =
+        MediaQuery.of(context).size.height * _maxImageHeightFraction;
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final availableWidth = constraints.maxWidth;
-        final imageWidth = (availableWidth * _imageMaxWidthFraction).clamp(
-          0.0,
-          availableWidth,
-        );
-        final textColumnWidth = (availableWidth - imageWidth - _gap).clamp(
-          0.0,
-          availableWidth,
-        );
-
-        final fullTextHeight = _measureTextHeight(
-          context,
-          description,
-          textStyle,
-          availableWidth,
-        );
-        final sideTextHeight = _measureTextHeight(
-          context,
-          description,
-          textStyle,
-          textColumnWidth,
-        );
-
-        // The image should be at least as tall as the thumbnail fallback, but
-        // never taller than the full description text (so there is always text
-        // flowing beside and below it) and never taller than the screen allows.
-        final screenHeight = MediaQuery.of(context).size.height;
-        final maxImageHeight = min(fullTextHeight, screenHeight * 0.75);
-        final imageHeight = maxImageHeight.clamp(
-          _minImageHeight,
-          double.infinity,
-        );
-
-        // If the text is short, place everything below the image rather than
-        // creating a large empty column next to the image.
-        if (sideTextHeight <= _minImageHeight || textColumnWidth <= 0) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxWidth: imageWidth,
-                    maxHeight: imageHeight,
-                  ),
-                  child: image,
-                ),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: FloatColumn(
+        children: [
+          Floatable(
+            float: FCFloat.end,
+            padding: const EdgeInsetsDirectional.only(start: _gap),
+            maxWidthPercentage: _imageMaxWidthFraction,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: _minImageHeight,
+                maxHeight: maxImageHeight,
               ),
-              const SizedBox(height: 12),
-              Text(description, style: textStyle),
-            ],
-          );
-        }
-
-        final split = _splitDescription(
-          context,
-          description,
-          textStyle,
-          textColumnWidth,
-          imageHeight,
-        );
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(child: Text(split.sideText, style: textStyle)),
-                  const SizedBox(width: _gap),
-                  ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxWidth: imageWidth,
-                      maxHeight: imageHeight,
-                    ),
-                    child: image,
-                  ),
-                ],
-              ),
+              child: _ImageHeader(details: details),
             ),
-            if (split.bottomText.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              Text(split.bottomText, style: textStyle),
-            ],
-          ],
-        );
-      },
+          ),
+          WrappableText(
+            text: TextSpan(text: description, style: textStyle),
+          ),
+        ],
+      ),
     );
   }
-
-  double _measureTextHeight(
-    BuildContext context,
-    String text,
-    TextStyle? style,
-    double maxWidth,
-  ) {
-    final textPainter = TextPainter(
-      text: TextSpan(text: text, style: style),
-      textDirection: Directionality.of(context),
-      textScaler: MediaQuery.textScalerOf(context),
-    )..layout(maxWidth: maxWidth);
-
-    return textPainter.size.height;
-  }
-
-  _TextSplit _splitDescription(
-    BuildContext context,
-    String text,
-    TextStyle? style,
-    double columnWidth,
-    double columnHeight,
-  ) {
-    if (columnWidth <= 0) {
-      return _TextSplit('', text);
-    }
-
-    final textPainter = TextPainter(
-      textDirection: Directionality.of(context),
-      textScaler: MediaQuery.textScalerOf(context),
-    );
-
-    var low = 0;
-    var high = text.length;
-    while (low < high) {
-      final mid = (low + high + 1) ~/ 2;
-      textPainter.text = TextSpan(text: text.substring(0, mid), style: style);
-      textPainter.layout(maxWidth: columnWidth);
-      if (textPainter.size.height <= columnHeight) {
-        low = mid;
-      } else {
-        high = mid - 1;
-      }
-    }
-
-    final sideEnd = low;
-    if (sideEnd == 0 || sideEnd == text.length) {
-      return _TextSplit(text, '');
-    }
-
-    var breakIndex = sideEnd;
-    while (breakIndex < text.length && text[breakIndex] != ' ') {
-      breakIndex++;
-    }
-    if (breakIndex == text.length) {
-      return _TextSplit(text, '');
-    }
-
-    return _TextSplit(
-      text.substring(0, breakIndex).trimRight(),
-      text.substring(breakIndex + 1).trimLeft(),
-    );
-  }
-}
-
-class _TextSplit {
-  const _TextSplit(this.sideText, this.bottomText);
-
-  final String sideText;
-  final String bottomText;
 }
 
 class _ImageHeader extends StatefulWidget {
