@@ -140,147 +140,152 @@ class _CollectionViewState extends State<_CollectionView> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          const _SyncProgress(),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
-            child: BlocBuilder<CollectionBloc, CollectionState>(
-              buildWhen: (previous, current) =>
-                  previous.searchText != current.searchText,
-              builder: (context, state) {
-                if (_searchController.text != state.searchText) {
-                  _searchController.text = state.searchText;
-                }
-                return TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: localizations.searchHint,
-                    prefixIcon: const Icon(Icons.search),
-                    suffixIcon: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (_searchController.text.isNotEmpty)
+      body: SafeArea(
+        key: const Key('collectionSafeArea'),
+        top: false,
+        bottom: true,
+        child: Column(
+          children: [
+            const _SyncProgress(),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+              child: BlocBuilder<CollectionBloc, CollectionState>(
+                buildWhen: (previous, current) =>
+                    previous.searchText != current.searchText,
+                builder: (context, state) {
+                  if (_searchController.text != state.searchText) {
+                    _searchController.text = state.searchText;
+                  }
+                  return TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: localizations.searchHint,
+                      prefixIcon: const Icon(Icons.search),
+                      suffixIcon: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (_searchController.text.isNotEmpty)
+                            IconButton(
+                              icon: const Icon(Icons.clear),
+                              tooltip: localizations.clearSearchLabel,
+                              onPressed: () {
+                                _searchController.clear();
+                                bloc.add(const CollectionSearchCleared());
+                              },
+                            ),
                           IconButton(
-                            icon: const Icon(Icons.clear),
-                            tooltip: localizations.clearSearchLabel,
+                            icon: Icon(
+                              _filterPanelOpen
+                                  ? Icons.filter_list_off
+                                  : Icons.filter_list,
+                            ),
+                            tooltip: localizations.filterLabel,
                             onPressed: () {
-                              _searchController.clear();
-                              bloc.add(const CollectionSearchCleared());
+                              setState(() {
+                                _filterPanelOpen = !_filterPanelOpen;
+                              });
                             },
                           ),
-                        IconButton(
-                          icon: Icon(
-                            _filterPanelOpen
-                                ? Icons.filter_list_off
-                                : Icons.filter_list,
-                          ),
-                          tooltip: localizations.filterLabel,
-                          onPressed: () {
-                            setState(() {
-                              _filterPanelOpen = !_filterPanelOpen;
-                            });
-                          },
-                        ),
-                      ],
+                        ],
+                      ),
+                      border: const OutlineInputBorder(),
                     ),
-                    border: const OutlineInputBorder(),
-                  ),
-                  onChanged: (value) {
-                    bloc.add(CollectionSearchTextChanged(value));
-                    setState(() {});
-                  },
-                );
-              },
-            ),
-          ),
-          AnimatedSize(
-            duration: const Duration(milliseconds: 200),
-            child: _filterPanelOpen
-                ? ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxHeight: MediaQuery.of(context).size.height * 0.55,
-                    ),
-                    child: BlocBuilder<CollectionBloc, CollectionState>(
-                      builder: (context, state) {
-                        return SingleChildScrollView(
-                          child: _FilterPanel(
-                            filter: state.filter,
-                            items: state.items,
-                            maxPlays: state.items
-                                .map((i) => i.numPlays ?? 0)
-                                .fold(0, (a, b) => a > b ? a : b),
-                            playsInfo: state.playsInfo,
-                            onFilterChanged: (filter) {
-                              bloc.add(CollectionFilterChanged(filter));
-                            },
-                            onClearFilters: () {
-                              bloc.add(const CollectionFilterCleared());
-                            },
-                          ),
-                        );
-                      },
-                    ),
-                  )
-                : const SizedBox.shrink(),
-          ),
-          Expanded(
-            child: BlocBuilder<CollectionBloc, CollectionState>(
-              builder: (context, state) {
-                final localizations = AppLocalizations.of(context)!;
-                if (state.isLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                final errorMessage = state.errorMessage(localizations);
-                if (errorMessage != null) {
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Text(errorMessage, textAlign: TextAlign.center),
-                    ),
+                    onChanged: (value) {
+                      bloc.add(CollectionSearchTextChanged(value));
+                      setState(() {});
+                    },
                   );
-                }
-
-                if (state.filteredItems.isEmpty) {
-                  return Center(
-                    child: Text(
-                      state.items.isEmpty
-                          ? localizations.collectionEmptyAfterSync
-                          : state.filter.isActive
-                          ? localizations.noGamesMatchFilters
-                          : localizations.collectionEmptySearch,
-                    ),
-                  );
-                }
-
-                return RefreshIndicator(
-                  onRefresh: () async {
-                    final bloc = context.read<CollectionBloc>();
-                    bloc.add(const CollectionSyncRequested());
-                    await bloc.stream.firstWhere((s) => s.isSyncing);
-                    await bloc.stream.firstWhere((s) => !s.isSyncing);
-                  },
-                  child: state.isCompactMode
-                      ? _CompactCollectionList(items: state.filteredItems)
-                      : ListView.builder(
-                          itemCount: state.filteredItems.length,
-                          itemBuilder: (context, index) {
-                            final item = state.filteredItems[index];
-                            return CollectionCard(
-                              item: item,
-                              config: state.cardLayout,
-                              playerNamesByGame:
-                                  state.playsInfo.playerNamesByGame,
-                              onTap: () => _openGameDetail(context, item),
-                            );
-                          },
-                        ),
-                );
-              },
+                },
+              ),
             ),
-          ),
-        ],
+            AnimatedSize(
+              duration: const Duration(milliseconds: 200),
+              child: _filterPanelOpen
+                  ? ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxHeight: MediaQuery.of(context).size.height * 0.55,
+                      ),
+                      child: BlocBuilder<CollectionBloc, CollectionState>(
+                        builder: (context, state) {
+                          return SingleChildScrollView(
+                            child: _FilterPanel(
+                              filter: state.filter,
+                              items: state.items,
+                              maxPlays: state.items
+                                  .map((i) => i.numPlays ?? 0)
+                                  .fold(0, (a, b) => a > b ? a : b),
+                              playsInfo: state.playsInfo,
+                              onFilterChanged: (filter) {
+                                bloc.add(CollectionFilterChanged(filter));
+                              },
+                              onClearFilters: () {
+                                bloc.add(const CollectionFilterCleared());
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            ),
+            Expanded(
+              child: BlocBuilder<CollectionBloc, CollectionState>(
+                builder: (context, state) {
+                  final localizations = AppLocalizations.of(context)!;
+                  if (state.isLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  final errorMessage = state.errorMessage(localizations);
+                  if (errorMessage != null) {
+                    return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Text(errorMessage, textAlign: TextAlign.center),
+                      ),
+                    );
+                  }
+
+                  if (state.filteredItems.isEmpty) {
+                    return Center(
+                      child: Text(
+                        state.items.isEmpty
+                            ? localizations.collectionEmptyAfterSync
+                            : state.filter.isActive
+                            ? localizations.noGamesMatchFilters
+                            : localizations.collectionEmptySearch,
+                      ),
+                    );
+                  }
+
+                  return RefreshIndicator(
+                    onRefresh: () async {
+                      final bloc = context.read<CollectionBloc>();
+                      bloc.add(const CollectionSyncRequested());
+                      await bloc.stream.firstWhere((s) => s.isSyncing);
+                      await bloc.stream.firstWhere((s) => !s.isSyncing);
+                    },
+                    child: state.isCompactMode
+                        ? _CompactCollectionList(items: state.filteredItems)
+                        : ListView.builder(
+                            itemCount: state.filteredItems.length,
+                            itemBuilder: (context, index) {
+                              final item = state.filteredItems[index];
+                              return CollectionCard(
+                                item: item,
+                                config: state.cardLayout,
+                                playerNamesByGame:
+                                    state.playsInfo.playerNamesByGame,
+                                onTap: () => _openGameDetail(context, item),
+                              );
+                            },
+                          ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

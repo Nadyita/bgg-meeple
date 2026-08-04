@@ -69,6 +69,20 @@ Widget _buildApp({required Widget home, ThemeCubit? themeCubit}) {
   );
 }
 
+Widget _buildAppWithBottomInset({
+  required Widget home,
+  ThemeCubit? themeCubit,
+  double bottom = 48,
+}) {
+  return MediaQuery(
+    data: MediaQueryData(
+      viewPadding: EdgeInsets.only(bottom: bottom),
+      padding: EdgeInsets.only(bottom: bottom),
+    ),
+    child: _buildApp(home: home, themeCubit: themeCubit),
+  );
+}
+
 ThemeCubit _createThemeCubit() {
   return ThemeCubit(
     loadThemeConfig: _FakeLoadThemeConfig(),
@@ -133,6 +147,33 @@ void main() {
       when(() => saveCollectionView.call(any())).thenAnswer((_) async {});
       when(loadCredentials.call).thenAnswer((_) async => null);
       when(loadPlaysInfo.call).thenAnswer((_) async => const PlaysInfo());
+    });
+
+    testWidgets('applies bottom safe area padding to collection list', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _buildAppWithBottomInset(
+          home: CollectionPage(
+            loadCollection: loadCollection,
+            loadGameDetails: loadGameDetails,
+            loadCardLayout: loadCardLayout,
+            loadCollectionView: loadCollectionView,
+            saveCollectionView: saveCollectionView,
+            loadCredentials: loadCredentials,
+            loadPlaysInfo: loadPlaysInfo,
+            syncCollection: syncCollection,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final safeArea = tester.widget<SafeArea>(
+        find.byKey(const Key('collectionSafeArea')),
+      );
+      expect(safeArea.bottom, true);
+      expect(safeArea.top, false);
+      expect(safeArea.minimum, EdgeInsets.zero);
     });
 
     testWidgets('restores persisted search text into the search field', (

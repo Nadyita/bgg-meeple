@@ -24,6 +24,20 @@ Widget _buildApp({required Widget home}) {
   );
 }
 
+Widget _buildAppWithBottomInset({required Widget home, double bottom = 48}) {
+  return MediaQuery(
+    data: MediaQueryData(
+      viewPadding: EdgeInsets.only(bottom: bottom),
+      padding: EdgeInsets.only(bottom: bottom),
+    ),
+    child: MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: home,
+    ),
+  );
+}
+
 void main() {
   group('GameDetailPage', () {
     late LoadGameDetailsUseCase loadGameDetails;
@@ -353,6 +367,40 @@ void main() {
         find.text('Moderate in-game text - needs crib sheet or paste ups'),
         findsOneWidget,
       );
+    });
+
+    testWidgets('applies bottom safe area padding on detail page', (
+      tester,
+    ) async {
+      const item = CollectionItem(
+        thingId: 1,
+        collId: 1,
+        names: [LocalizedName(value: 'Catan', language: null, isPrimary: true)],
+      );
+      const game = BoardGame(
+        id: 1,
+        names: [LocalizedName(value: 'Catan', language: null, isPrimary: true)],
+      );
+
+      when(() => loadGameDetails.call(1, 1)).thenAnswer(
+        (_) async => const GameDetails(collectionItem: item, boardGame: game),
+      );
+
+      await tester.pumpWidget(
+        _buildAppWithBottomInset(
+          home: GameDetailPage(
+            thingId: 1,
+            collId: 1,
+            loadGameDetails: loadGameDetails,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final safeArea = tester.widget<SafeArea>(
+        find.byKey(const Key('gameDetailSafeArea')),
+      );
+      expect(safeArea.bottom, true);
     });
 
     testWidgets('shows German language dependence label', (tester) async {

@@ -106,7 +106,9 @@ class _SettingsFormState extends State<_SettingsForm> {
         builder: (context, state) {
           return SingleChildScrollView(
             child: SafeArea(
+              key: const Key('settingsSafeArea'),
               minimum: const EdgeInsets.all(16),
+              bottom: true,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [

@@ -49,6 +49,20 @@ Widget _buildApp({required Widget home, required ThemeCubit themeCubit}) {
   );
 }
 
+Widget _buildAppWithBottomInset({
+  required Widget home,
+  required ThemeCubit themeCubit,
+  double bottom = 48,
+}) {
+  return MediaQuery(
+    data: MediaQueryData(
+      viewPadding: EdgeInsets.only(bottom: bottom),
+      padding: EdgeInsets.only(bottom: bottom),
+    ),
+    child: _buildApp(home: home, themeCubit: themeCubit),
+  );
+}
+
 void main() {
   setUpAll(() {
     registerFallbackValue(const CardLayoutConfig());
@@ -84,6 +98,33 @@ void main() {
     });
 
     tearDown(() => themeCubit.close());
+
+    testWidgets('applies bottom safe area padding on settings page', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _buildAppWithBottomInset(
+          home: SettingsPage(
+            loadCredentials: loadCredentials,
+            saveCredentials: saveCredentials,
+            login: login,
+            syncCollection: syncCollection,
+            loadCardLayout: loadCardLayout,
+            saveCardLayout: saveCardLayout,
+          ),
+          themeCubit: themeCubit,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final safeArea = tester.widget<SafeArea>(
+        find.byKey(const Key('settingsSafeArea')),
+      );
+      expect(safeArea.bottom, true);
+      expect(safeArea.minimum, const EdgeInsets.all(16));
+      expect(safeArea.bottom, true);
+      expect(safeArea.minimum, const EdgeInsets.all(16));
+    });
 
     testWidgets('renders theme mode and font size controls', (tester) async {
       await tester.pumpWidget(

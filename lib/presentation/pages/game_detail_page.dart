@@ -134,28 +134,31 @@ class _GameDetailPageState extends State<GameDetailPage> {
     final hasDescription =
         details.boardGame?.description != null &&
         details.boardGame!.description!.isNotEmpty;
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _TitleAndStatus(
-            details: details,
-            showAllNames: _showAllNames,
-            onToggleNames: () {
-              setState(() {
-                _showAllNames = !_showAllNames;
-              });
-            },
-          ),
-          const SizedBox(height: 16),
-          if (hasDescription) _DescriptionAndImage(details: details),
-          if (!hasDescription) _ImageHeader(details: details),
-          const SizedBox(height: 16),
-          const Divider(),
-          const SizedBox(height: 16),
-          _DetailFields(details: details),
-        ],
+    return SafeArea(
+      key: const Key('gameDetailSafeArea'),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _TitleAndStatus(
+              details: details,
+              showAllNames: _showAllNames,
+              onToggleNames: () {
+                setState(() {
+                  _showAllNames = !_showAllNames;
+                });
+              },
+            ),
+            const SizedBox(height: 16),
+            if (hasDescription) _DescriptionAndImage(details: details),
+            if (!hasDescription) _ImageHeader(details: details),
+            const SizedBox(height: 16),
+            const Divider(),
+            const SizedBox(height: 16),
+            _DetailFields(details: details),
+          ],
+        ),
       ),
     );
   }
