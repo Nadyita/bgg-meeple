@@ -107,17 +107,12 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // The first sentence appears next to the image, the rest below.
+      // The whole description is rendered as a single text block so it can
+      // flow naturally around the floated image; it is not split into pieces.
       expect(
-        find.text('First paragraph next to image. Second paragraph continues'),
-        findsNothing,
-      );
-      expect(
-        find.textContaining('First paragraph next to image.'),
-        findsOneWidget,
-      );
-      expect(
-        find.textContaining('Second paragraph continues below the image'),
+        find.text(
+          'First paragraph next to image. Second paragraph continues below the image after enough text has been wrapped beside it so we can verify the split.',
+        ),
         findsOneWidget,
       );
     });
