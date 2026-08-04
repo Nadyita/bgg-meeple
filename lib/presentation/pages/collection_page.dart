@@ -266,7 +266,10 @@ class _CollectionViewState extends State<_CollectionView> {
                       await bloc.stream.firstWhere((s) => !s.isSyncing);
                     },
                     child: state.isCompactMode
-                        ? _CompactCollectionList(items: state.filteredItems)
+                        ? _CompactCollectionList(
+                            items: state.filteredItems,
+                            onTap: (item) => _openGameDetail(context, item),
+                          )
                         : ListView.builder(
                             itemCount: state.filteredItems.length,
                             itemBuilder: (context, index) {
@@ -402,9 +405,10 @@ class _CollectionViewState extends State<_CollectionView> {
 }
 
 class _CompactCollectionList extends StatelessWidget {
-  const _CompactCollectionList({required this.items});
+  const _CompactCollectionList({required this.items, required this.onTap});
 
   final List<CollectionItem> items;
+  final ValueChanged<CollectionItem> onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -422,6 +426,7 @@ class _CompactCollectionList extends StatelessWidget {
             style: theme.textTheme.bodyLarge,
             overflow: TextOverflow.ellipsis,
           ),
+          onTap: () => onTap(item),
         );
       },
     );

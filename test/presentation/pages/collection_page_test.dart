@@ -21,6 +21,7 @@ import 'package:bgg_meeple/domain/value_objects/theme_config.dart';
 import 'package:bgg_meeple/presentation/cubits/theme_cubit.dart';
 import 'package:bgg_meeple/presentation/l10n/app_localizations.dart';
 import 'package:bgg_meeple/presentation/pages/collection_page.dart';
+import 'package:bgg_meeple/presentation/pages/game_detail_page.dart';
 import 'package:bgg_meeple/presentation/widgets/collection_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -303,6 +304,39 @@ void main() {
 
       expect(find.text('Markus'), findsOneWidget);
       expect(find.text('Anna'), findsOneWidget);
+    });
+
+    testWidgets('compact list item opens game detail on tap', (tester) async {
+      when(
+        () => loadGameDetails.call(any(), any()),
+      ).thenAnswer((_) async => null);
+
+      await tester.pumpWidget(
+        _buildApp(
+          home: CollectionPage(
+            loadCollection: loadCollection,
+            loadGameDetails: loadGameDetails,
+            loadCardLayout: loadCardLayout,
+            loadCollectionView: loadCollectionView,
+            saveCollectionView: saveCollectionView,
+            loadCredentials: loadCredentials,
+            loadPlaysInfo: loadPlaysInfo,
+            syncCollection: syncCollection,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.view_module));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ListTile), findsNWidgets(2));
+
+      await tester.tap(find.text('Catan'));
+      await tester.pumpAndSettle();
+
+      verify(() => loadGameDetails.call(1, 1)).called(1);
+      expect(find.byType(GameDetailPage), findsOneWidget);
     });
 
     testWidgets('toggles between card list and compact list', (tester) async {
